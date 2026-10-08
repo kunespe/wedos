@@ -13,7 +13,14 @@ import {
 	uniqueIndex,
 	varchar
 } from 'drizzle-orm/mysql-core';
-import { ORDER_STATUSES, SERVICE_KINDS, SERVICE_STATUSES, TICKET_STATUSES } from '../../constants.ts';
+import {
+	ORDER_STATUSES,
+	PAYMENT_STATUSES,
+	SERVICE_KINDS,
+	SERVICE_STATUSES,
+	TICKET_CATEGORIES,
+	TICKET_STATUSES
+} from '../../constants.ts';
 
 const id = () => int('id').primaryKey().autoincrement();
 const createdAt = () => datetime('created_at', { mode: 'date' }).notNull().$defaultFn(() => new Date());
@@ -142,6 +149,8 @@ export const orders = mysqlTable(
 		assigneeId: int('assignee_id').references(() => users.id, { onDelete: 'set null' }),
 		customerId: int('customer_id').references(() => customers.id, { onDelete: 'set null' }),
 		ip: varchar('ip', { length: 64 }).notNull().default(''),
+		// 'panel' orders come from a logged-in customer and are tied to their account from the start.
+		source: mysqlEnum('source', ['web', 'panel']).notNull().default('web'),
 		createdAt: createdAt(),
 		updatedAt: updatedAt()
 	},
@@ -182,6 +191,8 @@ export const services = mysqlTable(
 		monitored: boolean('monitored').notNull().default(true),
 		orderId: int('order_id').references(() => orders.id, { onDelete: 'set null' }),
 		note: text('note'),
+		// Connection details shown to the customer (host, SFTP user, nameservers...). Never passwords.
+		clientInfo: json('client_info').$type<{ label: string; value: string }[]>(),
 		createdAt: createdAt(),
 		updatedAt: updatedAt()
 	},
@@ -216,6 +227,9 @@ export const tickets = mysqlTable(
 		serviceId: int('service_id').references(() => services.id, { onDelete: 'set null' }),
 		subject: varchar('subject', { length: 200 }).notNull(),
 		status: mysqlEnum('status', TICKET_STATUSES).notNull().default('open'),
+		category: mysqlEnum('category', TICKET_CATEGORIES).notNull().default('general'),
+		// Structured fields of a request form (e.g. DNS record type/name/value), rendered for the admin.
+		details: json('details').$type<Record<string, string>>(),
 		createdById: int('created_by_id').references(() => users.id, { onDelete: 'set null' }),
 		createdAt: createdAt(),
 		updatedAt: updatedAt()
@@ -234,6 +248,41 @@ export const ticketMessages = mysqlTable('ticket_messages', {
 	body: text('body').notNull(),
 	createdAt: createdAt()
 });
+
+export const paymentRequests = mysqlTable(
+	'payment_requests',
+	{
+		id: id(),
+		// Variable symbol for the bank transfer; unique so incoming payments can be matched by hand.
+		vs: varchar('vs', { length: 10 }).notNull(),
+		customerId: int('customer_id')
+			.notNull()
+			.references(() => customers.id, { onDelete: 'restrict' }),
+		serviceId: int('service_id').references(() => services.id, { onDelete: 'set null' }),
+		description: varchar('description', { length: 200 }).notNull(),
+		// Amounts in whole CZK. `amount` is what the customer pays (incl. VAT when VAT applies).
+		net: int('net').notNull(),
+		vatRate: int('vat_rate').notNull().default(0),
+		amount: int('amount').notNull(),
+		dueDate: date('due_date', { mode: 'string' }).notNull(),
+		// When paid, the linked service is extended to this date.
+		coversUntil: date('covers_until', { mode: 'string' }),
+		status: mysqlEnum('status', PAYMENT_STATUSES).notNull().default('unpaid'),
+		paidAt: datetime('paid_at', { mode: 'date' }),
+		// Reference of the tax invoice issued in Fakturor after payment.
+		invoiceRef: varchar('invoice_ref', { length: 60 }).notNull().default(''),
+		remindedAt: datetime('reminded_at', { mode: 'date' }),
+		createdById: int('created_by_id').references(() => users.id, { onDelete: 'set null' }),
+		note: text('note'),
+		createdAt: createdAt(),
+		updatedAt: updatedAt()
+	},
+	(t) => [
+		uniqueIndex('payment_requests_vs').on(t.vs),
+		index('payment_requests_customer').on(t.customerId),
+		index('payment_requests_status').on(t.status)
+	]
+);
 
 export const auditLog = mysqlTable(
 	'audit_log',
@@ -287,4 +336,8 @@ export const domainsRelations = relations(domains, ({ one }) => ({
 }));
 export const auditRelations = relations(auditLog, ({ one }) => ({
 	actor: one(users, { fields: [auditLog.actorId], references: [users.id] })
+}));
+export const paymentRequestsRelations = relations(paymentRequests, ({ one }) => ({
+	customer: one(customers, { fields: [paymentRequests.customerId], references: [customers.id] }),
+	service: one(services, { fields: [paymentRequests.serviceId], references: [services.id] })
 }));
