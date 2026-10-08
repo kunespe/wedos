@@ -106,10 +106,10 @@
 	</div>
 {/snippet}
 
-<div class="min-h-dvh lg:grid lg:grid-cols-[240px_1fr]">
-	<aside class="sticky top-0 hidden h-dvh flex-col bg-chassis-3 lg:flex">{@render nav()}</aside>
+<div class="min-h-dvh lg:grid lg:grid-cols-[240px_1fr] print:block print:min-h-0">
+	<aside class="sticky top-0 hidden h-dvh flex-col bg-chassis-3 lg:flex print:hidden">{@render nav()}</aside>
 
-	<div class="sticky top-0 z-30 flex h-12 items-center justify-between bg-chassis-3 px-3 lg:hidden">
+	<div class="sticky top-0 z-30 flex h-12 items-center justify-between bg-chassis-3 px-3 lg:hidden print:hidden">
 		<button type="button" class="grid size-9 place-items-center text-white" aria-label="Otevřít menu" onclick={() => (drawer = true)}>
 			<Menu size={20} />
 		</button>
@@ -131,7 +131,7 @@
 		</div>
 	{/if}
 
-	<main class="min-w-0 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+	<main class="min-w-0 px-4 py-6 sm:px-6 lg:px-8 lg:py-8 print:p-0">
 		<div class="mx-auto max-w-[1280px]">{@render children()}</div>
 	</main>
 </div>

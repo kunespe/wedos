@@ -11,6 +11,7 @@
 	import Pill from '#lib/components/Pill.svelte';
 	import { ago, czk, date, daysUntil, KIND_LABEL, TICKET_STATUS_LABEL } from '#lib/format.ts';
 	import CustomerFields from '../CustomerFields.svelte';
+	import PaymentList from '../../platby/PaymentList.svelte';
 	import ServiceStatus from '../../sluzby/ServiceStatus.svelte';
 	import type { PageProps } from './$types';
 
@@ -124,6 +125,38 @@
 					<div><label class="label" for="d-reg">Registrátor</label><input class="input" id="d-reg" name="registrar" value="Subreg" /></div>
 					<label class="flex items-center gap-2 text-sm sm:col-span-2"><input type="checkbox" name="managedByUs" checked class="size-4" /> Prodlužujeme my</label>
 					<div class="flex justify-end"><Button type="submit">Přidat</Button></div>
+				</form>
+			</details>
+		</Panel>
+
+		<Panel title="Platby" flush>
+			{#snippet actions()}<a class="text-xs font-semibold text-accent hover:underline" href="/admin/platby?stav=all">Všechny platby</a>{/snippet}
+			<PaymentList rows={data.payments} />
+			{#if form && 'paymentId' in form && form.paymentId}
+				<div class="border-t border-line px-4 py-2.5 text-sm">
+					<a class="font-semibold text-accent hover:underline" href="/admin/platby/{form.paymentId}">Otevřít novou výzvu a poslat ji zákazníkovi</a>
+				</div>
+			{/if}
+			<details class="border-t border-line">
+				<summary class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-accent">Vystavit jednorázovou výzvu</summary>
+				<form method="POST" action="?/addPayment" use:enhance={keepResult({ reset: true })} class="grid gap-3 p-4 pt-1 sm:grid-cols-2">
+					<div class="sm:col-span-2">
+						<label class="label" for="p-desc">Za co</label>
+						<input class="input" id="p-desc" name="description" required maxlength="200" placeholder="Migrace webu z původního hostingu" />
+					</div>
+					<div>
+						<label class="label" for="p-net">Částka bez DPH (Kč)</label>
+						<input class="input mono" id="p-net" name="net" inputmode="numeric" pattern="[0-9]+" required />
+					</div>
+					<div>
+						<label class="label" for="p-service">Služba</label>
+						<select class="input" id="p-service" name="serviceId">
+							<option value="">Bez vazby na službu</option>
+							{#each data.services as s (s.id)}<option value={s.id}>{s.label}</option>{/each}
+						</select>
+					</div>
+					<p class="text-xs text-muted sm:col-span-2">Jednorázová výzva služby neprodlužuje. Pro obnovu použijte tlačítko v detailu služby.</p>
+					<div class="flex justify-end sm:col-span-2"><Button type="submit" variant="primary">Vystavit výzvu</Button></div>
 				</form>
 			</details>
 		</Panel>

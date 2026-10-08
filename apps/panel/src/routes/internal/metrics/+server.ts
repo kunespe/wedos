@@ -1,7 +1,8 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
 import { db } from '#lib/server/db/index.ts';
-import { domains, orders, services, tickets } from '#lib/server/db/schema.ts';
+import { domains, orders, paymentRequests, services, tickets } from '#lib/server/db/schema.ts';
+import { todayPrague } from '#lib/server/payment-ops.ts';
 
 /**
  * Prometheus text format for Alloy, which scrapes 127.0.0.1:3000 directly.
@@ -24,6 +25,13 @@ export const GET: RequestHandler = async ({ request }) => {
 		.select({ total: sql<number>`coalesce(sum(${services.priceMonthly}), 0)` })
 		.from(services)
 		.where(sql`${services.status} = 'active'`);
+	const [payments] = await db
+		.select({
+			unpaid: sql<number>`coalesce(sum(${paymentRequests.amount}), 0)`,
+			overdue: sql<number>`coalesce(sum(${paymentRequests.dueDate} < ${todayPrague()}), 0)`
+		})
+		.from(paymentRequests)
+		.where(sql`${paymentRequests.status} = 'unpaid'`);
 
 	const esc = (v: string) => v.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 	const lines = [
@@ -39,6 +47,12 @@ export const GET: RequestHandler = async ({ request }) => {
 		'# HELP servero_mrr_czk Monthly recurring revenue of active services, CZK excl. VAT.',
 		'# TYPE servero_mrr_czk gauge',
 		`servero_mrr_czk ${Number(mrr[0]?.total ?? 0)}`,
+		'# HELP servero_payments_unpaid_czk Sum of unpaid payment requests, CZK as billed (incl. VAT when charged).',
+		'# TYPE servero_payments_unpaid_czk gauge',
+		`servero_payments_unpaid_czk ${Number(payments?.unpaid ?? 0)}`,
+		'# HELP servero_payments_overdue_total Unpaid payment requests past their due date.',
+		'# TYPE servero_payments_overdue_total gauge',
+		`servero_payments_overdue_total ${Number(payments?.overdue ?? 0)}`,
 		'# HELP servero_domain_expiry_timestamp_seconds Domain expiry as a Unix timestamp.',
 		'# TYPE servero_domain_expiry_timestamp_seconds gauge',
 		...domainRows.map(

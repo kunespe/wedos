@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { Wrench } from '@lucide/svelte';
+	import { Banknote, MessageSquarePlus, ShoppingCart, Wrench } from '@lucide/svelte';
+	import Button from '#lib/components/Button.svelte';
 	import Empty from '#lib/components/Empty.svelte';
 	import Led from '#lib/components/Led.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Panel from '#lib/components/Panel.svelte';
 	import Pill from '#lib/components/Pill.svelte';
-	import { ago, date, KIND_LABEL, SERVICE_STATUS_LABEL, TICKET_STATUS_LABEL } from '#lib/format.ts';
+	import { ago, czk, date, daysUntil, KIND_LABEL, SERVICE_STATUS_LABEL, TICKET_STATUS_LABEL } from '#lib/format.ts';
 	import Contact from './Contact.svelte';
 	import Health from './Health.svelte';
 	import { expiryHint, expiryTone, SERVICE_TONE, TEXT_TONE, TICKET_TONE } from './tones.ts';
@@ -18,11 +19,31 @@
 		return h < 10 ? 'Dobré ráno' : h < 18 ? 'Dobrý den' : 'Dobrý večer';
 	});
 	const pending = $derived(data.services.filter((s) => s.status === 'pending'));
+	const unpaidTotal = $derived(data.unpaid.reduce((sum, p) => sum + p.amount, 0));
+	const overdue = $derived(data.unpaid.some((p) => (daysUntil(p.dueDate) ?? 0) < 0));
 </script>
 
 <PageHeader title="{greeting}, {data.name.split(' ')[0]}">
 	{#snippet meta()}Vaše služby, domény a požadavky na jednom místě.{/snippet}
+	{#snippet actions()}
+		<Button href="/app/podpora/novy"><MessageSquarePlus size={15} />Nový požadavek</Button>
+		<Button href="/app/objednat" variant="primary"><ShoppingCart size={15} />Objednat službu</Button>
+	{/snippet}
 </PageHeader>
+
+{#if data.unpaid.length}
+	<div class="mb-5 flex flex-wrap items-center gap-3 rounded-[6px] border px-4 py-3 text-sm {overdue ? 'border-bad/40 bg-bad-bg' : 'border-warn/40 bg-warn-bg'}">
+		<Banknote size={18} class="shrink-0 {overdue ? 'text-bad' : 'text-warn'}" />
+		<div class="min-w-0 flex-1">
+			<div class="font-bold">K úhradě {czk(unpaidTotal)}</div>
+			<p class="mt-0.5 text-muted">
+				{data.unpaid.length === 1 ? 'Máte jednu nezaplacenou výzvu' : `Máte ${data.unpaid.length} ${data.unpaid.length < 5 ? 'nezaplacené výzvy' : 'nezaplacených výzev'}`}, splatnost
+				{date(data.unpaid[0].dueDate)}{overdue ? ' (už po splatnosti)' : ''}. Zaplatit můžete QR kódem v aplikaci banky.
+			</p>
+		</div>
+		<Button href="/app/faktury" variant="primary">Zaplatit</Button>
+	</div>
+{/if}
 
 {#if pending.length}
 	<div class="mb-5 flex items-start gap-3 rounded-[6px] border border-line bg-info-bg px-4 py-3 text-sm">
@@ -79,7 +100,7 @@
 				</ul>
 			{:else}
 				<div class="rounded-[6px] border border-line bg-surface">
-					<Empty title="Zatím tu nemáte žádnou službu">Objednat můžete na <a class="underline" href="https://servero.cz">servero.cz</a>.</Empty>
+					<Empty title="Zatím tu nemáte žádnou službu"><a class="underline" href="/app/objednat">Objednejte si první</a> přímo tady.</Empty>
 				</div>
 			{/if}
 		</section>

@@ -1,0 +1,8 @@
+[Unit]
+Description=Issue SERVERO TLS certificates once DNS points here
+After=network-online.target nginx.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/servero-ops/issue-certs.sh

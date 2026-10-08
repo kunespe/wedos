@@ -1,12 +1,17 @@
 import { error, fail } from '@sveltejs/kit';
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 import { ORIGIN } from '$app/env/private';
 import { inviteUrl } from '#lib/server/auth/invites.ts';
 import { audit } from '#lib/server/audit.ts';
 import { db } from '#lib/server/db/index.ts';
-import { customers, nodes, orderNotes, orders, plans, services, users } from '#lib/server/db/schema.ts';
+import { customers, nodes, orderNotes, orders, paymentRequests, plans, services, users } from '#lib/server/db/schema.ts';
 import { convertOrder, FulfilmentError } from '#lib/server/fulfilment.ts';
+import { requireAdmin } from '#lib/server/guards.ts';
 import { sendMail } from '#lib/server/mail.ts';
+import { paymentRows } from '#lib/server/payment-ops.ts';
+import { createPaymentRequest, PaymentError } from '#lib/server/payments.ts';
+import { periodTotal } from '#lib/format.ts';
+import { nextCoverage } from '#lib/payments.ts';
 import { ORDER_STATUSES, type OrderStatus } from '#lib/constants.ts';
 import { canTransition, ORDER_STATUS_LABEL } from '#lib/orders.ts';
 import type { Actions, PageServerLoad } from './$types';
@@ -32,7 +37,8 @@ export const load: PageServerLoad = async ({ params }) => {
 		db.select({ id: services.id, label: services.label, status: services.status }).from(services).where(eq(services.orderId, order.id)),
 		order.customerId ? db.select().from(customers).where(eq(customers.id, order.customerId)).then((r) => r[0]) : null
 	]);
-	return { order, plan, notes, admins, nodes: nodeRows, linked, customer };
+	const payments = linked.length ? await paymentRows(eq(paymentRequests.serviceId, linked[0].id)).limit(10) : [];
+	return { order, plan, notes, admins, nodes: nodeRows, linked, customer, payments };
 };
 
 export const actions: Actions = {
@@ -65,6 +71,35 @@ export const actions: Actions = {
 		if (body.length > 4000) return fail(400, { error: 'Poznámka je příliš dlouhá.' });
 		await db.insert(orderNotes).values({ orderId: order.id, authorId: event.locals.user!.id, body });
 		return { message: 'Poznámka přidána.' };
+	},
+	firstPayment: async (event) => {
+		const admin = requireAdmin(event);
+		const order = await getOrder(Number(event.params.id));
+		const [s] = await db.select().from(services).where(eq(services.orderId, order.id)).orderBy(asc(services.id)).limit(1);
+		if (!order.customerId || !s) return fail(400, { error: 'Nejdřív převeďte objednávku na zákazníka a službu.' });
+		const price = s.priceMonthly ?? order.priceMonthly;
+		if (price == null) return fail(400, { error: 'Služba nemá cenu; doplňte ji v detailu služby.' });
+		const [open] = await db
+			.select({ vs: paymentRequests.vs })
+			.from(paymentRequests)
+			.where(and(eq(paymentRequests.serviceId, s.id), eq(paymentRequests.status, 'unpaid')));
+		if (open) return fail(400, { error: `Služba už má nezaplacenou výzvu ${open.vs}.` });
+		const coversUntil = nextCoverage(null, s.period);
+		try {
+			const { id, vs } = await createPaymentRequest(db, {
+				customerId: s.customerId,
+				serviceId: s.id,
+				description: `${s.label}, první období do ${coversUntil.split('-').reverse().join('. ')}`,
+				net: periodTotal(price, s.period),
+				coversUntil,
+				createdById: admin.id
+			});
+			await audit(event, 'payment_create', `výzva ${vs}`, `objednávka #${order.id}, služba ${s.id}`);
+			return { message: `Výzva ${vs} za první období vystavena.`, paymentId: id };
+		} catch (e) {
+			if (e instanceof PaymentError) return fail(400, { error: e.message });
+			throw e;
+		}
 	},
 	convert: async (event) => {
 		const order = await getOrder(Number(event.params.id));

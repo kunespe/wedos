@@ -5,11 +5,14 @@ import { audit } from '#lib/server/audit.ts';
 import { broker, BrokerError, brokerEnabled } from '#lib/server/broker.ts';
 import { allPlans } from '#lib/server/catalog.ts';
 import { db } from '#lib/server/db/index.ts';
-import { customers, nodes, orders, services } from '#lib/server/db/schema.ts';
+import { customers, nodes, orders, paymentRequests, services } from '#lib/server/db/schema.ts';
 import { checkbox, optionalDate, optionalInt, parseForm } from '#lib/server/forms.ts';
 import { requireAdmin } from '#lib/server/guards.ts';
+import { paymentRows } from '#lib/server/payment-ops.ts';
+import { createRenewalRequest, PaymentError } from '#lib/server/payments.ts';
 import { probeHealth } from '#lib/server/prometheus.ts';
 import { refreshProbes } from '#lib/server/probes.ts';
+import { clientInfoSchema } from '#lib/client-info.ts';
 import { SERVICE_STATUSES } from '#lib/constants.ts';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -22,14 +25,15 @@ async function getService(id: number) {
 export const load: PageServerLoad = async (event) => {
 	requireAdmin(event);
 	const service = await getService(Number(event.params.id));
-	const [[customer], plans, nodeRows, health, [order]] = await Promise.all([
+	const [[customer], plans, nodeRows, health, [order], payments] = await Promise.all([
 		db.select().from(customers).where(eq(customers.id, service.customerId)),
 		allPlans(),
 		db.select({ id: nodes.id, name: nodes.name, host: nodes.host, local: nodes.local }).from(nodes),
 		probeHealth([service.id]),
-		service.orderId ? db.select({ id: orders.id, createdAt: orders.createdAt }).from(orders).where(eq(orders.id, service.orderId)) : [undefined]
+		service.orderId ? db.select({ id: orders.id, createdAt: orders.createdAt }).from(orders).where(eq(orders.id, service.orderId)) : [undefined],
+		paymentRows(eq(paymentRequests.serviceId, service.id)).limit(20)
 	]);
-	return { service, customer, plans, nodes: nodeRows, health: health.get(service.id)!, order, brokerEnabled: brokerEnabled() };
+	return { service, customer, plans, nodes: nodeRows, health: health.get(service.id)!, order, payments, brokerEnabled: brokerEnabled() };
 };
 
 const serviceSchema = z.object({
@@ -53,6 +57,18 @@ const serviceSchema = z.object({
 });
 
 export const actions: Actions = {
+	renew: async (event) => {
+		const admin = requireAdmin(event);
+		const service = await getService(Number(event.params.id));
+		try {
+			const { id, vs } = await createRenewalRequest(db, service.id, admin.id);
+			await audit(event, 'payment_create', `výzva ${vs}`, `služba ${service.id}`);
+			return { message: `Výzva ${vs} vystavena.`, paymentId: id };
+		} catch (e) {
+			if (e instanceof PaymentError) return fail(400, { error: e.message });
+			throw e;
+		}
+	},
 	update: async (event) => {
 		requireAdmin(event);
 		const service = await getService(Number(event.params.id));
@@ -85,5 +101,17 @@ export const actions: Actions = {
 		await audit(event, suspend ? 'web_suspend' : 'web_resume', service.cloudpanelSite, `služba ${service.id}`);
 		refreshProbes();
 		return { message: suspend ? 'Web pozastaven, návštěvníci vidí 503.' : 'Web znovu běží.' };
+	},
+	clientInfo: async (event) => {
+		requireAdmin(event);
+		const service = await getService(Number(event.params.id));
+		const form = await event.request.formData();
+		const labels = form.getAll('infoLabel').map(String);
+		const values = form.getAll('infoValue').map(String);
+		const parsed = clientInfoSchema.safeParse(labels.map((label, i) => ({ label, value: values[i] ?? '' })));
+		if (!parsed.success) return fail(400, { error: parsed.error.issues[0]?.message ?? 'Neplatné údaje.' });
+		await db.update(services).set({ clientInfo: parsed.data.length ? parsed.data : null }).where(eq(services.id, service.id));
+		await audit(event, 'service_client_info', `služba ${service.id}`, parsed.data.map((r) => r.label).join(', '));
+		return { message: 'Přístupové údaje pro zákazníka uloženy.' };
 	}
 };

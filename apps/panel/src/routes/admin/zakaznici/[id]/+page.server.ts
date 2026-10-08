@@ -7,10 +7,12 @@ import { invalidateUserSessions } from '#lib/server/auth/session.ts';
 import { audit } from '#lib/server/audit.ts';
 import { activePlans } from '#lib/server/catalog.ts';
 import { db } from '#lib/server/db/index.ts';
-import { customers, domains, nodes, services, tickets, users } from '#lib/server/db/schema.ts';
+import { customers, domains, nodes, paymentRequests, services, tickets, users } from '#lib/server/db/schema.ts';
 import { customerSchema, optionalDate, parseForm } from '#lib/server/forms.ts';
 import { requireAdmin } from '#lib/server/guards.ts';
 import { sendMail } from '#lib/server/mail.ts';
+import { paymentRows } from '#lib/server/payment-ops.ts';
+import { createPaymentRequest, PaymentError } from '#lib/server/payments.ts';
 import type { Actions, PageServerLoad } from './$types';
 
 async function getCustomer(id: number) {
@@ -22,7 +24,7 @@ async function getCustomer(id: number) {
 export const load: PageServerLoad = async (event) => {
 	requireAdmin(event);
 	const customer = await getCustomer(Number(event.params.id));
-	const [userRows, serviceRows, domainRows, ticketRows, plans, nodeRows] = await Promise.all([
+	const [userRows, serviceRows, domainRows, ticketRows, plans, nodeRows, paymentList] = await Promise.all([
 		db
 			.select({ id: users.id, name: users.name, email: users.email, passwordHash: users.passwordHash, totp: users.totpSecret, disabled: users.disabled, lastLoginAt: users.lastLoginAt })
 			.from(users)
@@ -32,7 +34,8 @@ export const load: PageServerLoad = async (event) => {
 		db.select().from(domains).where(eq(domains.customerId, customer.id)).orderBy(asc(domains.name)),
 		db.select().from(tickets).where(eq(tickets.customerId, customer.id)).orderBy(desc(tickets.updatedAt)).limit(10),
 		activePlans(),
-		db.select({ id: nodes.id, name: nodes.name }).from(nodes)
+		db.select({ id: nodes.id, name: nodes.name }).from(nodes),
+		paymentRows(eq(paymentRequests.customerId, customer.id)).limit(30)
 	]);
 	return {
 		customer,
@@ -41,7 +44,8 @@ export const load: PageServerLoad = async (event) => {
 		domains: domainRows,
 		tickets: ticketRows,
 		plans,
-		nodes: nodeRows
+		nodes: nodeRows,
+		payments: paymentList
 	};
 };
 
@@ -125,6 +129,31 @@ export const actions: Actions = {
 			.$returningId();
 		await audit(event, 'service_create', `služba ${id}`, plan.code);
 		redirect(303, `/admin/sluzby/${id}`);
+	},
+	addPayment: async (event) => {
+		const admin = requireAdmin(event);
+		const customer = await getCustomer(Number(event.params.id));
+		const parsed = z
+			.object({
+				description: z.string().trim().min(3, 'Popište, za co výzva je.').max(200),
+				net: z.coerce.number().int('Částka v celých korunách.').positive('Částka musí být kladná.').max(10_000_000),
+				serviceId: z.preprocess((v) => (v === '' || v == null ? null : Number(v)), z.number().int().positive().nullable())
+			})
+			.safeParse(Object.fromEntries(await event.request.formData()));
+		if (!parsed.success) return fail(400, { error: parsed.error.issues[0]?.message ?? 'Zkontrolujte výzvu.' });
+		const { serviceId } = parsed.data;
+		if (serviceId) {
+			const [own] = await db.select({ id: services.id }).from(services).where(and(eq(services.id, serviceId), eq(services.customerId, customer.id)));
+			if (!own) return fail(400, { error: 'Služba nepatří tomuto zákazníkovi.' });
+		}
+		try {
+			const { id, vs } = await createPaymentRequest(db, { customerId: customer.id, serviceId, description: parsed.data.description, net: parsed.data.net, createdById: admin.id });
+			await audit(event, 'payment_create', `výzva ${vs}`, `zákazník ${customer.id}${serviceId ? `, služba ${serviceId}` : ''}`);
+			return { message: `Výzva ${vs} vystavena.`, paymentId: id };
+		} catch (e) {
+			if (e instanceof PaymentError) return fail(400, { error: e.message });
+			throw e;
+		}
 	},
 	addDomain: async (event) => {
 		requireAdmin(event);

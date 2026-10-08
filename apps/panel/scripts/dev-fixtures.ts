@@ -1,10 +1,11 @@
 // Local/e2e only: known accounts and sample data. Refuses to run against a non-local database.
 // Admin: admin@servero.test / heslo-pro-vyvoj-12 (TOTP: node scripts/totp.ts)
 // Client: klient@servero.test / heslo-pro-vyvoj-12
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { hashPassword } from '../src/lib/server/auth/password.ts';
 import { createDb } from '../src/lib/server/db/client.ts';
-import { customers, domains, orders, services, tickets, ticketMessages, users } from '../src/lib/server/db/schema.ts';
+import { variableSymbol } from '../src/lib/payments.ts';
+import { customers, domains, orders, paymentRequests, services, tickets, ticketMessages, users } from '../src/lib/server/db/schema.ts';
 
 export const DEV_TOTP_SECRET = 'c2VydmVyby1kZXYtdG90cC1rZXk=';
 const PASSWORD = 'heslo-pro-vyvoj-12';
@@ -46,5 +47,38 @@ if (!customer) {
 	]);
 }
 await upsertUser('klient@servero.test', { name: 'Jana Nováková', role: 'client', customerId: customer.id, passwordHash: hash, totpSecret: null });
+
+// Payment requests: last year's paid renewal and an open one for the next period. Only when the customer has none.
+const [anyRequest] = await db.select({ id: paymentRequests.id }).from(paymentRequests).where(eq(paymentRequests.customerId, customer.id)).limit(1);
+const [wp] = await db
+	.select()
+	.from(services)
+	.where(and(eq(services.customerId, customer.id), eq(services.domain, 'centrumarete.cz')));
+if (!anyRequest && wp) {
+	const iso = (d: Date) => d.toISOString().slice(0, 10);
+	const net = (wp.priceMonthly ?? 349) * 10;
+	// Placeholder variable symbols until the row id is known, as in createPaymentRequest.
+	let id0 = Date.now() % 1e6;
+	const addRequest = async (values: Omit<typeof paymentRequests.$inferInsert, 'vs' | 'customerId' | 'serviceId' | 'net' | 'amount' | 'vatRate'>) => {
+		const [{ id }] = await db
+			.insert(paymentRequests)
+			.values({ vs: `tmp${id0++}`, customerId: customer.id, serviceId: wp.id, net, vatRate: 0, amount: net, createdById: adminId, ...values })
+			.$returningId();
+		await db.update(paymentRequests).set({ vs: variableSymbol(id) }).where(eq(paymentRequests.id, id));
+	};
+	await addRequest({
+		description: `${wp.label}, prodloužení do 31. 3. 2027`,
+		dueDate: '2026-03-20',
+		coversUntil: '2027-03-31',
+		status: 'paid',
+		paidAt: new Date('2026-03-12T09:30:00Z'),
+		invoiceRef: 'FA-2026-0042'
+	});
+	await addRequest({
+		description: `${wp.label}, prodloužení do 31. 3. 2028`,
+		dueDate: iso(new Date(Date.now() + 14 * 86_400_000)),
+		coversUntil: '2028-03-31'
+	});
+}
 await pool.end();
 console.log('Fixtures ready. admin %d, customer %d', adminId, customer.id);

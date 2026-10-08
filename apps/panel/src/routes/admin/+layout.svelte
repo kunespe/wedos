@@ -2,6 +2,7 @@
 	import {
 		Activity,
 		Archive,
+		Banknote,
 		ClipboardList,
 		CreditCard,
 		Gauge,
@@ -27,7 +28,8 @@
 			items: [
 				{ href: '/admin', label: 'Přehled', icon: LayoutDashboard, exact: true },
 				{ href: '/admin/objednavky', label: 'Objednávky', icon: ClipboardList, badge: data.badges.orders },
-				{ href: '/admin/tikety', label: 'Podpora', icon: LifeBuoy, badge: data.badges.tickets }
+				{ href: '/admin/tikety', label: 'Podpora', icon: LifeBuoy, badge: data.badges.tickets },
+				{ href: '/admin/platby', label: 'Platby', icon: Banknote, badge: data.badges.overduePayments }
 			]
 		},
 		{

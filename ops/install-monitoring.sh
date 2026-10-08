@@ -119,7 +119,13 @@ write_secret_once() {
         return 0
     fi
     install -d -m 0750 -o root -g "$group" "$(dirname "$dst")"
-    (umask 077 && printf '%s\n' "$content" > "$dst")
+    # Single-value secrets (DSN, tokens, passwords) are read verbatim by Alloy and Alertmanager,
+    # so they must not end with a newline; multi-line env files keep theirs.
+    if [[ "$content" == *$'\n'* ]]; then
+        (umask 077 && printf '%s\n' "$content" > "$dst")
+    else
+        (umask 077 && printf '%s' "$content" > "$dst")
+    fi
     chown "$owner:$group" "$dst"
     chmod "$mode" "$dst"
     note "created $dst"

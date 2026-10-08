@@ -9,7 +9,9 @@
 	import Pill from '#lib/components/Pill.svelte';
 	import { czk, dateTime, periodTotal, SERVICE_STATUS_LABEL } from '#lib/format.ts';
 	import { nextStatuses, ORDER_STATUS_LABEL } from '#lib/orders.ts';
+	import PaymentList from '../../platby/PaymentList.svelte';
 	import OrderStatus from '../OrderStatus.svelte';
+	import SourceChip from '../SourceChip.svelte';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -44,6 +46,7 @@
 <PageHeader title="Objednávka #{o.id}" crumbs={[{ href: '/admin/objednavky', label: 'Objednávky' }]}>
 	{#snippet meta()}
 		<OrderStatus status={o.status} />
+		{#if o.source === 'panel'}<SourceChip />{/if}
 		<span>přišla {dateTime(o.createdAt)}</span>
 		{#if o.ip}<span class="mono text-xs">{o.ip}</span>{/if}
 	{/snippet}
@@ -147,7 +150,8 @@
 		</Panel>
 
 		<Panel title="Převzetí">
-			{#if data.customer}
+			<!-- A panel order has its customer from the start; it counts as converted once a service exists. -->
+			{#if data.customer && (data.linked.length || o.source !== 'panel')}
 				<p class="text-sm">
 					Převedeno na zákazníka
 					<a class="font-semibold underline" href="/admin/zakaznici/{data.customer.id}">{data.customer.company || data.customer.name}</a>.
@@ -160,13 +164,34 @@
 						</li>
 					{/each}
 				</ul>
+				{#if data.linked.length}
+					<div class="-mx-4 mt-4 -mb-4 overflow-hidden rounded-b-[6px] border-t border-line">
+						{#if data.payments.length}
+							<PaymentList rows={data.payments} />
+						{/if}
+						{#if !data.payments.some((p) => p.status !== 'cancelled')}
+							<form method="POST" action="?/firstPayment" use:enhance={keepResult()} class="flex flex-col gap-2 p-4">
+								<p class="text-sm text-muted">Záloha za {o.period === 'year' ? 'první rok' : 'první měsíc'} služby. Po úhradě se služba prodlouží.</p>
+								<Button type="submit" variant="primary">Vystavit výzvu za první období</Button>
+							</form>
+						{/if}
+					</div>
+				{/if}
 			{:else if o.status === 'cancelled' || o.status === 'done'}
 				<p class="text-sm text-muted">Uzavřená objednávka se nepřevádí.</p>
 			{:else}
 				<form method="POST" action="?/convert" use:enhance={keepResult()} class="flex flex-col gap-3">
-					<p class="text-sm text-muted">
-						Založí zákazníka (nebo použije existujícího se stejným e-mailem či IČO), klientský účet a službu ve stavu „Zřizujeme“. Na serveru se nic nespustí.
-					</p>
+					{#if o.source === 'panel' && data.customer}
+						<p class="text-sm text-muted">
+							Objednal přihlášený zákazník
+							<a class="font-semibold text-ink underline" href="/admin/zakaznici/{data.customer.id}">{data.customer.company || data.customer.name}</a>. Přidá mu službu ve stavu
+							„Zřizujeme“, účet už má. Na serveru se nic nespustí.
+						</p>
+					{:else}
+						<p class="text-sm text-muted">
+							Založí zákazníka (nebo použije existujícího se stejným e-mailem či IČO), klientský účet a službu ve stavu „Zřizujeme“. Na serveru se nic nespustí.
+						</p>
+					{/if}
 					{#if data.plan?.kind !== 'vps' && data.plan?.kind !== 'management'}
 						<div>
 							<label class="label" for="node">Uzel</label>
@@ -175,11 +200,15 @@
 							</select>
 						</div>
 					{/if}
-					<label class="flex items-center gap-2 text-sm">
-						<input type="checkbox" name="send" checked class="size-4 accent-[var(--accent)]" />
-						Poslat zákazníkovi pozvánku e-mailem
-					</label>
-					<Button type="submit" variant="primary">Založit zákazníka a službu</Button>
+					{#if o.source === 'panel' && data.customer}
+						<Button type="submit" variant="primary">Přidat službu zákazníkovi</Button>
+					{:else}
+						<label class="flex items-center gap-2 text-sm">
+							<input type="checkbox" name="send" checked class="size-4 accent-[var(--accent)]" />
+							Poslat zákazníkovi pozvánku e-mailem
+						</label>
+						<Button type="submit" variant="primary">Založit zákazníka a službu</Button>
+					{/if}
 				</form>
 			{/if}
 		</Panel>

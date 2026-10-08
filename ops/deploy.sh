@@ -143,7 +143,7 @@ if want ops; then
             warn "skip $vhost: /etc/nginx/ssl-certificates/$cert.crt/.key missing (issue the cert first, see ops/README.md)"
         fi
     done
-    cp "$OPS/systemd/servero-panel.service" "$STAGE/systemd/"
+    cp "$OPS/systemd/servero-panel.service" "$OPS"/systemd/servero-issue-certs.{service,timer} "$STAGE/systemd/"
 
     REMOTE_TMP="$(remote mktemp -d /tmp/servero-deploy.XXXXXX)"
     rs -a "$STAGE/" "$HOST:$REMOTE_TMP/stage/"
@@ -345,6 +345,8 @@ install -d -m 0755 /var/www/acme /etc/nginx/servero
 for f in "$STAGE"/nginx/servero/*.conf; do put "$f" "/etc/nginx/servero/${f##*/}" 0644; done
 for f in "$STAGE"/nginx/sites/*.conf; do put "$f" "/etc/nginx/sites-enabled/${f##*/}" 0644; done
 put "$STAGE/systemd/servero-panel.service" /etc/systemd/system/servero-panel.service 0644
+put "$STAGE/systemd/servero-issue-certs.service" /etc/systemd/system/servero-issue-certs.service 0644
+put "$STAGE/systemd/servero-issue-certs.timer" /etc/systemd/system/servero-issue-certs.timer 0644
 if ! nginx -t -q; then
     rollback
     nginx -t -q && echo "    rollback OK, nginx config is back to the previous state" >&2
@@ -378,6 +380,11 @@ if want panel || want ops; then
             warn "servero-panel not started: /etc/servero-panel/env is missing"
         fi
     fi
+fi
+
+if want ops && ! dry; then
+    # Hourly: issues Let's Encrypt certificates as soon as DNS points here (ops/issue-certs.sh).
+    remote "command -v certbot >/dev/null && systemctl enable --now --quiet servero-issue-certs.timer || true"
 fi
 
 if health; then

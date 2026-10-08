@@ -8,6 +8,7 @@
 	import { ago, czk, dateTime } from '#lib/format.ts';
 	import { ORDER_STATUS_LABEL } from '#lib/orders.ts';
 	import OrderStatus from './OrderStatus.svelte';
+	import SourceChip from './SourceChip.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -71,7 +72,7 @@
 		<tr class="cursor-pointer" onclick={() => goto(`/admin/objednavky/${o.id}`)}>
 			<td class="mono text-xs text-muted"><a href="/admin/objednavky/{o.id}" class="hover:underline">#{o.id}</a></td>
 			<td>
-				<div class="font-semibold">{o.company || o.name}</div>
+				<div class="flex flex-wrap items-center gap-1.5 font-semibold">{o.company || o.name}{#if o.source === 'panel'}<SourceChip />{/if}</div>
 				<div class="text-xs text-muted">{o.email}</div>
 			</td>
 			<td>{o.plan ?? 'Neznámý'} <span class="text-xs text-muted">{o.period === 'year' ? 'ročně' : 'měsíčně'}</span></td>

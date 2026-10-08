@@ -1,10 +1,16 @@
 import { redirect } from '@sveltejs/kit';
-import type { Handle } from '@sveltejs/kit/hooks';
+import type { Handle, ServerInit } from '@sveltejs/kit/hooks';
 import { clearSessionCookie, SESSION_COOKIE, validateSession } from '#lib/server/auth/session.ts';
+import { refreshProbes } from '#lib/server/probes.ts';
+
+// Services can change outside the panel (imports, direct SQL), so rebuild the monitoring targets on start.
+export const init: ServerInit = () => {
+	refreshProbes();
+};
 
 // Paths reachable before the second factor is done.
 const PRE_2FA = ['/prihlaseni', '/odhlaseni', '/nastaveni-2fa'];
-const PUBLIC = ['/prihlaseni', '/pozvanka', '/api/orders', '/internal/', '/zdravi'];
+const PUBLIC = ['/prihlaseni', '/pozvanka', '/api/orders', '/api/domain-check', '/internal/', '/zdravi', '/stav'];
 
 export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.user = null;

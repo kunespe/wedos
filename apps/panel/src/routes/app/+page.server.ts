@@ -1,14 +1,14 @@
 import { and, asc, desc, eq, isNotNull, lte, ne } from 'drizzle-orm';
 import { requireClient } from '#lib/server/guards.ts';
 import { db } from '#lib/server/db/index.ts';
-import { domains, plans, services, tickets } from '#lib/server/db/schema.ts';
+import { domains, paymentRequests, plans, services, tickets } from '#lib/server/db/schema.ts';
 import { clientServiceColumns, healthOf } from '#lib/server/client-area.ts';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	const user = requireClient(event);
 	const in60 = new Date(Date.now() + 60 * 86_400_000).toISOString().slice(0, 10);
-	const [serviceRows, openTickets, expiringDomains] = await Promise.all([
+	const [serviceRows, openTickets, expiringDomains, unpaid] = await Promise.all([
 		db
 			.select({ ...clientServiceColumns, plan: plans.name })
 			.from(services)
@@ -25,8 +25,13 @@ export const load: PageServerLoad = async (event) => {
 			.select({ id: domains.id, name: domains.name, expiresAt: domains.expiresAt, managedByUs: domains.managedByUs })
 			.from(domains)
 			.where(and(eq(domains.customerId, user.customerId), isNotNull(domains.expiresAt), lte(domains.expiresAt, in60)))
-			.orderBy(asc(domains.expiresAt))
+			.orderBy(asc(domains.expiresAt)),
+		db
+			.select({ id: paymentRequests.id, amount: paymentRequests.amount, dueDate: paymentRequests.dueDate })
+			.from(paymentRequests)
+			.where(and(eq(paymentRequests.customerId, user.customerId), eq(paymentRequests.status, 'unpaid')))
+			.orderBy(asc(paymentRequests.dueDate))
 	]);
 	const health = await healthOf(serviceRows.filter((s) => s.status === 'active').map((s) => s.id));
-	return { name: user.name, services: serviceRows, health, openTickets, expiringDomains };
+	return { name: user.name, services: serviceRows, health, openTickets, expiringDomains, unpaid };
 };

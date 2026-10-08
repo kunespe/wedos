@@ -9,7 +9,9 @@
 	import Panel from '#lib/components/Panel.svelte';
 	import { SERVICE_STATUSES } from '#lib/constants.ts';
 	import { czk, date, dateTime, daysUntil, KIND_LABEL, periodTotal, SERVICE_STATUS_LABEL } from '#lib/format.ts';
+	import PaymentList from '../../platby/PaymentList.svelte';
 	import ServiceStatus from '../ServiceStatus.svelte';
+	import ClientInfoPanel from './ClientInfoPanel.svelte';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -144,6 +146,20 @@
 			<p class="mt-3 text-xs text-muted">Pozastavení po splatnosti nikdy neproběhne samo. Vždy ho spouští člověk tady nebo v sekci Weby.</p>
 		</Panel>
 
+		<Panel title="Platby" flush>
+			{#snippet actions()}
+				<form method="POST" action="?/renew" use:enhance={keepResult()}>
+					<Button type="submit" size="sm">Vystavit výzvu k obnově</Button>
+				</form>
+			{/snippet}
+			<PaymentList rows={data.payments} />
+			{#if form && 'paymentId' in form && form.paymentId}
+				<div class="border-t border-line px-4 py-2.5 text-sm">
+					<a class="font-semibold text-accent hover:underline" href="/admin/platby/{form.paymentId}">Otevřít novou výzvu a poslat ji zákazníkovi</a>
+				</div>
+			{/if}
+		</Panel>
+
 		{#if s.cloudpanelSite}
 			<Panel title="Provoz webu">
 				{#if !data.brokerEnabled}
@@ -169,4 +185,8 @@
 			</Panel>
 		{/if}
 	</div>
+</div>
+
+<div class="mt-5">
+	<ClientInfoPanel kind={s.kind} domain={s.domain} rows={s.clientInfo ?? []} />
 </div>

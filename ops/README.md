@@ -8,6 +8,24 @@ každá služba s `MemoryMax`.
 
 Oba skripty jsou ve výchozím stavu **dry run** a nic nemění. Změny dělá až `--apply`.
 
+## Stav nasazení (9. 10. 2026)
+
+| Co | Stav |
+| --- | --- |
+| `bootstrap-server.sh --apply` | Hotovo: uživatelé `servero` a `servero-panel`, DB `servero_panel`, `/etc/servero-panel/env`, certbot, klíče certifikátů `0600`, ufw |
+| ufw | Aktivní: 22, 80, 443/tcp+udp, 8443. Port 8080 a interní porty jsou zvenku zavřené |
+| Panel | Běží (`servero-panel.service`), migrace a ceník nahrané, převzaté weby centrumarete.cz a jrmontaze.cz, admin pozván |
+| Web servero.cz | Nasazený v `/home/servero/htdocs/servero.cz` |
+| Monitoring | Prometheus, Loki, Alloy, Alertmanager, Grafana běží; všechny cíle `up` |
+| Certifikáty | Zatím self-signed. `servero-issue-certs.timer` každou hodinu zkusí Let's Encrypt, jakmile DNS ukáže na 2.31.25.249 |
+
+Zbývá:
+1. **DNS** u Váš-hosting: `servero.cz`, `www`, `panel`, `monitor` jako A záznam na `2.31.25.249`. Certifikáty pak naskočí samy do hodiny (nebo hned: `systemctl start servero-issue-certs`).
+2. **SMTP relay** (port 587; Hetzner blokuje odchozí 25): doplnit `SMTP_URL` v `/etc/servero-panel/env`, `smtp_*` v `alertmanager.yml` a `/etc/alertmanager/secrets/smtp_password`, `GF_SMTP_PASSWORD`. Do té doby panel e-maily jen loguje (`journalctl -u servero-panel`).
+3. **Telegram** pro alerty: token do `/etc/alertmanager/secrets/telegram_bot_token` (bez koncového nového řádku) a `chat_id` do `alertmanager.yml`.
+4. **Platby**: `SUPPLIER_*`, `PAYMENT_ACCOUNT`, `PAYMENT_IBAN`, `VAT_RATE` v `/etc/servero-panel/env`, pak `systemctl restart servero-panel`.
+5. **Heslo MySQL root v CloudPanelu** se během nasazení jednou zobrazilo v pracovním logu; doporučeno ho změnit.
+
 ## Architektura
 
 ```mermaid
@@ -33,7 +51,7 @@ flowchart LR
     probes --> bb
     timer[servero-backup-metrics.timer<br/>každých 5 min] -->|servero_backups.prom| unix
     myexp --> mysql
-    alloy -->|remote_write| prom[Prometheus<br/>127.0.0.1:9090<br/>15 d / 3 GB]
+    alloy -->|remote_write| prom[Prometheus<br/>127.0.0.1:9090<br/>100 d / 5 GB]
     logs -->|push| loki[Loki<br/>127.0.0.1:3100<br/>7 d]
     prom -->|alerty| am[Alertmanager<br/>127.0.0.1:9093]
     am -->|e-mail| mail[SMTP relay]
@@ -78,8 +96,8 @@ Server má 3,7 GiB RAM, aktuálně je volných asi 1,7 GB (kolega uvolňuje dal�
 
 | Služba | MemoryMax | Očekávané běžné využití | Poznámka |
 | --- | ---: | ---: | --- |
-| Prometheus | 350M | 120 až 200 MB | Pár tisíc sérií; retence 15 d nebo 3 GB disku |
-| Grafana | 250M | 100 až 150 MB | `GOMEMLIMIT=200MiB` |
+| Prometheus | 350M | 120 až 200 MB | Pár tisíc sérií; retence 100 d (90denní historie na /stav) nebo 5 GB disku |
+| Grafana | 380M | 250 až 270 MB (naměřeno na serveru) | `GOMEMLIMIT=300MiB` |
 | Loki | 200M | 80 až 150 MB | `GOMEMLIMIT=170MiB`, embedded cache 2 x 32 MB |
 | Alloy | 150M | 70 až 120 MB | `GOMEMLIMIT=120MiB` |
 | Alertmanager | 50M | 15 až 25 MB | |
