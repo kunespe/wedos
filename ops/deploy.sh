@@ -171,6 +171,11 @@ EOF
     remote "T=$REMOTE_TMP/nginx-test STAGE=$REMOTE_TMP/stage bash -s" <<'EOF'
 set -euo pipefail
 mkdir -p "$T/sites-enabled" "$T/servero" "$T/logs"
+# Relative includes (fastcgi_params, mime.types, ...) resolve against the test config's directory,
+# so mirror the rest of /etc/nginx there as read-only symlinks.
+for entry in /etc/nginx/*; do
+    case "${entry##*/}" in nginx.conf | sites-enabled | servero) ;; *) ln -s "$entry" "$T/${entry##*/}" ;; esac
+done
 cp -a /etc/nginx/sites-enabled/. "$T/sites-enabled/"
 cp "$STAGE"/nginx/sites/*.conf "$T/sites-enabled/"
 cp "$STAGE"/nginx/servero/*.conf "$T/servero/"
