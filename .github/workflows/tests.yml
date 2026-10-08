@@ -60,6 +60,22 @@ jobs:
         run: pnpm test
       - name: Production build
         run: pnpm build
+      - name: End-to-end tests (order to customer, access, requests, payments)
+        # Job-level env wins over .env.e2e (node --env-file never overrides), so restate the e2e values.
+        env:
+          E2E_DATABASE_URL: mysql://root:root@127.0.0.1:3306/servero_e2e
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/servero_e2e
+          ORIGIN: http://127.0.0.1:4173
+          PUBLIC_WEB_ORIGIN: http://127.0.0.1:4410
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot -e 'CREATE DATABASE IF NOT EXISTS servero_e2e'
+          pnpm exec playwright install --with-deps chromium
+          pnpm test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces
+          path: apps/panel/test-results/
 
   catalog:
     runs-on: ubuntu-latest
