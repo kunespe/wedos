@@ -1,0 +1,56 @@
+{
+	"name": "servero-panel",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev --port 5190 --strictPort --host 127.0.0.1",
+		"build": "vite build",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"test": "node --env-file-if-exists=.env.test ./node_modules/vitest/vitest.mjs run",
+		"test:e2e": "playwright test",
+		"db:generate": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs generate",
+		"db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.ts",
+		"db:seed": "node --env-file-if-exists=.env.local scripts/seed.ts",
+		"admin:create": "node --env-file-if-exists=.env.local scripts/create-admin.ts",
+		"import:legacy": "node --env-file-if-exists=.env.local scripts/import-legacy.ts",
+		"db:fixtures": "node --env-file-if-exists=.env.local scripts/dev-fixtures.ts"
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.64.0",
+		"@sveltejs/adapter-node": "^6.0.0",
+		"@sveltejs/kit": "^3.0.0",
+		"@sveltejs/vite-plugin-svelte": "^7.2.0",
+		"@tailwindcss/vite": "^4.3.3",
+		"@types/node": "^26.6.4",
+		"@types/nodemailer": "^8.0.2",
+		"@types/qrcode": "^1.5.6",
+		"drizzle-kit": "^0.31.11",
+		"svelte": "^5.57.1",
+		"svelte-check": "^4.6.0",
+		"tailwindcss": "^4.3.3",
+		"typescript": "^6.0.3",
+		"vite": "^8.3.0",
+		"vitest": "^5.0.3"
+	},
+	"imports": {
+		"#lib": "./src/lib/index.js",
+		"#lib/*": "./src/lib/*"
+	},
+	"dependencies": {
+		"@lucide/svelte": "^1.52.0",
+		"@node-rs/argon2": "^2.2.2",
+		"@oslojs/crypto": "^1.0.1",
+		"@oslojs/encoding": "^1.1.0",
+		"@oslojs/otp": "^1.1.0",
+		"bits-ui": "^2.19.5",
+		"drizzle-orm": "^0.45.3",
+		"mysql2": "^3.24.5",
+		"nodemailer": "^10.0.16",
+		"qrcode": "^1.5.4",
+		"zod": "^4.6.5"
+	}
+}
