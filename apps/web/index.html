@@ -6,11 +6,57 @@
   <title>Servero | Správa serverů, CI/CD a cloud</title>
   <meta name="description" content="Spravujeme servery, nasazování a cloud pro firmy bez vlastního admina. Nonstop dohled, zálohy, bezpečnost. Plzeň, celá ČR.">
   <meta name="theme-color" content="#E7EAEE">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='6' width='26' height='8' rx='2' fill='%231F2328'/%3E%3Crect x='3' y='18' width='26' height='8' rx='2' fill='%231F2328'/%3E%3Ccircle cx='24' cy='10' r='2' fill='%2336E08F'/%3E%3Ccircle cx='24' cy='22' r='2' fill='%23FFB43B'/%3E%3C/svg%3E">
+  <link rel="canonical" href="https://servero.cz/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Servero">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:url" content="https://servero.cz/">
+  <meta property="og:title" content="Servero | Správa serverů, CI/CD a cloud">
+  <meta property="og:description" content="Spravujeme servery, nasazování a cloud pro firmy bez vlastního admina. Nonstop dohled, zálohy, bezpečnost. Plzeň, celá ČR.">
+  <meta property="og:image" content="https://servero.cz/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Servero: servery, na které nemusíte myslet">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <!-- Panel origin for local dev (domain search, status bars). site.js honours a localhost value only
+       when this page is itself served from localhost, so production always uses https://panel.servero.cz. -->
+  <meta name="servero-panel" content="http://localhost:5190">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=6">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://servero.cz/#org",
+        "name": "Servero",
+        "url": "https://servero.cz/",
+        "logo": "https://servero.cz/apple-touch-icon.png",
+        "email": "info@servero.cz",
+        "telephone": "+420773559645",
+        "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "email": "info@servero.cz", "telephone": "+420773559645", "availableLanguage": "cs" }
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://servero.cz/#business",
+        "name": "Servero",
+        "description": "Správa serverů, webhosting, spravované VPS, CI/CD a zálohy pro firmy bez vlastního admina.",
+        "url": "https://servero.cz/",
+        "image": "https://servero.cz/assets/og.png",
+        "email": "info@servero.cz",
+        "telephone": "+420773559645",
+        "address": { "@type": "PostalAddress", "addressLocality": "Plzeň", "addressCountry": "CZ" },
+        "areaServed": { "@type": "Country", "name": "Česká republika" },
+        "parentOrganization": { "@id": "https://servero.cz/#org" }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 <div class="rack">
@@ -24,7 +70,8 @@
       <a href="#sluzby">Služby</a>
       <a href="#cenik">Ceník</a>
       <a href="#tym">Kdo jsme</a>
-      <a class="nav__login" href="https://panel.servero.cz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a href="navody/">Návody</a>
+      <a class="nav__login" href="https://panel.servero.cz" data-panel-path="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
       <a class="btn btn--sm" href="#kontakt"><i class="led led--on"></i>Kontakt</a>
     </nav>
   </header>
@@ -223,7 +270,10 @@
     <section class="sec wrap status" aria-labelledby="status-h">
       <div class="sec__head">
         <h2 id="status-h">Takhle má vypadat klidný kvartál.</h2>
-        <p>90 dní, jedna plánovaná údržba v noci. Najeďte na den.</p>
+        <div class="status__head">
+          <p id="status-lead">90 dní, jedna plánovaná údržba v noci. Najeďte na den.</p>
+          <a class="btn btn--ghost btn--sm" href="https://panel.servero.cz/stav" data-panel-path="/stav"><i class="led led--on"></i>Živý stav služeb</a>
+        </div>
       </div>
       <div class="bars" role="img" aria-label="Graf dostupnosti za 90 dní: vše v provozu, jedna plánovaná noční údržba"></div>
       <div class="bars__axis"><span>před 90 dny</span><span class="bars__tip" aria-hidden="true">&nbsp;</span><span>dnes</span></div>
@@ -286,6 +336,30 @@
       <noscript><p class="pricing__nojs">Ceník se zobrazí se zapnutým JavaScriptem. Mezitím můžete rovnou <a href="objednat.html">objednat službu</a> nebo napsat na <a href="mailto:info@servero.cz">info@servero.cz</a>.</p></noscript>
     </section>
 
+    <!-- DOMAIN SEARCH: RDAP lookup through the panel API (main.js) -->
+    <section class="sec wrap" id="domena" aria-labelledby="domena-h">
+      <div class="sec__head">
+        <h2 id="domena-h">Najděte doménu</h2>
+        <p>Ověříme ji přímo v registru. Volnou zaregistrujeme k hostingu za vás, obsazenou vaši k nám převedeme.</p>
+      </div>
+      <form class="dsearch" role="search" aria-label="Hledání domény" novalidate>
+        <span class="ear"><i class="screw"></i><i class="screw"></i></span>
+        <div class="dsearch__body">
+          <div class="dsearch__row">
+            <label class="sr-only" for="ds-name">Doména</label>
+            <input class="dsearch__input" id="ds-name" name="domena" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="253" placeholder="vasefirma.cz">
+            <button class="btn btn--light" type="submit"><i class="led led--on"></i>Ověřit</button>
+          </div>
+          <div class="dsearch__out" data-state="idle" aria-live="polite">
+            <p class="lcd"><i class="led"></i><span class="dsearch__text">čekám na doménu, třeba firma.cz</span><i class="lcd__cursor" aria-hidden="true"></i></p>
+            <div class="dsearch__act"></div>
+          </div>
+        </div>
+        <span class="ear"><i class="screw"></i><i class="screw"></i></span>
+      </form>
+      <p class="dsearch__note">Ověřujeme .cz i většinu dalších koncovek. Registraci potvrdíme e-mailem, než doménu objednáme.</p>
+    </section>
+
     <!-- TEAM: datacenter access badges -->
     <section class="sec wrap team" id="tym" aria-labelledby="tym-h">
       <div class="sec__head">
@@ -324,6 +398,44 @@
       </div>
     </section>
 
+    <!-- FAQ: details/summary, no script -->
+    <section class="sec wrap faq" id="faq" aria-labelledby="faq-h">
+      <div class="sec__head">
+        <h2 id="faq-h">Časté otázky</h2>
+        <p>Víc v <a href="navody/">návodech</a>. Nebo napište, odpovídáme lidsky.</p>
+      </div>
+      <div class="faq__list">
+        <details class="faq__item">
+          <summary><i class="led"></i><span>Jak rychle službu zřídíte?</span><i class="faq__sw" aria-hidden="true"></i></summary>
+          <div class="faq__a"><p>Zřízení dělá člověk, ne automat. Po objednávce se ozveme do pár hodin v pracovní době a pošleme přístupy. U správy serverů začínáme auditem, termín převzetí domluvíme.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary><i class="led"></i><span>Mám se k něčemu zavázat?</span><i class="faq__sw" aria-hidden="true"></i></summary>
+          <div class="faq__a"><p>Ne. Platíte měsíčně bez závazku. Když zaplatíte rovnou na rok, dva měsíce máte zdarma. Ceny v ceníku jsou bez DPH.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary><i class="led"></i><span>Převedete můj web od jiného hostingu?</span><i class="faq__sw" aria-hidden="true"></i></summary>
+          <div class="faq__a"><p>Ano. U webhostingu a WP Provozu je migrace v ceně. Web přeneseme, vyzkoušíme a teprve pak přepneme doménu. Postup je v návodu <a href="navody/prenos-webu.html">Přenos webu k nám</a>.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary><i class="led"></i><span>Jak často zálohujete a jak se dostanu k záloze?</span><i class="faq__sw" aria-hidden="true"></i></summary>
+          <div class="faq__a"><p>Weby zálohujeme každý den, v tarifu Web Start máte 14 dní historie. WordPress v tarifu WP Provoz navíc zálohujeme před každou aktualizací a zálohu nejdřív ověříme. Obnovu si vyžádáte v klientském panelu, viz <a href="navody/zalohy.html">Zálohy a obnova</a>.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary><i class="led"></i><span>Hostujete i e-maily?</span><i class="faq__sw" aria-hidden="true"></i></summary>
+          <div class="faq__a"><p>Ne, poštu necháváme specialistům. Doporučíme Seznam Email Profi, Google Workspace nebo Microsoft 365 a pomůžeme nastavit záznamy v DNS. Přesné hodnoty jsou v návodu <a href="navody/email.html">E-mail k doméně</a>.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary><i class="led"></i><span>Co když web spadne v noci?</span><i class="faq__sw" aria-hidden="true"></i></summary>
+          <div class="faq__a"><p>Dostupnost webů i platnost certifikátů hlídáme nepřetržitě, takže o výpadku obvykle víme dřív než vy. Reakci do 30 minut garantujeme v tarifu 2U Provoz, ostatní řešíme co nejdřív. Aktuální stav je na stránce <a href="https://panel.servero.cz/stav" data-panel-path="/stav">Stav služeb</a>.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary><i class="led"></i><span>Kolik stojí doména?</span><i class="faq__sw" aria-hidden="true"></i></summary>
+          <div class="faq__a"><p>Doménu .cz registrujeme za 249 Kč ročně bez DPH a stejnou cenu platíte i při prodloužení. U ostatních koncovek cenu potvrdíme předem. Dostupnost si ověříte <a href="#domena">výše na stránce</a>.</p></div>
+        </details>
+      </div>
+    </section>
+
     <!-- CTA -->
     <section class="cta" id="kontakt" aria-labelledby="cta-h">
       <img class="cta__bg" src="assets/img/earth.jpg" alt="" loading="lazy" width="1800" height="1198">
@@ -339,13 +451,16 @@
   <footer class="foot wrap">
     <span>© <span class="year">2026</span> Servero.cz, Plzeň</span>
     <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
-    <nav class="foot__links" aria-label="Právní informace">
+    <nav class="foot__links" aria-label="Odkazy v patičce">
+      <a href="navody/">Návody</a>
+      <a href="https://panel.servero.cz/stav" data-panel-path="/stav">Stav služeb</a>
       <a href="obchodni-podminky.html">Obchodní podmínky</a>
       <a href="ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
       <a href="#top">Zpět nahoru</a>
     </nav>
   </footer>
 </div>
-<script src="main.js?v=4"></script>
+<script src="site.js?v=5"></script>
+<script src="main.js?v=5"></script>
 </body>
 </html>

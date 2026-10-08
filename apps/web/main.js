@@ -5,21 +5,8 @@
   const wait = ms => new Promise(r => setTimeout(r, reduced ? 0 : ms));
   const setLed = (el, state) => { el.className = 'led' + (state ? ' led--' + state : ''); };
 
-  /* ---------- Rails: U numbers along the page ---------- */
-  const U = 44;
-  function drawRails() {
-    const h = document.querySelector('.rack').offsetHeight;
-    const count = Math.floor(h / U);
-    $$('.rail__marks').forEach(m => {
-      let html = '';
-      for (let i = 1; i <= count; i++) html += `<span style="top:${i * U - 13}px">${i}</span>`;
-      m.innerHTML = html;
-    });
-  }
-  drawRails();
-  let rt;
-  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawRails, 200); });
-  addEventListener('load', drawRails);
+  const { drawRails, panel, cleanDomain, checkDomain } = window.servero; // from site.js
+  const U = 44; // one rack unit, as in site.js
 
   const pos = $('.rail-pos'), posLabel = $('.rail-pos span');
   function updatePos() {
@@ -192,7 +179,9 @@
     }, { threshold: .35 }).observe($('.pipe'));
   }
 
-  /* ---------- Status bars ---------- */
+  /* ---------- Status bars ----------
+     Decorative first (a calm quarter), then replaced by real days from the panel's /stav.json
+     once monitoring has at least a week of measurements. */
   const bars = $('.bars'), tip = $('.bars__tip');
   const today = new Date();
   const df = new Intl.DateTimeFormat('cs-CZ', { day: 'numeric', month: 'long' });
@@ -208,6 +197,31 @@
   const showTip = t => { tip.textContent = t || ' '; };
   bars.addEventListener('pointermove', e => { if (e.target.dataset.tip) showTip(e.target.dataset.tip); });
   bars.addEventListener('pointerleave', () => showTip());
+
+  const pct = n => new Intl.NumberFormat('cs-CZ', { maximumFractionDigits: 2 }).format(n) + ' %';
+  async function realBars() {
+    let st;
+    try {
+      const res = await fetch(`${panel}/stav.json`, { headers: { Accept: 'application/json' } });
+      if (!res.ok) return;
+      st = await res.json();
+    } catch { return; } // panel unreachable: the decorative bars stay
+    const days = Array.isArray(st.days) ? st.days.slice(-90) : [];
+    const measured = days.filter(d => d.uptime != null);
+    if (!st.enabled || measured.length < 7) return;
+    bars.replaceChildren(...days.map(d => {
+      const s = document.createElement('span');
+      if (d.uptime == null) s.className = 'is-none';
+      else if (d.uptime < 99) s.className = 'is-fault';
+      else if (d.uptime < 99.9) s.className = 'is-maint';
+      s.dataset.tip = `${df.format(new Date(d.date + 'T12:00:00'))}: ${d.uptime == null ? 'bez měření' : pct(d.uptime) + ' v provozu'}`;
+      return s;
+    }));
+    const avg = measured.reduce((a, d) => a + d.uptime, 0) / measured.length;
+    $('#status-lead').textContent = `Skutečná dostupnost z našeho monitoringu, průměr ${pct(avg)}. Najeďte na den.`;
+    bars.setAttribute('aria-label', `Graf dostupnosti za 90 dní, průměr ${pct(avg)}`);
+  }
+  realBars();
 
   /* ---------- Patch cable + parallax (scroll-driven) ---------- */
   const cable = $('.patch__cable path');
@@ -242,13 +256,48 @@
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
   onScroll();
 
+  /* ---------- Domain search: the answer on a small LCD ---------- */
+  const kc = n => new Intl.NumberFormat('cs-CZ').format(Math.round(n));
+  const dsForm = $('.dsearch');
+  if (dsForm) {
+    const dsInput = $('input', dsForm), dsBtn = $('button', dsForm);
+    const dsOut = $('.dsearch__out'), dsText = $('.dsearch__text', dsOut), dsLed = $('.led', dsOut), dsAct = $('.dsearch__act');
+    const show = (state, text, link) => {
+      dsOut.dataset.state = state;
+      dsLed.className = 'led' + ({ free: ' led--on', busy: ' led--act', taken: ' led--fault' }[state] || '');
+      dsText.textContent = text;
+      dsAct.replaceChildren();
+      if (link) dsAct.append(link);
+    };
+    const linkTo = (props, html) => Object.assign(document.createElement('a'), props, html ? { innerHTML: html } : {});
+    dsForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      let name = cleanDomain(dsInput.value);
+      if (name && !name.includes('.')) name += '.cz'; // a bare "firma" means firma.cz here
+      if (!name) { show('err', 'napište doménu, třeba firma.cz'); dsInput.focus(); return; }
+      dsInput.value = name;
+      dsBtn.disabled = true;
+      show('busy', `ověřuji ${name} …`);
+      const r = await checkDomain(name);
+      dsBtn.disabled = false;
+      const order = rezim => `objednat.html?${new URLSearchParams({ plan: 'web-start', domena: r.name || name, rezim })}`;
+      if (r.available === true) {
+        show('free', `${r.name} je volná · ${r.price ? kc(r.price) + ' Kč/rok' : 'cenu potvrdíme'}`,
+          linkTo({ className: 'btn btn--light', href: order('registrace') }, '<i class="led led--on"></i>Registrovat s hostingem'));
+      } else if (r.available === false) {
+        show('taken', `${r.name} je obsazená`, linkTo({ className: 'dsearch__link', href: order('vlastni'), textContent: 'Máte ji? Převeďte ji k nám' }));
+      } else {
+        show('err', r.reason || 'dostupnost teď nejde ověřit');
+      }
+    });
+  }
+
   /* ---------- Pricing: tabs rendered from plans.json ----------
      plans.json is a copy of /catalog/plans.json, the single source of prices.
      Copy step (deploy runs it, run it by hand after editing the catalog):
        cp catalog/plans.json apps/web/plans.json
      For local dev the copied file simply stays in apps/web next to index.html. */
   const pricing = $('.pricing');
-  const kc = n => new Intl.NumberFormat('cs-CZ').format(Math.round(n));
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const months = n => n === 1 ? 'měsíc' : n < 5 ? 'měsíce' : 'měsíců';
   const extraUnit = { rok: '/ rok', hodina: '/ hod.' };

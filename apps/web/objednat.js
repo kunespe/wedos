@@ -3,34 +3,9 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
-  /* ---------- Rails: U numbers along the page ---------- */
-  const U = 44;
-  function drawRails() {
-    const count = Math.floor($('.rack').offsetHeight / U);
-    $$('.rail__marks').forEach(m => {
-      let html = '';
-      for (let i = 1; i <= count; i++) html += `<span style="top:${i * U - 13}px">${i}</span>`;
-      m.innerHTML = html;
-    });
-  }
-  drawRails();
-  let rt;
-  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawRails, 200); });
-  addEventListener('load', drawRails);
+  const { drawRails, panel: PANEL_ORIGIN, cleanDomain, checkDomain } = window.servero; // from site.js
 
-  /* ---------- Config ----------
-     The panel origin can be overridden with <meta name="servero-panel" content="...">.
-     A localhost override only applies while this page is served from localhost too,
-     so a dev value left in the HTML never sends real orders to a dev machine. */
-  const isLocal = h => /^(localhost|127\.0\.0\.1|\[::1\])$/.test(h);
-  let PANEL_ORIGIN = 'https://panel.servero.cz';
-  const metaPanel = $('meta[name="servero-panel"]');
-  if (metaPanel && metaPanel.content) {
-    try {
-      const u = new URL(metaPanel.content);
-      if (!isLocal(u.hostname) || isLocal(location.hostname)) PANEL_ORIGIN = u.origin;
-    } catch { /* malformed meta: keep the default */ }
-  }
+  /* ---------- Config ---------- */
   const ARES = 'https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/';
   const VAT = .21;
   const MAIL = 'info@servero.cz';
@@ -45,16 +20,26 @@
   const alertBox = $('.alert');
   const submitBtn = $('.order__submit');
 
-  /* ---------- State from the URL: ?plan=<code>&obdobi=mesic|rok ---------- */
+  /* ---------- State from the URL: ?plan=<code>&obdobi=mesic|rok&domena=firma.cz&rezim=registrace|vlastni ---------- */
   const q = new URLSearchParams(location.search);
   let planCode = q.get('plan') || '';
   let period = q.get('obdobi') === 'rok' ? 'year' : 'month';
   let data, plans = {}, catName = {}, mc = 10, domainPrice = null;
+  const modeParam = { registrace: 'register', vlastni: 'own' };
+  const preDomain = cleanDomain(q.get('domena')).slice(0, 253);
+  const preMode = modeParam[q.get('rezim')] || '';
+  if (preDomain) el('domain').value = preDomain;
+  if (preMode) $(`input[name="domainMode"][value="${preMode}"]`, form).checked = true;
 
   function syncUrl() {
     if (!plans[planCode]) return;
     const p = new URLSearchParams({ plan: planCode });
     if (plans[planCode].monthly != null) p.set('obdobi', period === 'year' ? 'rok' : 'mesic');
+    const { domain } = values();
+    if (domain) {
+      p.set('domena', domain);
+      p.set('rezim', formChoice('domainMode') === 'register' ? 'registrace' : 'vlastni');
+    }
     history.replaceState(null, '', '?' + p);
   }
 
@@ -188,16 +173,66 @@
   form.addEventListener('input', e => {
     const n = e.target.name;
     if (n && e.target.getAttribute('aria-invalid') === 'true') check(n);
-    if (n === 'domain') renderSummary();
+    if (n === 'domain') { renderSummary(); setDomStatus(); }
   });
   form.addEventListener('change', e => {
     const t = e.target;
     if (t.name === 'plan') { planCode = t.value; setError('plan', ''); renderSummary(); syncUrl(); }
     if (t.name === 'period') { period = t.value; updatePrices(); renderSummary(); syncUrl(); }
-    if (t.name === 'domainMode') renderSummary();
+    if (t.name === 'domainMode') { syncDomainMode(); renderSummary(); syncUrl(); }
   });
   // the consent box lives in the summary (form="order"), outside the form's DOM subtree
   el('consent').addEventListener('change', () => check('consent'));
+
+  /* ---------- Domain: availability check while registering a new one ---------- */
+  const domBtn = $('.domain-check'), domStatus = $('#domain-status'), domHint = $('#hint-domain');
+  function setDomStatus(state, ...parts) { // state: busy | free | taken | unknown; parts: text or nodes
+    domStatus.hidden = !state;
+    domStatus.dataset.state = state || '';
+    const text = document.createElement('span');
+    text.append(...parts);
+    domStatus.replaceChildren(...(state ? [Object.assign(document.createElement('i'), { className: 'led' }), text] : []));
+  }
+  function syncDomainMode() {
+    const reg = formChoice('domainMode') === 'register';
+    domBtn.hidden = !reg;
+    domHint.textContent = reg ? 'Ověříme v registru, jestli je volná. Registraci pak zařídíme za vás.' : 'Nepovinné. Doménu můžete doplnit i později.';
+    if (!reg) setDomStatus();
+  }
+  let domBusy = false;
+  async function runDomainCheck() {
+    if (domBusy) return;
+    const name = cleanDomain(el('domain').value);
+    const msg = name ? rules.domain(name) : 'Zadejte doménu, kterou chcete registrovat.';
+    setError('domain', msg);
+    if (msg) { el('domain').focus(); return; }
+    el('domain').value = name;
+    renderSummary();
+    domBusy = domBtn.disabled = true;
+    setDomStatus('busy', 'Ověřuji v registru…');
+    const r = await checkDomain(name);
+    domBusy = domBtn.disabled = false;
+    if (cleanDomain(el('domain').value) !== name) return setDomStatus(); // edited while we waited
+    if (r.available === true) {
+      setDomStatus('free', `${r.name} je volná · ${r.price ? `${kc(r.price)} Kč/rok` : 'cenu potvrdíme'}`);
+    } else if (r.available === false) {
+      const own = Object.assign(document.createElement('button'), { type: 'button', className: 'linkish', textContent: 'Je moje, převedu ji' });
+      own.addEventListener('click', () => {
+        $('input[name="domainMode"][value="own"]', form).checked = true;
+        syncDomainMode(); renderSummary(); syncUrl();
+        el('domain').focus();
+      });
+      setDomStatus('taken', `${r.name} je obsazená. `, own);
+    } else {
+      setDomStatus('unknown', r.reason || 'Dostupnost teď nejde ověřit.');
+    }
+  }
+  domBtn.addEventListener('click', runDomainCheck);
+  el('domain').addEventListener('keydown', e => { // Enter checks instead of submitting the whole order
+    if (e.key === 'Enter' && formChoice('domainMode') === 'register') { e.preventDefault(); runDomainCheck(); }
+  });
+  syncDomainMode();
+  if (preDomain && preMode === 'register') runDomainCheck();
 
   /* ---------- ARES: fill company from IČO ---------- */
   const aresBtn = $('.ares'), aresStatus = $('#ares-status');

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>E-mail k doméně | Návody Servero</title>
+  <meta name="description" content="Správné DNS záznamy MX, SPF, DKIM a DMARC pro Seznam Email Profi, Google Workspace a Microsoft 365. Servero poštu nehostuje.">
+  <meta name="theme-color" content="#E7EAEE">
+  <link rel="canonical" href="https://servero.cz/navody/email.html">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Servero">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:url" content="https://servero.cz/navody/email.html">
+  <meta property="og:title" content="E-mail k doméně | Návody Servero">
+  <meta property="og:description" content="Správné DNS záznamy MX, SPF, DKIM a DMARC pro Seznam Email Profi, Google Workspace a Microsoft 365. Servero poštu nehostuje.">
+  <meta property="og:image" content="https://servero.cz/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=6">
+</head>
+<body>
+<div class="rack">
+  <div class="rail rail--l" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
+
+  <header class="top wrap">
+    <a class="logo" href="../index.html" aria-label="Servero, domů">servero<span>.cz</span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="../index.html#sluzby">Služby</a>
+      <a href="../index.html#cenik">Ceník</a>
+      <a href="../index.html#tym">Kdo jsme</a>
+      <a href="./" aria-current="page">Návody</a>
+      <a class="nav__login" href="https://panel.servero.cz" data-panel-path="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a class="btn btn--sm" href="../index.html#kontakt"><i class="led led--on"></i>Kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top" class="wrap page">
+    <div class="page-head">
+      <p class="crumbs"><a href="../index.html">servero.cz</a><span aria-hidden="true">/</span><a href="./">návody</a><span aria-hidden="true">/</span><span>06</span></p>
+      <h1>E-mail k doméně</h1>
+      <p>Poštu nehostujeme, je lepší ji mít u specialisty. Tady jsou správné DNS záznamy pro tři nejčastější volby.</p>
+    </div>
+
+    <div class="doc">
+      <article class="prose">
+        <h2 id="princip">Jak to funguje</h2>
+        <p>Web a e-mail jsou na sobě nezávislé. Záznam A posílá návštěvníky webu k nám, záznamy <strong>MX</strong> posílají poštu k vašemu poskytovateli e-mailu. Záznamy <strong>SPF</strong>, <strong>DKIM</strong> a <strong>DMARC</strong> říkají ostatním serverům, kdo smí za vaši doménu posílat, aby vaše zprávy nekončily ve spamu.</p>
+        <p>Pro všechny tři služby platí: schránky nejdřív založte u poskytovatele, ten vám pak ukáže hodnoty pro DNS. Ty níže jsou pro kontrolu, přednost má vždy to, co ukazuje jeho administrace.</p>
+
+        <h2 id="seznam">Seznam Email Profi</h2>
+        <div class="table"><table>
+          <thead><tr><th>Název</th><th>Typ</th><th>Hodnota</th><th>Priorita</th></tr></thead>
+          <tbody>
+          <tr><td><code>@</code></td><td>MX</td><td><code>mx1.seznam.cz</code></td><td>10</td></tr>
+          <tr><td><code>@</code></td><td>MX</td><td><code>mx2.seznam.cz</code></td><td>20</td></tr>
+          <tr><td><code>@</code></td><td>TXT</td><td><code>v=spf1 include:spf.seznam.cz ~all</code></td><td></td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>DKIM</strong>: klíč vygenerujete v administraci Email Profi u domény. Vložte ho jako TXT záznam pod názvem, který vám administrace ukáže.</p>
+
+        <h2 id="google">Google Workspace</h2>
+        <div class="table"><table>
+          <thead><tr><th>Název</th><th>Typ</th><th>Hodnota</th><th>Priorita</th></tr></thead>
+          <tbody>
+          <tr><td><code>@</code></td><td>MX</td><td><code>smtp.google.com</code></td><td>1</td></tr>
+          <tr><td><code>@</code></td><td>TXT</td><td><code>v=spf1 include:_spf.google.com ~all</code></td><td></td></tr>
+          <tr><td><code>google._domainkey</code></td><td>TXT</td><td><code>v=DKIM1; k=rsa; p=…</code> (z Admin konzole)</td><td></td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>DKIM</strong>: v Admin konzoli otevřete <strong>Aplikace › Google Workspace › Gmail › Ověřit e-maily</strong>, vygenerujte klíč, vložte ho do DNS a pak klikněte na <strong>Zahájit ověřování</strong>. Starší nastavení s pěti MX záznamy (<code>aspmx.l.google.com</code> a další) funguje také, nemusíte ho měnit.</p>
+
+        <h2 id="microsoft">Microsoft 365</h2>
+        <div class="table"><table>
+          <thead><tr><th>Název</th><th>Typ</th><th>Hodnota</th><th>Priorita</th></tr></thead>
+          <tbody>
+          <tr><td><code>@</code></td><td>MX</td><td><code>firma-cz.mail.protection.outlook.com</code></td><td>0</td></tr>
+          <tr><td><code>autodiscover</code></td><td>CNAME</td><td><code>autodiscover.outlook.com</code></td><td></td></tr>
+          <tr><td><code>@</code></td><td>TXT</td><td><code>v=spf1 include:spf.protection.outlook.com -all</code></td><td></td></tr>
+          <tr><td><code>selector1._domainkey</code></td><td>CNAME</td><td><code>selector1-firma-cz._domainkey.vasefirma.onmicrosoft.com</code></td><td></td></tr>
+          <tr><td><code>selector2._domainkey</code></td><td>CNAME</td><td><code>selector2-firma-cz._domainkey.vasefirma.onmicrosoft.com</code></td><td></td></tr>
+          </tbody>
+        </table></div>
+        <p>Přesnou hodnotu MX a DKIM ukáže <strong>Microsoft 365 admin center › Nastavení › Domény</strong>. Část <code>vasefirma</code> je název vašeho tenanta. DKIM po přidání záznamů zapněte v portálu Microsoft Defender u své domény.</p>
+
+        <h2 id="dmarc">DMARC pro všechny</h2>
+        <div class="table"><table>
+          <thead><tr><th>Název</th><th>Typ</th><th>Hodnota</th></tr></thead>
+          <tbody>
+          <tr><td><code>_dmarc</code></td><td>TXT</td><td><code>v=DMARC1; p=none; rua=mailto:dmarc@firma.cz</code></td></tr>
+          </tbody>
+        </table></div>
+        <p>Začněte s <code>p=none</code>: nic se neblokuje, jen chodí denní přehledy na uvedenou adresu. Když dva až čtyři týdny vidíte, že veškerá vaše pošta prochází SPF a DKIM, přepněte na <code>p=quarantine</code> a později na <code>p=reject</code>.</p>
+
+        <h2 id="spf-jeden">Jen jeden SPF záznam</h2>
+        <p>Doména smí mít <strong>jediný</strong> SPF záznam. Když posíláte poštu z více služeb (třeba Google Workspace a newsletter), spojte je do jednoho:</p>
+        <pre><code>v=spf1 include:_spf.google.com include:spf.vas-newsletter.cz ~all</code></pre>
+        <p>Pokud web odesílá e-maily (kontaktní formulář, objednávky e-shopu), je nejspolehlivější posílat je přes SMTP vašeho poskytovatele pošty, u WordPressu třeba pluginem WP Mail SMTP. SPF pak rozšiřovat nemusíte.</p>
+        <div class="callout"><b>Měníte poskytovatele pošty?</b>Nejdřív založte schránky u nového, pak přepněte MX. Zprávy během přepnutí mohou chvíli chodit do obou schránek. Když DNS spravujeme my, záznamy nastavíme podle požadavku <strong>Změna DNS záznamu</strong> v klientském panelu.</div>
+
+        <nav class="doc__next" aria-label="Další návod">
+          <a class="btn btn--ghost" href="zalohy.html">‹ Zálohy a obnova</a>
+<a class="btn" href="ssl.html"><i class="led led--on"></i>SSL certifikát ›</a>
+        </nav>
+      </article>
+
+      <aside class="doc__side" aria-label="Další návody a kontakt">
+        <nav class="side-unit" aria-labelledby="side-guides">
+          <h2 id="side-guides">Návody</h2>
+          <ul>
+            <li><a href="domena-dns.html"><i class="led"></i>Jak nasměrovat doménu</a></li>
+            <li><a href="sftp.html"><i class="led"></i>Připojení přes SFTP</a></li>
+            <li><a href="prenos-webu.html"><i class="led"></i>Přenos webu k nám</a></li>
+            <li><a href="wordpress.html"><i class="led"></i>WordPress u nás</a></li>
+            <li><a href="zalohy.html"><i class="led"></i>Zálohy a obnova</a></li>
+            <li><a href="email.html" aria-current="page"><i class="led"></i>E-mail k doméně</a></li>
+            <li><a href="ssl.html"><i class="led"></i>SSL certifikát</a></li>
+            <li><a href="nasazeni-z-gitu.html"><i class="led"></i>Nasazení aplikace z Gitu</a></li>
+          </ul>
+        </nav>
+        <div class="side-unit">
+          <h2>Pomoc</h2>
+          <p>Nevíte si rady? Napište na <a href="mailto:info@servero.cz">info@servero.cz</a> nebo volejte <a href="tel:+420773559645">+420 773 559 645</a>.</p>
+          <p>Klienti založí požadavek v <a href="https://panel.servero.cz/app/podpora" data-panel-path="/app/podpora">klientském panelu</a>.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© <span class="year">2026</span> Servero.cz, Plzeň</span>
+    <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
+    <nav class="foot__links" aria-label="Odkazy v patičce">
+      <a href="./">Návody</a>
+      <a href="https://panel.servero.cz/stav" data-panel-path="/stav">Stav služeb</a>
+      <a href="../obchodni-podminky.html">Obchodní podmínky</a>
+      <a href="../ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="#top">Zpět nahoru</a>
+    </nav>
+  </footer>
+</div>
+<script src="../site.js?v=5"></script>
+</body>
+</html>
