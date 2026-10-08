@@ -1,0 +1,32 @@
+[Unit]
+Description=Alertmanager (SERVERO, 127.0.0.1:9093)
+Documentation=https://prometheus.io/docs/alerting/latest/alertmanager/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=alertmanager
+Group=alertmanager
+ExecStart=/opt/alertmanager/current/alertmanager \
+  --config.file=/etc/alertmanager/alertmanager.yml \
+  --storage.path=/var/lib/alertmanager \
+  --web.listen-address=127.0.0.1:9093 \
+  --cluster.listen-address= \
+  --data.retention=120h
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ReadWritePaths=/var/lib/alertmanager
+MemoryMax=50M
+
+[Install]
+WantedBy=multi-user.target

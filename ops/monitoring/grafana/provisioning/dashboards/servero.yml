@@ -1,0 +1,16 @@
+# Dashboards as code. JSON files are copied by install-monitoring.sh to
+# /var/lib/grafana/dashboards/servero/ (source: ops/monitoring/grafana/dashboards/).
+apiVersion: 1
+
+providers:
+  - name: servero
+    orgId: 1
+    folder: SERVERO
+    folderUid: servero
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    updateIntervalSeconds: 60
+    options:
+      path: /var/lib/grafana/dashboards/servero
+      foldersFromFilesStructure: false

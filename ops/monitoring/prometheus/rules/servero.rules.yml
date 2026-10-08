@@ -1,0 +1,149 @@
+# Alert rules for SERVERO. Metric sources (all pushed by Alloy):
+#   job="node"           prometheus.exporter.unix (+ systemd + textfile collectors)
+#   job="mysql"          prometheus.exporter.mysql
+#   job="redis"          prometheus.exporter.redis
+#   job="blackbox"       prometheus.exporter.blackbox, labels domain/service_id/customer_id/probe_module
+#   job="servero-panel"  http://127.0.0.1:3000/internal/metrics
+# Severity: critical goes to e-mail + Telegram, warning to e-mail only.
+groups:
+  - name: servero-sites
+    rules:
+      - alert: SiteDown
+        expr: probe_success{job="blackbox", probe_module="http_2xx"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Web {{ $labels.domain }} nedostupny"
+          description: "HTTP probe na {{ $labels.domain }} (sluzba {{ $labels.service_id }}, zakaznik {{ $labels.customer_id }}) selhava dele nez 2 minuty."
+
+      - alert: SSLExpiringSoon
+        expr: min by (domain, service_id, customer_id) ((probe_ssl_earliest_cert_expiry{job="blackbox"} - time()) / 86400) < 14
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Certifikat {{ $labels.domain }} expiruje za {{ $value | printf \"%.1f\" }} dni"
+          description: "TLS certifikat pro {{ $labels.domain }} vyprsi za mene nez 14 dni. Zkontrolujte obnovu Let's Encrypt."
+
+      - alert: DomainExpiringSoon
+        expr: (servero_domain_expiry_timestamp_seconds - time()) / 86400 < 30
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Domena {{ $labels.domain }} expiruje za {{ $value | printf \"%.0f\" }} dni"
+          description: "Registrace domeny {{ $labels.domain }} konci za mene nez 30 dni (zdroj: panel /internal/metrics)."
+
+      - alert: DomainExpiringCritical
+        expr: (servero_domain_expiry_timestamp_seconds - time()) / 86400 < 7
+        for: 1h
+        labels:
+          severity: critical
+        annotations:
+          summary: "Domena {{ $labels.domain }} expiruje za {{ $value | printf \"%.0f\" }} dni"
+          description: "Registrace domeny {{ $labels.domain }} konci za mene nez 7 dni."
+
+  - name: servero-host
+    rules:
+      - alert: DiskAlmostFull
+        expr: |
+          (1 - node_filesystem_avail_bytes{job="node", fstype!~"tmpfs|ramfs|overlay|squashfs|nsfs"}
+               / node_filesystem_size_bytes{job="node", fstype!~"tmpfs|ramfs|overlay|squashfs|nsfs"}) > 0.85
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Disk {{ $labels.mountpoint }} zaplnen na {{ $value | humanizePercentage }}"
+          description: "Souborovy system {{ $labels.mountpoint }} ma obsazeno vice nez 85 %."
+
+      - alert: MemoryHigh
+        expr: (1 - node_memory_MemAvailable_bytes{job="node"} / node_memory_MemTotal_bytes{job="node"}) > 0.90
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Pamet vyuzita na {{ $value | humanizePercentage }}"
+          description: "Dostupna RAM je pod 10 % dele nez 10 minut. Zkontrolujte MemoryMax jednotek a swap."
+
+      - alert: SystemdUnitFailed
+        expr: |
+          node_systemd_unit_state{job="node", state="failed",
+            name=~"(nginx|mysql|clp-agent|clp-nginx|vw-dashboard-broker|servero-panel|grafana-server|prometheus|loki|alloy|alertmanager)\\.service"} == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Jednotka {{ $labels.name }} je ve stavu failed"
+          description: "systemd hlasi {{ $labels.name }} jako failed. journalctl -u {{ $labels.name }} -n 100"
+
+      - alert: SystemdUnitNotActive
+        expr: |
+          node_systemd_unit_state{job="node", state="active",
+            name=~"(nginx|mysql|clp-agent|clp-nginx|vw-dashboard-broker|servero-panel|grafana-server|prometheus|loki|alloy|alertmanager)\\.service"} == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Jednotka {{ $labels.name }} nebezi"
+          description: "{{ $labels.name }} neni ve stavu active dele nez 5 minut."
+
+      - alert: MySQLDown
+        expr: mysql_up{job="mysql"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MySQL neodpovida exporteru"
+          description: "mysql_up je 0. Bud MySQL nebezi, nebo exporter nema pristup (uzivatel exporter)."
+
+      - alert: RedisDown
+        expr: redis_up{job="redis"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis neodpovida exporteru"
+          description: "redis_up je 0 na 127.0.0.1:6379."
+
+  - name: servero-backups
+    rules:
+      - alert: BackupStale
+        expr: |
+          (time() - servero_backup_last_success_timestamp_seconds) > 26 * 3600
+          and on () servero_backup_maintenance_enabled == 1
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Zaloha webu {{ $labels.site }} je starsi nez 26 h"
+          description: "Posledni uspesna zaloha {{ $labels.path }} je starsi nez 26 hodin (0 = zadna zaloha). Zkontrolujte vytvorit-web-wordpress.service."
+
+      - alert: BackupMetricsStale
+        expr: (time() - servero_backup_metrics_generated_timestamp_seconds) > 900
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Metriky zaloh se neaktualizuji"
+          description: "servero-backup-metrics.timer nezapsal textfile dele nez 15 minut."
+
+  - name: servero-monitoring
+    rules:
+      - alert: MonitoringAgentSilent
+        expr: absent_over_time(node_uname_info{job="node"}[5m])
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Alloy neposila metriky"
+          description: "Za poslednich 5 minut neprisla zadna metrika node exporteru. Alloy pravdepodobne nebezi nebo selhava remote_write."
+
+      - alert: PanelMetricsDown
+        expr: up{job="servero-panel"} == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Panel /internal/metrics neodpovida"
+          description: "Alloy nemuze nacist http://127.0.0.1:3000/internal/metrics. Expirace domen a obchodni metriky se nesleduji."

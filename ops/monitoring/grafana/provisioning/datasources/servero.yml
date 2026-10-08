@@ -1,0 +1,55 @@
+# Datasources for SERVERO Grafana. Copied to /etc/grafana/provisioning/datasources/.
+# $GRAFANA_MYSQL_RO_PASSWORD comes from /etc/servero-monitoring/grafana.env.
+apiVersion: 1
+
+deleteDatasources: []
+
+datasources:
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://127.0.0.1:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      httpMethod: POST
+      timeInterval: 30s
+      manageAlerts: false
+      alertmanagerUid: alertmanager
+
+  - name: Loki
+    uid: loki
+    type: loki
+    access: proxy
+    url: http://127.0.0.1:3100
+    editable: false
+    jsonData:
+      maxLines: 1000
+      manageAlerts: false
+
+  - name: Alertmanager
+    uid: alertmanager
+    type: alertmanager
+    access: proxy
+    url: http://127.0.0.1:9093
+    editable: false
+    jsonData:
+      implementation: prometheus
+      handleGrafanaManagedAlerts: false
+
+  - name: Servero panel DB
+    uid: servero-mysql
+    type: mysql
+    access: proxy
+    url: 127.0.0.1:3306
+    user: grafana_ro
+    editable: false
+    jsonData:
+      database: servero_panel
+      maxOpenConns: 5
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+      timezone: Europe/Prague
+    secureJsonData:
+      password: $GRAFANA_MYSQL_RO_PASSWORD

@@ -1,0 +1,36 @@
+[Unit]
+Description=Prometheus (SERVERO, 127.0.0.1:9090, remote-write receiver)
+Documentation=https://prometheus.io/docs/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=prometheus
+Group=prometheus
+ExecStart=/opt/prometheus/current/prometheus \
+  --config.file=/etc/prometheus/prometheus.yml \
+  --storage.tsdb.path=/var/lib/prometheus \
+  --storage.tsdb.retention.time=15d \
+  --storage.tsdb.retention.size=3GB \
+  --web.listen-address=127.0.0.1:9090 \
+  --web.enable-remote-write-receiver \
+  --web.enable-lifecycle
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=60
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ReadWritePaths=/var/lib/prometheus
+MemoryMax=350M
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
