@@ -68,3 +68,27 @@ const TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
 
 export const nextStatuses = (from: OrderStatus) => TRANSITIONS[from];
 export const canTransition = (from: OrderStatus, to: OrderStatus) => TRANSITIONS[from].includes(to);
+
+/** Body of the "Objednat" form in the client zone. Contact details come from the customer record, not the form. */
+export const panelOrderSchema = z
+	.object({
+		plan: z.string().trim().min(1, 'Vyberte tarif.').max(40),
+		period: z.enum(['month', 'year'], 'Vyberte období platby.'),
+		domainMode: z.enum(['own', 'register', 'none'], 'Vyberte, jak to bude s doménou.'),
+		domain: trimmed(253)
+			.transform((v) => v.toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, ''))
+			.default(''),
+		note: trimmed(2000).default('')
+	})
+	.superRefine((v, ctx) => {
+		if (v.domainMode !== 'none' && !DOMAIN.test(v.domain))
+			ctx.addIssue({ code: 'custom', path: ['domain'], message: 'Zadejte doménu ve tvaru firma.cz.' });
+	});
+
+/** Catalog categories (plans.category) in the order the client zone shows them. */
+export const PLAN_CATEGORY_LABEL: Record<string, string> = {
+	hosting: 'Webhosting',
+	apps: 'Aplikace a WordPress',
+	vps: 'Virtuální servery',
+	management: 'Správa serverů'
+};

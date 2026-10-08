@@ -31,6 +31,21 @@ export const load: PageServerLoad = async (event) => {
 	return { ticket, customer, messages, service };
 };
 
+/** Sends a public reply: stores it, e-mails the customer's active logins and sets the ticket status. */
+async function replyToCustomer(event: Parameters<Actions[string]>[0], ticket: Awaited<ReturnType<typeof getTicket>>, body: string, status: TicketStatus) {
+	await db.insert(ticketMessages).values({ ticketId: ticket.id, authorId: event.locals.user!.id, internal: false, body });
+	await db.update(tickets).set({ status }).where(eq(tickets.id, ticket.id));
+	const recipients = await db
+		.select({ email: users.email })
+		.from(users)
+		.where(and(eq(users.customerId, ticket.customerId), eq(users.disabled, false), isNotNull(users.passwordHash)));
+	await Promise.all(
+		recipients.map((r) =>
+			sendMail(r.email, `Re: ${ticket.subject} [#${ticket.id}]`, `${body}\n\n${event.locals.user!.name}, SERVERO\n\nOdpovědět můžete v klientské zóně: ${ORIGIN}/app/podpora/${ticket.id}`)
+		)
+	);
+}
+
 export const actions: Actions = {
 	reply: async (event) => {
 		requireAdmin(event);
@@ -40,23 +55,25 @@ export const actions: Actions = {
 		const internal = form.get('internal') === 'on';
 		if (!body) return fail(400, { error: 'Zpráva je prázdná.' });
 		if (body.length > 8000) return fail(400, { error: 'Zpráva je příliš dlouhá.' });
-		await db.insert(ticketMessages).values({ ticketId: ticket.id, authorId: event.locals.user!.id, internal, body });
 		if (!internal) {
-			await db.update(tickets).set({ status: 'waiting' }).where(eq(tickets.id, ticket.id));
-			const recipients = await db
-				.select({ email: users.email })
-				.from(users)
-				.where(and(eq(users.customerId, ticket.customerId), eq(users.disabled, false), isNotNull(users.passwordHash)));
-			await Promise.all(
-				recipients.map((r) =>
-					sendMail(r.email, `Re: ${ticket.subject} [#${ticket.id}]`, `${body}\n\n${event.locals.user!.name}, SERVERO\n\nOdpovědět můžete v klientské zóně: ${ORIGIN}/app/podpora/${ticket.id}`)
-				)
-			);
+			await replyToCustomer(event, ticket, body, 'waiting');
 		} else {
+			await db.insert(ticketMessages).values({ ticketId: ticket.id, authorId: event.locals.user!.id, internal, body });
 			await db.update(tickets).set({ updatedAt: new Date() }).where(eq(tickets.id, ticket.id));
 		}
 		await audit(event, internal ? 'ticket_note' : 'ticket_reply', `tiket ${ticket.id}`);
 		return { message: internal ? 'Interní poznámka uložena.' : 'Odpověď odeslána.' };
+	},
+	// Quick action for structured requests: the work is done, tell the customer and close in one step.
+	done: async (event) => {
+		requireAdmin(event);
+		const ticket = await getTicket(Number(event.params.id));
+		const body = String((await event.request.formData()).get('body') ?? '').trim();
+		if (!body) return fail(400, { error: 'Napište zákazníkovi krátce, co je hotové.' });
+		if (body.length > 8000) return fail(400, { error: 'Zpráva je příliš dlouhá.' });
+		await replyToCustomer(event, ticket, body, 'closed');
+		await audit(event, 'ticket_done', `tiket ${ticket.id}`);
+		return { message: 'Odpověď odeslána a požadavek uzavřen.' };
 	},
 	status: async (event) => {
 		requireAdmin(event);

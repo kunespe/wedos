@@ -3,12 +3,14 @@
 	import { page } from '$app/state';
 	import { Plus } from '@lucide/svelte';
 	import Button from '#lib/components/Button.svelte';
+	import CategoryChip from '#lib/components/CategoryChip.svelte';
 	import DataTable from '#lib/components/DataTable.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Pill from '#lib/components/Pill.svelte';
 	import type { Column } from '#lib/components/table.ts';
 	import { TICKET_STATUSES } from '#lib/constants.ts';
 	import { ago, dateTime, TICKET_STATUS_LABEL } from '#lib/format.ts';
+	import { categoryLabel } from '#lib/requests.ts';
 	import Contact from '../Contact.svelte';
 	import { TICKET_TONE } from '../tones.ts';
 	import type { PageProps } from './$types';
@@ -60,11 +62,14 @@
 			{/each}
 		</nav>
 
-		<DataTable {rows} {columns} search={(r) => `${r.id} ${r.subject} ${r.service ?? ''}`} empty="Žádné požadavky." initialSort={{ column: 3, dir: 'desc' }}>
+		<DataTable {rows} {columns} search={(r) => `${r.id} ${r.subject} ${r.service ?? ''} ${categoryLabel(r.category)}`} empty="Žádné požadavky." initialSort={{ column: 3, dir: 'desc' }}>
 			{#snippet row(t)}
 				<tr class="cursor-pointer" onclick={() => goto(`/app/podpora/${t.id}`)}>
 					<td class="mono text-xs text-muted"><a href="/app/podpora/{t.id}" class="hover:underline">#{t.id}</a></td>
-					<td class="min-w-48 font-semibold">{t.subject}</td>
+					<td class="min-w-48">
+						<div class="font-semibold">{t.subject}</div>
+						{#if t.category !== 'general'}<div class="mt-1"><CategoryChip category={t.category} /></div>{/if}
+					</td>
 					<td class="text-xs">{t.service ?? '·'}</td>
 					<td class="text-xs whitespace-nowrap text-muted" title={dateTime(t.updatedAt)}>{ago(t.updatedAt)}</td>
 					<td><Pill tone={TICKET_TONE[t.status]}>{TICKET_STATUS_LABEL[t.status]}</Pill></td>

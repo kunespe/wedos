@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { migrate } from 'drizzle-orm/mysql2/migrator';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { createDb } from './db/client';
-import { customers, domains, invites, nodes, orders, plans, services, users } from './db/schema';
+import { customers, domains, invites, nodes, orders, paymentRequests, plans, services, ticketMessages, tickets, users } from './db/schema';
 import { convertOrder, FulfilmentError } from './fulfilment';
 
 const url = process.env.TEST_DATABASE_URL;
@@ -14,7 +14,7 @@ describe.skipIf(!url)('convertOrder', () => {
 	});
 	afterAll(() => pool.end());
 	beforeEach(async () => {
-		for (const t of [invites, services, domains, orders, users, customers, nodes, plans]) await db.delete(t);
+		for (const t of [paymentRequests, ticketMessages, tickets, invites, services, domains, orders, users, customers, nodes, plans]) await db.delete(t);
 		await db.insert(plans).values({ code: 'web-plus', category: 'hosting', kind: 'web', name: 'Web Plus', monthly: 149, features: [] });
 		await db.insert(nodes).values({ id: 1, name: 'n1', host: '127.0.0.1', local: true });
 	});
@@ -54,5 +54,24 @@ describe.skipIf(!url)('convertOrder', () => {
 		await db.insert(users).values({ email: 'lucie@example.cz', name: 'Admin', role: 'admin' });
 		await expect(convertOrder(db, await order(), 1)).rejects.toThrow(/správci/);
 		expect(await db.select().from(services)).toHaveLength(0);
+	});
+
+	it('attaches a panel order to its customer without creating a login', async () => {
+		const [{ id: customerId }] = await db.insert(customers).values({ name: 'Jana Nováková', email: 'jana@firma.cz' }).$returningId();
+		const [{ id: userId }] = await db
+			.insert(users)
+			.values({ email: 'jana@firma.cz', name: 'Jana Nováková', role: 'client', customerId, passwordHash: 'x' })
+			.$returningId();
+		// The contact e-mail differs on purpose: a panel order must not be matched by e-mail.
+		const id = await order({ source: 'panel', customerId, email: 'fakturace@firma.cz', domain: 'nova.cz', domainMode: 'own' });
+		const r = await convertOrder(db, id, 1);
+		expect(r).toMatchObject({ customerId, userId, inviteToken: null, createdCustomer: false });
+		expect(await db.select().from(customers)).toHaveLength(1);
+		expect(await db.select().from(users)).toHaveLength(1);
+		const [s] = await db.select().from(services).where(eq(services.id, r.serviceId));
+		expect(s).toMatchObject({ customerId, status: 'pending', orderId: id, domain: 'nova.cz' });
+		const [o] = await db.select().from(orders).where(eq(orders.id, id));
+		expect(o.status).toBe('provisioning');
+		await expect(convertOrder(db, id, 1)).rejects.toThrow(/převedená/);
 	});
 });

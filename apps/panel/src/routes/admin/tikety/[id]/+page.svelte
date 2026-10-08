@@ -2,6 +2,8 @@
 	import { enhance } from '$app/forms';
 	import { keepResult } from '#lib/forms.ts';
 	import Button from '#lib/components/Button.svelte';
+	import CategoryChip from '#lib/components/CategoryChip.svelte';
+	import RequestDetails from '#lib/components/RequestDetails.svelte';
 	import FormMessage from '#lib/components/FormMessage.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Panel from '#lib/components/Panel.svelte';
@@ -17,6 +19,7 @@
 <PageHeader title={t.subject} crumbs={[{ href: '/admin/tikety', label: 'Podpora' }, { href: `/admin/zakaznici/${data.customer.id}`, label: data.customer.company || data.customer.name }]}>
 	{#snippet meta()}
 		<TicketStatus status={t.status} />
+		<CategoryChip category={t.category} />
 		<span class="mono text-xs">#{t.id}</span>
 		{#if data.service}<a class="underline" href="/admin/sluzby/{data.service.id}">{data.service.label}</a>{/if}
 	{/snippet}
@@ -31,6 +34,12 @@
 <FormMessage {form} />
 
 <div class="grid max-w-5xl gap-5">
+	{#if t.details && Object.keys(t.details).length}
+		<Panel title="Údaje požadavku">
+			<RequestDetails details={t.details} copy />
+		</Panel>
+	{/if}
+
 	<ol class="flex flex-col gap-3">
 		{#each data.messages as m (m.id)}
 			{@const staff = m.role === 'admin'}
@@ -52,7 +61,12 @@
 			<textarea id="reply" name="body" class="input min-h-32" required placeholder={internal ? 'Vidí jen správci' : 'Zákazník dostane e-mail a uvidí ji v klientské zóně'}></textarea>
 			<div class="flex flex-wrap items-center justify-between gap-3">
 				<label class="flex items-center gap-2 text-sm"><input type="checkbox" name="internal" bind:checked={internal} class="size-4" /> Jen interní poznámka</label>
-				<Button type="submit" variant="primary">{internal ? 'Uložit poznámku' : 'Odeslat odpověď'}</Button>
+				<div class="flex flex-wrap gap-2">
+					{#if !internal && t.status !== 'closed'}
+						<Button type="submit" formaction="?/done">Hotovo, odpovědět a uzavřít</Button>
+					{/if}
+					<Button type="submit" variant="primary">{internal ? 'Uložit poznámku' : 'Odeslat odpověď'}</Button>
+				</div>
 			</div>
 		</form>
 	</Panel>

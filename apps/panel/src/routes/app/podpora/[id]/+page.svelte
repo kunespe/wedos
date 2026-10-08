@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Button from '#lib/components/Button.svelte';
+	import CategoryChip from '#lib/components/CategoryChip.svelte';
+	import RequestDetails from '#lib/components/RequestDetails.svelte';
 	import FormMessage from '#lib/components/FormMessage.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Pill from '#lib/components/Pill.svelte';
@@ -25,6 +27,7 @@
 	{#snippet meta()}
 		<span class="mono text-xs">#{t.id}</span>
 		<Pill tone={TICKET_TONE[t.status]}>{TICKET_STATUS_LABEL[t.status]}</Pill>
+		{#if t.category !== 'general'}<CategoryChip category={t.category} />{/if}
 		<span title={dateTime(t.createdAt)}>založeno {ago(t.createdAt)}</span>
 		{#if data.service}<a class="underline" href="/app/sluzby/{data.service.id}">{data.service.label}</a>{/if}
 	{/snippet}
@@ -45,6 +48,12 @@
 <FormMessage {form} />
 
 <div class="mx-auto flex max-w-[860px] flex-col gap-3">
+	{#if t.details && Object.keys(t.details).length}
+		<section class="rounded-[6px] border border-line bg-surface px-4 py-2" aria-label="Údaje požadavku">
+			<h2 class="pt-1 pb-1 text-xs font-bold text-muted">Údaje požadavku</h2>
+			<RequestDetails details={t.details} />
+		</section>
+	{/if}
 	<ol class="flex flex-col gap-3" aria-label="Konverzace">
 		{#each data.messages as m (m.id)}
 			{@const staff = m.authorRole === 'admin'}

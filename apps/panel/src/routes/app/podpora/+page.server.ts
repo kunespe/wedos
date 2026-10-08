@@ -11,6 +11,7 @@ export const load: PageServerLoad = async (event) => {
 			id: tickets.id,
 			subject: tickets.subject,
 			status: tickets.status,
+			category: tickets.category,
 			createdAt: tickets.createdAt,
 			updatedAt: tickets.updatedAt,
 			service: services.label

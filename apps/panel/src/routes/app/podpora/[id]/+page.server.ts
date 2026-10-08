@@ -34,7 +34,15 @@ export const load: PageServerLoad = async (event) => {
 			: null
 	]);
 	return {
-		ticket: { id: ticket.id, subject: ticket.subject, status: ticket.status, createdAt: ticket.createdAt, updatedAt: ticket.updatedAt },
+		ticket: {
+			id: ticket.id,
+			subject: ticket.subject,
+			status: ticket.status,
+			category: ticket.category,
+			details: ticket.details,
+			createdAt: ticket.createdAt,
+			updatedAt: ticket.updatedAt
+		},
 		messages: messages.map((m) => ({ ...m, mine: Boolean(m.mine) })),
 		service,
 		created: event.url.searchParams.has('nove'),

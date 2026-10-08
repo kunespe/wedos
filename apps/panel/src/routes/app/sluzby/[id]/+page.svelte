@@ -7,6 +7,8 @@
 	import Pill from '#lib/components/Pill.svelte';
 	import { ago, czk, date, KIND_LABEL, periodTotal, SERVICE_STATUS_LABEL, TICKET_STATUS_LABEL } from '#lib/format.ts';
 	import Health from '../../Health.svelte';
+	import Connection from './Connection.svelte';
+	import ServiceActions from './ServiceActions.svelte';
 	import { expiryHint, expiryTone, SERVICE_TONE, TEXT_TONE, TICKET_TONE } from '../../tones.ts';
 	import type { PageProps } from './$types';
 
@@ -62,6 +64,8 @@
 			{/if}
 		</Panel>
 
+		<Connection rows={data.connection} pending={s.status === 'pending'} />
+
 		<Panel title="Dostupnost webu">
 			{#if s.status === 'active'}
 				<Health health={data.health} wide />
@@ -92,6 +96,8 @@
 	</div>
 
 	<div class="flex min-w-0 flex-col gap-5">
+		<ServiceActions id={s.id} kind={s.kind} hasDomain={Boolean(s.domain)} />
+
 		<Panel title="Údaje">
 			<dl class="grid grid-cols-[110px_1fr] gap-x-3 gap-y-2 text-sm">
 				<dt class="text-muted">Stav</dt>
