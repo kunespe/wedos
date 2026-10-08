@@ -1,0 +1,12 @@
+[Unit]
+Description=Back up and update CloudPanel WordPress sites
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/vytvorit-web-wordpress
+Nice=10
+IOSchedulingClass=idle
+TimeoutStartSec=4h
+UMask=0077

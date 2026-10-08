@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily WordPress maintenance at 03:30 Prague time
+
+[Timer]
+OnCalendar=*-*-* 03:30:00 Europe/Prague
+RandomizedDelaySec=10m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

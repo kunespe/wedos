@@ -1,0 +1,11 @@
+[Unit]
+Description=Check hosting software updates without installing them
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/vw-dashboard/update-check.py
+UMask=0077
+PrivateTmp=true
+TimeoutStartSec=30min
+MemoryMax=384M

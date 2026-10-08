@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "backup_destination": "",
+  "backup_ssh_key": "",
+  "excluded_paths": [],
+  "local_retention_count": 2,
+  "backup_backend": "s3",
+  "require_offsite_backup": true,
+  "s3_retention_count": 2
+}

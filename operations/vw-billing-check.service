@@ -1,0 +1,13 @@
+[Unit]
+Description=Read-only Fakturor subscription synchronization
+After=network-online.target vw-dashboard-broker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/bin/python3 /opt/vw-dashboard/billing-check.py
+TimeoutStartSec=300
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true

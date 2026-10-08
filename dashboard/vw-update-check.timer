@@ -1,0 +1,8 @@
+[Unit]
+Description=Daily hosting update metadata check
+[Timer]
+OnCalendar=*-*-* 06:00:00 Europe/Prague
+RandomizedDelaySec=10min
+Persistent=true
+[Install]
+WantedBy=timers.target

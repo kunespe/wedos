@@ -1,0 +1,19 @@
+[Unit]
+Description=Vytvorit web restricted operations broker
+After=mysql.service nginx.service
+
+[Service]
+Type=simple
+User=root
+Group=vw-dashboard
+RuntimeDirectory=vw-dashboard
+RuntimeDirectoryMode=0750
+ExecStart=/usr/bin/python3 /opt/vw-dashboard/broker.py
+Restart=on-failure
+RestartSec=3
+UMask=0077
+PrivateTmp=true
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target

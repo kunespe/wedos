@@ -1,0 +1,8 @@
+{
+  "repository": "s3:https://s3.REGION.amazonaws.com/BUCKET/vytvorit-web",
+  "region": "REGION",
+  "access_key_id": "",
+  "secret_access_key": "",
+  "password_file": "/etc/vytvorit-web/restic-password",
+  "ready": false
+}

@@ -1,0 +1,33 @@
+# This workspace also contains client migrations. Track only dashboard source.
+/*
+!/.gitignore
+!/README.md
+!/dashboard/
+!/operations/
+!/.github/
+
+# Secrets, runtime data, local environments and archives (at any depth).
+**/__pycache__/
+**/*.py[cod]
+**/.DS_Store
+**/.env
+**/.env.*
+**/.venv/
+**/venv/
+**/*.log
+**/*.sqlite*
+**/*.db
+**/*.sql
+**/*.sql.gz
+**/*.tar*
+**/*.zip
+**/*.pem
+**/*.key
+**/*access*.txt
+**/*password*.txt
+**/*ed25519*
+**/fakturor-key
+
+# Customer-specific migrations and live infrastructure notes.
+/operations/migrations/
+/operations/provozni-nastaveni.txt

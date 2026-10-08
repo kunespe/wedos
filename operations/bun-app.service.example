@@ -1,0 +1,28 @@
+# Copy per application and replace all uppercase placeholders before enabling.
+# Create the site's reverse proxy in CloudPanel, targeting http://127.0.0.1:APP_PORT.
+# Application code must bind to 127.0.0.1; HOST alone is not honored by every framework.
+[Unit]
+Description=Bun application APP_NAME
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=SITE_USER
+Group=SITE_USER
+WorkingDirectory=/home/SITE_USER/htdocs/DOMAIN
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=APP_PORT
+ExecStart=/usr/local/bin/bun run start
+Restart=on-failure
+RestartSec=5
+MemoryMax=512M
+TasksMax=128
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target
