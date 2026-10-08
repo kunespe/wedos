@@ -10,6 +10,7 @@ import { checkbox, optionalDate, optionalInt, parseForm } from '#lib/server/form
 import { requireAdmin } from '#lib/server/guards.ts';
 import { paymentRows } from '#lib/server/payment-ops.ts';
 import { createRenewalRequest, PaymentError } from '#lib/server/payments.ts';
+import { notifyServiceActive } from '#lib/server/notify-service.ts';
 import { probeHealth } from '#lib/server/prometheus.ts';
 import { refreshProbes } from '#lib/server/probes.ts';
 import { clientInfoSchema } from '#lib/client-info.ts';
@@ -84,6 +85,11 @@ export const actions: Actions = {
 			.map(([k]) => k);
 		await audit(event, 'service_update', `služba ${service.id}`, changed.join(', '));
 		refreshProbes();
+		// First activation: the customer learns their service is live (manual provisioning is done).
+		if (service.status === 'pending' && data.status === 'active') {
+			const sent = await notifyServiceActive(service.id);
+			return { message: sent ? 'Služba běží. Zákazník dostal e-mail s detaily.' : 'Služba běží. E-mail zákazníkovi se neodeslal (SMTP není nastavené), dejte mu vědět sami.' };
+		}
 		return { message: 'Služba uložena.' };
 	},
 	webState: async (event) => {

@@ -28,7 +28,7 @@ test('an admin issues a renewal, the client sees the QR, payment extends the ser
 	await page.locator('#f-status').selectOption('active');
 	await page.locator('#f-exp').fill('2030-05-31');
 	await page.getByRole('button', { name: 'Uložit', exact: true }).click();
-	await expect(page.getByText('Služba uložena.')).toBeVisible();
+	await expect(page.getByText(/Služba běží\./)).toBeVisible();
 	await page.getByRole('button', { name: 'Vystavit výzvu k obnově' }).click();
 	await expect(page.getByText(/výzv/i).first()).toBeVisible();
 

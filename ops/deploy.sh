@@ -247,6 +247,10 @@ health() {
             --resolve "$h:443:$SERVER_IP" "https://$h/" 2>/dev/null || true)"
         if [[ "$code" =~ ^[23][0-9][0-9]$ ]]; then
             note "OK   $code https://$h/"
+        elif [[ "${code:-000}" == 000 ]] && code="$(curl -sSk -o /dev/null -w '%{http_code}' --max-time 15 \
+            --resolve "$h:443:$SERVER_IP" "https://$h/" 2>/dev/null)" && [[ "$code" =~ ^[23][0-9][0-9]$ ]]; then
+            # Answers, but with the placeholder certificate until issue-certs.sh gets a real one.
+            note "OK   $code https://$h/ (certificate not trusted yet)"
         else
             note "FAIL ${code:-000} https://$h/"
             failed=1
