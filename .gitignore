@@ -1,10 +1,14 @@
-# This workspace also contains client migrations. Track only dashboard source.
+# This workspace also contains client migrations. Track only platform source.
 /*
 !/.gitignore
 !/README.md
 !/dashboard/
 !/operations/
 !/.github/
+!/apps/
+!/catalog/
+!/docs/
+!/ops/
 
 # Secrets, runtime data, local environments and archives (at any depth).
 **/__pycache__/
@@ -12,12 +16,19 @@
 **/.DS_Store
 **/.env
 **/.env.*
+!**/.env.example
 **/.venv/
 **/venv/
+**/node_modules/
+**/.svelte-kit/
+**/build/
+**/test-results/
+**/playwright-report/
 **/*.log
 **/*.sqlite*
 **/*.db
 **/*.sql
+!/apps/panel/drizzle/*.sql
 **/*.sql.gz
 **/*.tar*
 **/*.zip
