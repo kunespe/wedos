@@ -1,0 +1,106 @@
+{
+  "currency": "CZK",
+  "vatNote": "Ceny jsou bez DPH.",
+  "yearlyMonthsCharged": 10,
+  "categories": [
+    { "id": "hosting", "name": "Webhosting" },
+    { "id": "apps", "name": "WordPress a aplikace" },
+    { "id": "vps", "name": "Spravované VPS" },
+    { "id": "management", "name": "Správa serverů" }
+  ],
+  "plans": [
+    {
+      "code": "web-start",
+      "category": "hosting",
+      "kind": "web",
+      "name": "Web Start",
+      "monthly": 79,
+      "features": ["1 web", "5 GB NVMe", "1 databáze", "SSL zdarma", "Denní záloha, 14 dní zpět", "Migrace zdarma"]
+    },
+    {
+      "code": "web-plus",
+      "category": "hosting",
+      "kind": "web",
+      "name": "Web Plus",
+      "monthly": 149,
+      "featured": true,
+      "features": ["5 webů", "20 GB NVMe", "10 databází", "Redis cache", "Testovací prostředí", "Migrace zdarma"]
+    },
+    {
+      "code": "wp-provoz",
+      "category": "apps",
+      "kind": "wp",
+      "name": "WP Provoz",
+      "monthly": 349,
+      "featured": true,
+      "features": ["1 WordPress, 10 GB", "Před každou aktualizací ověřená záloha", "Týdenní aktualizace", "Hlídání dostupnosti a SSL", "Migrace zdarma"]
+    },
+    {
+      "code": "app-node",
+      "category": "apps",
+      "kind": "app",
+      "name": "Aplikace Node / Bun",
+      "monthly": 399,
+      "features": ["1 aplikace, 1 GB RAM", "Nasazení z Gitu nastavíme my", "Reverse proxy a SSL", "Logy a restart při pádu"]
+    },
+    {
+      "code": "vps-s",
+      "category": "vps",
+      "kind": "vps",
+      "name": "VPS S",
+      "monthly": 1290,
+      "features": ["2 vCPU, 4 GB RAM, 80 GB", "Vlastní server, root na vyžádání", "Aktualizace a zabezpečení", "Monitoring a zálohy"]
+    },
+    {
+      "code": "vps-m",
+      "category": "vps",
+      "kind": "vps",
+      "name": "VPS M",
+      "monthly": 2190,
+      "featured": true,
+      "features": ["4 vCPU, 8 GB RAM, 160 GB", "Vlastní server, root na vyžádání", "Aktualizace a zabezpečení", "Monitoring a zálohy"]
+    },
+    {
+      "code": "vps-l",
+      "category": "vps",
+      "kind": "vps",
+      "name": "VPS L",
+      "monthly": 3990,
+      "from": true,
+      "features": ["Dedikovaná vCPU", "Velikost podle zátěže", "Aktualizace a zabezpečení", "Monitoring a zálohy"]
+    },
+    {
+      "code": "sprava-start",
+      "category": "management",
+      "kind": "management",
+      "name": "1U Start",
+      "monthly": 2990,
+      "from": true,
+      "features": ["1 až 2 servery", "Aktualizace a zabezpečení", "Monitoring 24/7", "Zálohy každou noc"]
+    },
+    {
+      "code": "sprava-provoz",
+      "category": "management",
+      "kind": "management",
+      "name": "2U Provoz",
+      "monthly": 7900,
+      "from": true,
+      "featured": true,
+      "features": ["Až 6 serverů nebo cluster", "CI/CD pipeline v ceně", "Reakce do 30 minut", "Měsíční report"]
+    },
+    {
+      "code": "sprava-na-miru",
+      "category": "management",
+      "kind": "management",
+      "name": "4U Na míru",
+      "monthly": null,
+      "features": ["Celá infrastruktura", "Cloud i vlastní železo", "SLA podle dohody", "Vyhrazený technik"]
+    }
+  ],
+  "extras": [
+    { "code": "domena-cz", "name": "Doména .cz", "price": 249, "unit": "rok", "note": "Stejná cena i při prodloužení." },
+    { "code": "audit", "name": "Audit infrastruktury", "price": 4900, "unit": "jednorázově", "note": "Odečteme z první faktury, když u nás zůstanete." },
+    { "code": "cicd", "name": "CI/CD pipeline", "price": 9900, "unit": "jednorázově", "from": true },
+    { "code": "hodina", "name": "Práce technika", "price": 1290, "unit": "hodina" }
+  ]
+}

@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Servero | Správa serverů, CI/CD a cloud</title>
+  <meta name="description" content="Spravujeme servery, nasazování a cloud pro firmy bez vlastního admina. Nonstop dohled, zálohy, bezpečnost. Plzeň, celá ČR.">
+  <meta name="theme-color" content="#E7EAEE">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='6' width='26' height='8' rx='2' fill='%231F2328'/%3E%3Crect x='3' y='18' width='26' height='8' rx='2' fill='%231F2328'/%3E%3Ccircle cx='24' cy='10' r='2' fill='%2336E08F'/%3E%3Ccircle cx='24' cy='22' r='2' fill='%23FFB43B'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=4">
+</head>
+<body>
+<div class="rack">
+  <div class="rail rail--l" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail-pos" aria-hidden="true"><i class="led led--on"></i><span>U01</span></div>
+
+  <header class="top wrap">
+    <a class="logo" href="#top" aria-label="Servero, domů">servero<span>.cz</span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="#sluzby">Služby</a>
+      <a href="#cenik">Ceník</a>
+      <a href="#tym">Kdo jsme</a>
+      <a class="nav__login" href="https://panel.servero.cz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a class="btn btn--sm" href="#kontakt"><i class="led led--on"></i>Kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO: 4U server front panel -->
+    <section class="hero wrap">
+      <div class="chassis" data-state="off">
+        <div class="ear"><i class="screw"></i><span class="ear__label">4U</span><i class="screw"></i></div>
+        <div class="chassis__body">
+          <div class="bays" aria-hidden="true"></div>
+          <div class="chassis__center">
+            <div class="wordmark" aria-hidden="true"><span>S</span><span>E</span><span>R</span><span>V</span><span>E</span><span>R</span><span>O</span></div>
+            <div class="lcd" aria-hidden="true"><span class="lcd__text">&nbsp;</span><i class="lcd__cursor"></i></div>
+          </div>
+          <div class="chassis__ctrl">
+            <button class="power" type="button" aria-label="Restartovat server (animace)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg></button>
+            <div class="ctrl__leds" aria-hidden="true">
+              <span><i class="led" data-led="net"></i>net</span>
+              <span><i class="led" data-led="hdd"></i>hdd</span>
+              <span><i class="led" data-led="sys"></i>sys</span>
+            </div>
+            <div class="usb" aria-hidden="true"><i></i><i></i></div>
+          </div>
+        </div>
+        <div class="ear"><i class="screw"></i><span class="ear__label">A1</span><i class="screw"></i></div>
+      </div>
+
+      <div class="hero__copy">
+        <h1>Servery, na které nemusíte myslet.</h1>
+        <div class="hero__side">
+          <p>Spravujeme servery, nasazování a cloud pro firmy, které nemají vlastního admina. Nonstop, z Plzně.</p>
+          <div class="hero__cta">
+            <a class="btn" href="#kontakt"><i class="led led--on"></i>Domluvit konzultaci zdarma</a>
+            <p class="clock"><span class="clock__time">--:--</span> v Plzni. Hlídáme.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES: pull-out rack units -->
+    <section class="sec wrap" id="sluzby">
+      <div class="sec__head">
+        <h2>Co za vás držíme v chodu</h2>
+        <p>Klikněte na jednotku a vysuňte ji z racku.</p>
+      </div>
+
+      <div class="units">
+        <article class="unit" style="--u:2">
+          <button class="unit__panel" type="button" aria-expanded="false" aria-controls="t-sprava">
+            <span class="ear ear--unit"><i class="screw"></i><i class="screw"></i></span>
+            <span class="unit__size">2U</span>
+            <span class="unit__name">Správa serverů</span>
+            <span class="unit__line">Linux v kondici. Aktualizace, výkon, pořádek.</span>
+            <span class="unit__leds"><i class="led led--on"></i><i class="led led--act"></i></span>
+            <span class="unit__grille"></span>
+            <span class="unit__handle"></span>
+          </button>
+          <div class="unit__tray" id="t-sprava"><div class="tray">
+            <ul>
+              <li>Ubuntu, Debian, Rocky, AlmaLinux</li>
+              <li>Bezpečnostní záplaty každý týden</li>
+              <li>Ladění webů, databází a cache</li>
+            </ul>
+            <img src="assets/img/circuit.jpg" alt="" loading="lazy" width="1800" height="1200">
+          </div></div>
+        </article>
+
+        <article class="unit" style="--u:1">
+          <button class="unit__panel" type="button" aria-expanded="false" aria-controls="t-cicd">
+            <span class="ear ear--unit"><i class="screw"></i><i class="screw"></i></span>
+            <span class="unit__size">1U</span>
+            <span class="unit__name">CI/CD</span>
+            <span class="unit__line">Nasazení jedním pushem.</span>
+            <span class="unit__leds"><i class="led led--on"></i><i class="led led--act"></i></span>
+            <span class="unit__grille"></span>
+            <span class="unit__handle"></span>
+          </button>
+          <div class="unit__tray" id="t-cicd"><div class="tray">
+            <ul>
+              <li>GitHub Actions, GitLab CI, Docker</li>
+              <li>Automatické testy a náhledové verze</li>
+              <li>Návrat na předchozí verzi během vteřin</li>
+            </ul>
+            <img src="assets/img/rack.jpg" alt="" loading="lazy" width="1800" height="1350">
+          </div></div>
+        </article>
+
+        <article class="unit" style="--u:2">
+          <button class="unit__panel" type="button" aria-expanded="false" aria-controls="t-cloud">
+            <span class="ear ear--unit"><i class="screw"></i><i class="screw"></i></span>
+            <span class="unit__size">2U</span>
+            <span class="unit__name">Cloud</span>
+            <span class="unit__line">AWS, Hetzner, Azure. Bez překvapení na faktuře.</span>
+            <span class="unit__leds"><i class="led led--on"></i><i class="led led--act"></i></span>
+            <span class="unit__grille"></span>
+            <span class="unit__handle"></span>
+          </button>
+          <div class="unit__tray" id="t-cloud"><div class="tray">
+            <ul>
+              <li>Migrace bez výpadku</li>
+              <li>Infrastruktura jako kód (Terraform)</li>
+              <li>Hlídáme výdaje a škrtáme zbytečné</li>
+            </ul>
+            <img src="assets/img/earth.jpg" alt="" loading="lazy" width="1800" height="1198">
+          </div></div>
+        </article>
+
+        <article class="unit" style="--u:1">
+          <button class="unit__panel" type="button" aria-expanded="false" aria-controls="t-mon">
+            <span class="ear ear--unit"><i class="screw"></i><i class="screw"></i></span>
+            <span class="unit__size">1U</span>
+            <span class="unit__name">Monitoring</span>
+            <span class="unit__line">O výpadku víme dřív než vaši zákazníci.</span>
+            <span class="unit__leds"><i class="led led--on"></i><i class="led led--act"></i></span>
+            <span class="unit__grille"></span>
+            <span class="unit__handle"></span>
+          </button>
+          <div class="unit__tray" id="t-mon"><div class="tray">
+            <ul>
+              <li>Dohled 24/7, i o Vánocích</li>
+              <li>Reakce do 30 minut</li>
+              <li>Veřejná status stránka pro vaše klienty</li>
+            </ul>
+            <img src="assets/img/server-room.jpg" alt="" loading="lazy" width="1800" height="1010">
+          </div></div>
+        </article>
+
+        <article class="unit" style="--u:1">
+          <button class="unit__panel" type="button" aria-expanded="false" aria-controls="t-zal">
+            <span class="ear ear--unit"><i class="screw"></i><i class="screw"></i></span>
+            <span class="unit__size">1U</span>
+            <span class="unit__name">Zálohy</span>
+            <span class="unit__line">Zálohy, které jdou opravdu obnovit.</span>
+            <span class="unit__leds"><i class="led led--on"></i><i class="led led--act"></i></span>
+            <span class="unit__grille"></span>
+            <span class="unit__handle"></span>
+          </button>
+          <div class="unit__tray" id="t-zal"><div class="tray">
+            <ul>
+              <li>Pravidlo 3-2-1, šifrovaně, mimo datacentrum</li>
+              <li>Každou noc, historie 30 dní</li>
+              <li>Zkušební obnova jednou měsíčně</li>
+            </ul>
+            <img src="assets/img/datacenter.jpg" alt="" loading="lazy" width="1800" height="1200">
+          </div></div>
+        </article>
+
+        <article class="unit" style="--u:1">
+          <button class="unit__panel" type="button" aria-expanded="false" aria-controls="t-sec">
+            <span class="ear ear--unit"><i class="screw"></i><i class="screw"></i></span>
+            <span class="unit__size">1U</span>
+            <span class="unit__name">Bezpečnost</span>
+            <span class="unit__line">Zamčeno, záplatováno, zdokumentováno.</span>
+            <span class="unit__leds"><i class="led led--on"></i><i class="led led--act"></i></span>
+            <span class="unit__grille"></span>
+            <span class="unit__handle"></span>
+          </button>
+          <div class="unit__tray" id="t-sec"><div class="tray">
+            <ul>
+              <li>Firewall, SSH klíče, dvoufázové přihlášení</li>
+              <li>SSL certifikáty se obnovují samy</li>
+              <li>Audit a jasný plán opatření</li>
+            </ul>
+            <img src="assets/img/cables.jpg" alt="" loading="lazy" width="1800" height="1200">
+          </div></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- PIPELINE -->
+    <section class="pipe" aria-labelledby="pipe-h">
+      <img class="pipe__bg" src="assets/img/rack.jpg" alt="" loading="lazy" width="1800" height="1350">
+      <div class="wrap pipe__inner">
+        <h2 id="pipe-h">Git push. <br>A za minutu je to venku.</h2>
+        <ol class="stations" aria-label="Průběh nasazení">
+          <li data-stage="0"><i></i><b>Push</b><small>main</small></li>
+          <li data-stage="1"><i></i><b>Build</b><small>docker</small></li>
+          <li data-stage="2"><i></i><b>Testy</b><small>214 ok</small></li>
+          <li data-stage="3"><i></i><b>Deploy</b><small>bez výpadku</small></li>
+          <li data-stage="4"><i></i><b>Živě</b><small>servero.cz</small></li>
+          <span class="packet" aria-hidden="true"></span>
+        </ol>
+        <pre class="log" aria-hidden="true"></pre>
+      </div>
+    </section>
+
+    <!-- PHOTO BAND -->
+    <section class="photo" aria-label="Noční služba">
+      <img class="photo__img" src="assets/img/server-room.jpg" alt="Serverová skříň plná kabelů v datacentru" loading="lazy" width="1800" height="1010">
+      <p class="photo__text wrap"><span>Když server spadne ve tři ráno, vstáváme my. Ne vy.</span></p>
+    </section>
+
+    <!-- STATUS -->
+    <section class="sec wrap status" aria-labelledby="status-h">
+      <div class="sec__head">
+        <h2 id="status-h">Takhle má vypadat klidný kvartál.</h2>
+        <p>90 dní, jedna plánovaná údržba v noci. Najeďte na den.</p>
+      </div>
+      <div class="bars" role="img" aria-label="Graf dostupnosti za 90 dní: vše v provozu, jedna plánovaná noční údržba"></div>
+      <div class="bars__axis"><span>před 90 dny</span><span class="bars__tip" aria-hidden="true">&nbsp;</span><span>dnes</span></div>
+      <ul class="facts">
+        <li><b>30 min</b>reakce na incident, ve dne i v noci</li>
+        <li><b>Každou noc</b>šifrovaná záloha mimo datacentrum</li>
+        <li><b>1× měsíčně</b>report, co jsme udělali a co doporučujeme</li>
+      </ul>
+    </section>
+
+    <!-- PROCESS: patch panel -->
+    <section class="sec wrap process" aria-labelledby="proc-h">
+      <div class="sec__head">
+        <h2 id="proc-h">Jak začneme</h2>
+        <p>Tři kroky, žádný dlouhý projekt.</p>
+      </div>
+      <div class="patch">
+        <svg class="patch__cable" viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M 166 40 C 166 200, 500 200, 500 40 C 500 200, 834 200, 834 40"/>
+        </svg>
+        <ol class="ports">
+          <li>
+            <span class="port"><i></i></span>
+            <h3>Audit</h3>
+            <p>Projdeme vaše servery a řekneme, co hoří. Zdarma, do týdne.</p>
+          </li>
+          <li>
+            <span class="port"><i></i></span>
+            <h3>Převzetí</h3>
+            <p>Přístupy, dokumentace, monitoring a zálohy. Bez výpadku.</p>
+          </li>
+          <li>
+            <span class="port"><i></i></span>
+            <h3>Provoz</h3>
+            <p>Měsíční paušál. Staráme se, vy děláte byznys.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- PRICING: tabs of rack units, rendered by main.js from plans.json -->
+    <section class="sec wrap" id="cenik" aria-labelledby="cenik-h">
+      <div class="sec__head">
+        <h2 id="cenik-h">Vyberte velikost</h2>
+        <p>Měsíčně bez závazku. Nebo ročně a dva měsíce máte zdarma.</p>
+      </div>
+      <div class="pricing" hidden>
+        <div class="pricing__bar">
+          <div class="tabs" role="tablist" aria-label="Kategorie služeb"></div>
+          <fieldset class="seg">
+            <legend class="sr-only">Období platby</legend>
+            <label><input type="radio" name="obdobi" value="mesic" checked><span>Měsíčně</span></label>
+            <label><input type="radio" name="obdobi" value="rok"><span>Ročně <small class="seg__free"></small></span></label>
+          </fieldset>
+        </div>
+        <div class="pricing__panels"></div>
+        <ul class="extras" aria-label="Doplňky"></ul>
+        <p class="pricing__vat"></p>
+      </div>
+      <noscript><p class="pricing__nojs">Ceník se zobrazí se zapnutým JavaScriptem. Mezitím můžete rovnou <a href="objednat.html">objednat službu</a> nebo napsat na <a href="mailto:info@servero.cz">info@servero.cz</a>.</p></noscript>
+    </section>
+
+    <!-- TEAM: datacenter access badges -->
+    <section class="sec wrap team" id="tym" aria-labelledby="tym-h">
+      <div class="sec__head">
+        <h2 id="tym-h">Dva lidi s přístupem do racku</h2>
+        <p>Žádné call centrum. Voláte přímo nám.</p>
+      </div>
+      <div class="badges">
+        <article class="badge">
+          <span class="badge__clip" aria-hidden="true"></span>
+          <div class="badge__card">
+            <div class="badge__top"><span class="badge__logo">servero</span><span class="badge__chip" aria-hidden="true"></span></div>
+            <img src="assets/img/vojtech.webp" alt="Vojtěch Kotrč" width="900" height="1110" loading="lazy">
+            <h3>Vojtěch Kotrč</h3>
+            <p>Infrastruktura, CI/CD a vše, co běží v terminálu.</p>
+            <div class="badge__foot">
+              <span><i class="led led--on"></i>Ve službě</span>
+              <a href="https://webzi.cz" target="_blank" rel="noopener">webzi.cz</a>
+            </div>
+            <span class="badge__code" aria-hidden="true"></span>
+          </div>
+        </article>
+        <article class="badge">
+          <span class="badge__clip" aria-hidden="true"></span>
+          <div class="badge__card">
+            <div class="badge__top"><span class="badge__logo">servero</span><span class="badge__chip" aria-hidden="true"></span></div>
+            <img src="assets/img/petr.jpg" alt="Petr Kuneš" width="800" height="800" loading="lazy">
+            <h3>Petr Kuneš</h3>
+            <p>Klienti, plánování a provoz, aby to dávalo smysl i v rozpočtu.</p>
+            <div class="badge__foot">
+              <span><i class="led led--on"></i>Ve službě</span>
+              <a href="https://digitality.marketing" target="_blank" rel="noopener">digitality.marketing</a>
+            </div>
+            <span class="badge__code" aria-hidden="true"></span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" id="kontakt" aria-labelledby="cta-h">
+      <img class="cta__bg" src="assets/img/earth.jpg" alt="" loading="lazy" width="1800" height="1198">
+      <div class="wrap cta__inner">
+        <h2 id="cta-h">Spěte klidně.</h2>
+        <p class="cta__sub">Napište, jaké servery máte. Do 24 hodin se ozveme s návrhem.</p>
+        <a class="cta__mail" href="mailto:info@servero.cz?subject=Popt%C3%A1vka%20spr%C3%A1vy%20server%C5%AF">info@servero.cz</a>
+        <a class="cta__tel" href="tel:+420773559645">+420 773 559 645</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© <span class="year">2026</span> Servero.cz, Plzeň</span>
+    <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
+    <nav class="foot__links" aria-label="Právní informace">
+      <a href="obchodni-podminky.html">Obchodní podmínky</a>
+      <a href="ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="#top">Zpět nahoru</a>
+    </nav>
+  </footer>
+</div>
+<script src="main.js?v=4"></script>
+</body>
+</html>
