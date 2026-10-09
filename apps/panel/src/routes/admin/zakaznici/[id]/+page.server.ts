@@ -167,7 +167,7 @@ export const actions: Actions = {
 		if (!exp.success) return fail(400, { error: 'Neplatné datum expirace.' });
 		const [dup] = await db.select({ id: domains.id }).from(domains).where(eq(domains.name, name));
 		if (dup) return fail(400, { error: 'Doména už je v evidenci.' });
-		await db.insert(domains).values({ customerId: customer.id, name, managedByUs: form.get('managedByUs') === 'on', expiresAt: exp.data, registrar: String(form.get('registrar') || 'Subreg').slice(0, 60) });
+		await db.insert(domains).values({ customerId: customer.id, name, managedByUs: form.get('managedByUs') === 'on', expiresAt: exp.data, registrar: String(form.get('registrar') || 'WEDOS').slice(0, 60) });
 		await audit(event, 'domain_create', name, `zákazník ${customer.id}`);
 		return { message: 'Doména přidána.' };
 	}

@@ -95,7 +95,7 @@ describe.skipIf(!url)('convertOrder', () => {
 		expect(r.skippedDomains).toEqual(['obsazena.cz']);
 		const rows = await db.select().from(domains).where(eq(domains.customerId, r.customerId));
 		expect(rows.map((d) => d.name).sort()).toEqual(['kvetiny.cz', 'kvetiny.eu', 'stara-firma.com']);
-		expect(rows.find((d) => d.name === 'stara-firma.com')).toMatchObject({ managedByUs: true, registrar: 'Subreg', expiresAt: null, note: `Převod z objednávky #${id}` });
+		expect(rows.find((d) => d.name === 'stara-firma.com')).toMatchObject({ managedByUs: true, registrar: 'WEDOS', expiresAt: null, note: `Převod z objednávky #${id}` });
 		expect(rows.find((d) => d.name === 'kvetiny.eu')?.note).toBe(`Registrace z objednávky #${id}`);
 	});
 

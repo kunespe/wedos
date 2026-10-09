@@ -1,5 +1,10 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { keepResult } from '#lib/forms.ts';
+	import Button from '#lib/components/Button.svelte';
+	import FormMessage from '#lib/components/FormMessage.svelte';
+	import Panel from '#lib/components/Panel.svelte';
 	import DataTable from '#lib/components/DataTable.svelte';
 	import Led from '#lib/components/Led.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
@@ -8,7 +13,10 @@
 	import { date, daysUntil } from '#lib/format.ts';
 	import type { PageProps } from './$types';
 
-	let { data }: PageProps = $props();
+	let { data, form }: PageProps = $props();
+	const w = $derived(data.wedos);
+	const cmp = $derived(form && 'compare' in form ? form.compare : null);
+	const pinged = $derived(form && 'ping' in form ? form.ping : null);
 	type Row = (typeof data.domains)[number];
 	const columns: Column<Row>[] = [
 		{ label: '', class: 'w-6' },
@@ -23,9 +31,54 @@
 
 <PageHeader title="Domény">
 	{#snippet meta()}
-		Registrace a prodloužení děláme ručně přes Subreg. {#if soon}<Pill tone="warn">{soon} do 30 dní</Pill>{/if}
+		Registrace a prodloužení děláme ručně přes WEDOS (tlačítka v detailu domény). {#if soon}<Pill tone="warn">{soon} do 30 dní</Pill>{/if}
+		{#if !w.configured}<Pill>WEDOS nenastaven</Pill>{:else if w.live}<Pill tone="bad">WEDOS ostrý režim</Pill>{:else}<Pill tone="warn">WEDOS testovací režim</Pill>{/if}
+	{/snippet}
+	{#snippet actions()}
+		{#if w.configured}
+			<form method="POST" action="?/ping" use:enhance={keepResult()}><Button type="submit" size="sm" variant="ghost">WAPI ping</Button></form>
+			<form method="POST" action="?/compare" use:enhance={keepResult()}><Button type="submit" size="sm">Porovnat s WEDOS</Button></form>
+		{/if}
 	{/snippet}
 </PageHeader>
+
+<FormMessage {form} />
+
+{#if !w.configured}
+	<p class="mb-4 rounded-[6px] border border-line bg-surface-2 px-3 py-2 text-sm text-muted">
+		Propojení s WEDOS není nastavené (chybí <span class="mono">{w.missing.join(', ')}</span>). Domény se zatím evidují jen ručně, postup nastavení je v README panelu.
+	</p>
+{/if}
+
+{#if pinged}
+	<p class="mb-4 text-sm text-muted">Ping: odpověď za {pinged.ms} ms z IP serveru <span class="mono">{w.serverIp}</span>, tedy povolená v seznamu WAPI.</p>
+{/if}
+
+{#if cmp}
+	<Panel title="Porovnání s WEDOS" class="mb-5">
+		<p class="mb-3 text-sm text-muted">U WEDOS {cmp.total} domén, z toho {cmp.matched} v panelu. Nic se nezměnilo, jen přehled.</p>
+		<div class="grid gap-5 md:grid-cols-2">
+			<div class="min-w-0">
+				<h3 class="mb-1 text-sm font-bold">U WEDOS, ale ne v panelu ({cmp.onlyWedos.length})</h3>
+				{#if cmp.onlyWedos.length}
+					<ul class="divide-y divide-line text-sm">
+						{#each cmp.onlyWedos as dm (dm.name)}<li class="flex justify-between gap-2 py-1.5"><span class="mono break-all">{dm.name}</span><span class="text-xs text-muted">{dm.status}</span></li>{/each}
+					</ul>
+					<p class="mt-2 text-xs text-muted">Přidejte je k zákazníkovi v jeho detailu (Přidat doménu).</p>
+				{:else}<p class="text-sm text-muted">Žádné.</p>{/if}
+			</div>
+			<div class="min-w-0">
+				<h3 class="mb-1 text-sm font-bold">V panelu jako WEDOS, ale u WEDOS chybí ({cmp.missingAtWedos.length})</h3>
+				{#if cmp.missingAtWedos.length}
+					<ul class="divide-y divide-line text-sm">
+						{#each cmp.missingAtWedos as dm (dm.id)}<li class="py-1.5"><a class="mono break-all hover:underline" href="/admin/domeny/{dm.id}">{dm.name}</a></li>{/each}
+					</ul>
+					<p class="mt-2 text-xs text-muted">Buď ještě nejsou zaregistrované, nebo mají špatně vyplněného registrátora.</p>
+				{:else}<p class="text-sm text-muted">Žádné.</p>{/if}
+			</div>
+		</div>
+	</Panel>
+{/if}
 
 <DataTable rows={data.domains} {columns} search={(r) => `${r.name} ${r.customer} ${r.company}`} empty="Žádné domény v evidenci." initialSort={{ column: 5, dir: 'asc' }}>
 	{#snippet row(d)}

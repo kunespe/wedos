@@ -41,6 +41,8 @@ export const customers = mysqlTable('customers', {
 	email: varchar('email', { length: 254 }).notNull(),
 	phone: varchar('phone', { length: 32 }).notNull().default(''),
 	note: text('note'),
+	// Registry contact handles created for this customer, keyed by TLD (e.g. { cz: 'SRV-ABC123' }); WEDOS owner_c.
+	registryContacts: json('registry_contacts').$type<Record<string, string>>(),
 	createdAt: createdAt(),
 	updatedAt: updatedAt()
 });

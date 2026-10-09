@@ -21,3 +21,8 @@ export const PAYMENT_ACCOUNT = '';
 export const PAYMENT_IBAN = e.PAYMENT_IBAN ?? '';
 export const VAT_RATE = 0;
 export const PAYMENT_DUE_DAYS = 14;
+export const WEDOS_WAPI_USER = e.WEDOS_WAPI_USER ?? '';
+export const WEDOS_WAPI_PASSWORD = e.WEDOS_WAPI_PASSWORD ?? '';
+export const WEDOS_WAPI_LIVE = e.WEDOS_WAPI_LIVE === '1';
+export const WEDOS_NSSET = e.WEDOS_NSSET ?? '';
+export const WEDOS_DNS = (e.WEDOS_DNS ?? '').split(',').map((s) => s.trim()).filter(Boolean);

@@ -122,7 +122,7 @@
 				<form method="POST" action="?/addDomain" use:enhance={keepResult({ reset: true })} class="grid gap-3 p-4 pt-1 sm:grid-cols-3">
 					<div><label class="label" for="d-name">Doména</label><input class="input mono" id="d-name" name="name" required placeholder="firma.cz" /></div>
 					<div><label class="label" for="d-exp">Expirace</label><input class="input" id="d-exp" name="expiresAt" type="date" /></div>
-					<div><label class="label" for="d-reg">Registrátor</label><input class="input" id="d-reg" name="registrar" value="Subreg" /></div>
+					<div><label class="label" for="d-reg">Registrátor</label><input class="input" id="d-reg" name="registrar" value="WEDOS" /></div>
 					<label class="flex items-center gap-2 text-sm sm:col-span-2"><input type="checkbox" name="managedByUs" checked class="size-4" /> Prodlužujeme my</label>
 					<div class="flex justify-end"><Button type="submit">Přidat</Button></div>
 				</form>

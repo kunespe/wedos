@@ -90,7 +90,7 @@ export async function convertOrder(db: Db, orderId: number, nodeId: number | nul
 
 		if (order.domain && order.domainMode === 'register') {
 			const [existing] = await tx.select().from(domains).where(eq(domains.name, order.domain));
-			if (!existing) await tx.insert(domains).values({ customerId: customer.id, name: order.domain, managedByUs: true });
+			if (!existing) await tx.insert(domains).values({ customerId: customer.id, name: order.domain, registrar: 'WEDOS', managedByUs: true });
 		}
 
 		// The basket: one row per domain, registrar and expiry are filled in by hand once the registry confirms.
@@ -112,7 +112,7 @@ export async function convertOrder(db: Db, orderId: number, nodeId: number | nul
 			await tx.insert(domains).values({
 				customerId: customer.id,
 				name: d.name,
-				registrar: 'Subreg',
+				registrar: 'WEDOS',
 				managedByUs: true,
 				expiresAt: null,
 				note: `${d.mode === 'transfer' ? 'Převod' : 'Registrace'} z objednávky #${order.id}`

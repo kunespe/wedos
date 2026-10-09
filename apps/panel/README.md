@@ -47,8 +47,29 @@ Testy: `pnpm check`, `pnpm test`. Databázové testy potřebují `TEST_DATABASE_
 - `src/lib/server/fulfilment.ts`: převod objednávky na zákazníka, účet a službu.
 - `src/lib/server/broker.ts`: klient root brokeru; `snapshot.ts` načítá stav serveru.
 - `src/lib/server/probes.ts`: zapisuje cíle pro monitoring (Alloy blackbox) z aktivních služeb.
+- `src/lib/server/wedos.ts`: klient WEDOS WAPI (registrace, prodloužení, převody a kontakty domén).
 - `src/routes/api/orders`: veřejné API objednávkového formuláře (CORS jen pro serveros.cz, honeypot, limit).
 - `src/routes/internal/metrics`: obchodní metriky pro Prometheus, jen z loopbacku.
+
+## WEDOS (registrace domén)
+
+Domény registrujeme, prodlužujeme a převádíme přes WEDOS WAPI, ale vždy ručně: v detailu domény (`/admin/domeny/<id>`) je panel WEDOS a každá změna má potvrzovací krok. Nic se neděje automaticky. Každé volání, které něco mění, se zapíše do auditu (bez hesel a AUTH-ID).
+
+1. **WAPI heslo:** v administraci WEDOS otevřete WAPI > Nastavení, zapněte WAPI a nastavte WAPI heslo. Je to jiné heslo než heslo k účtu.
+2. **Povolená IP:** v WAPI > Povolené IP adresy přidejte IP serveru `2.31.25.249`. Bez toho WAPI vrací chybu 2051. Ověříte to tlačítkem **WAPI ping** na `/admin/domeny`.
+3. **Proměnné na serveru** v `/etc/servero-panel/env`, pak restart panelu:
+
+   ```sh
+   WEDOS_WAPI_USER=prihlasovaci@email.cz   # login k účtu WEDOS; prázdné = integrace vypnutá
+   WEDOS_WAPI_PASSWORD=...                  # WAPI heslo z kroku 1
+   WEDOS_WAPI_LIVE=0                        # 0 = testovací režim, 1 = ostrý
+   WEDOS_NSSET=                             # NSSET pro .cz; prázdné = použije se WEDOS_DNS
+   WEDOS_DNS=                               # nameservery pro ostatní domény, oddělené čárkou; prázdné = výchozí WEDOS
+   ```
+
+**Testovací vs. ostrý režim.** Dokud není `WEDOS_WAPI_LIVE=1`, posílá panel změny (registrace, prodloužení, převod, kontakt, AUTH-ID) s příznakem `test`: WEDOS je jen ověří, nic nezaregistruje a nestrhne kredit. Režim je vidět u každého tlačítka i v hlavičce `/admin/domeny`. Čtecí příkazy (stav, dostupnost, seznam, ping) běží vždy naostro, nic nemění. Limit WAPI je 1000 požadavků za hodinu a 100 kontrol a registrací domén za hodinu.
+
+Registrace potřebuje kontakt majitele pro danou koncovku. Panel ho založí z údajů zákazníka (IČO jako identifikátor) a handle uloží k zákazníkovi; existující handle z administrace WEDOS lze vložit ručně. Tlačítko **Porovnat s WEDOS** na `/admin/domeny` ukáže domény, které jsou u WEDOS a chybí v panelu, a naopak.
 
 ## Zabezpečení
 

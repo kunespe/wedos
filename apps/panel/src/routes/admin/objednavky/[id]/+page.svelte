@@ -176,7 +176,7 @@
 				</div>
 				<p class="border-t border-line px-4 py-2.5 text-xs text-muted">
 					Známé ceny celkem {czk(total.known)} bez DPH{total.unknown ? `, ${total.unknown}× cenu potvrdit zákazníkovi e-mailem` : ''}. Při převzetí vznikne
-					záznam v Doménách (Subreg, bez data expirace), jména už vedená v evidenci se přeskočí.
+					záznam v Doménách (WEDOS, bez data expirace), jména už vedená v evidenci se přeskočí.
 				</p>
 			</Panel>
 		{/if}
