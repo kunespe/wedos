@@ -464,6 +464,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   font: 500 12px/1.3 var(--mono); color: #e9b768; background: #120e08; box-shadow: inset 0 0 0 1px rgba(255,180,59,.22);
 }
 .stage__chip strong { font-size: 17px; font-weight: 500; color: var(--amber); text-shadow: 0 0 10px rgba(255,180,59,.35); }
+.stages__note { margin-top: 18px; font-size: 15px; color: var(--steel-dk); }
+.stages__note a { color: #1d55d6; font-weight: 600; }
 @media (max-width: 1020px) {
   .stage { grid-template-columns: 22px auto minmax(0, 1fr); grid-template-areas: "leds num body" "leds num list" "leds num chip"; row-gap: 16px; }
   .stage__leds { grid-area: leds; align-self: start; padding-top: 8px; }

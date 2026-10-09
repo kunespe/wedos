@@ -26,7 +26,7 @@
   <meta name="servero-panel" content="http://localhost:5190">
   <!-- Archivo and JetBrains Mono are self-hosted (@font-face in styles.css); preload the latin face the first paint needs -->
   <link rel="preload" href="/assets/fonts/archivo-v25-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=14">
+  <link rel="stylesheet" href="styles.css?v=15">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -284,47 +284,48 @@
       </ul>
     </section>
 
-    <!-- PROCESS: three rack units that power on in order as they scroll into view -->
+    <!-- PROCESS: three rack units that power on in order; the same path for a small web and a whole infrastructure -->
     <section class="sec wrap process" aria-labelledby="proc-h">
       <div class="sec__head">
         <h2 id="proc-h">Jak začneme</h2>
-        <p>Tři kroky, žádný dlouhý projekt. Převzetí obvykle do dvou týdnů.</p>
+        <p>Stejně jednoduše pro malý web i celou infrastrukturu.</p>
       </div>
       <ol class="stages">
-          <li class="stage" style="--u: 1">
+          <li class="stage">
             <span class="stage__leds" aria-hidden="true"><i class="led"></i><i class="led"></i><i class="led"></i></span>
             <span class="stage__num" aria-hidden="true">01</span>
             <div class="stage__body">
-              <p class="stage__when">Den 1 až 5</p>
-              <h3>Audit</h3>
-              <p class="stage__text">Projdeme servery, aplikace a zálohy. Sepíšeme, co hoří a co počká.</p>
+              <p class="stage__when">Dvě minuty</p>
+              <h3>Objednáte</h3>
+              <p class="stage__text">Vyberete webhosting, WordPress, VPS nebo správu serverů. Doménu přidáte rovnou do košíku.</p>
             </div>
-            <ul class="stage__list"><li>Bezpečnost a aktualizace</li><li>Zálohy a zkušební obnova</li><li>Výkon a zbytečné náklady</li></ul>
-            <p class="stage__chip"><strong>4 900 Kč</strong><span>odečteme z první faktury</span></p>
+            <ul class="stage__list"><li>Cena po roce nezdraží</li><li>Doména .cz za 249 Kč ročně</li><li>Nevíte si rady? Zavolejte</li></ul>
+            <p class="stage__chip"><strong>od 79 Kč</strong><span>měsíčně, bez DPH</span></p>
           </li>
-          <li class="stage" style="--u: 2">
+          <li class="stage">
             <span class="stage__leds" aria-hidden="true"><i class="led"></i><i class="led"></i><i class="led"></i></span>
             <span class="stage__num" aria-hidden="true">02</span>
             <div class="stage__body">
-              <p class="stage__when">Druhý týden</p>
-              <h3>Převzetí</h3>
-              <p class="stage__text">Převezmeme přístupy, zdokumentujeme infrastrukturu a zapneme dohled.</p>
+              <p class="stage__when">Do pár hodin</p>
+              <h3>Zřídíme</h3>
+              <p class="stage__text">Službu nastaví člověk, ne automat. Starý web přestěhujeme za vás.</p>
             </div>
-            <ul class="stage__list"><li>Přístupy a dokumentace</li><li>Monitoring a upozornění 24/7</li><li>Ověřené zálohy každou noc</li></ul>
-            <p class="stage__chip"><strong>Bez výpadku</strong><span>převzetí za provozu</span></p>
+            <ul class="stage__list"><li>Přístupy pošleme e-mailem</li><li>SSL certifikát od prvního dne</li><li>Přenos webu bez výpadku</li></ul>
+            <p class="stage__chip"><strong>Migrace zdarma</strong><span>u webhostingu a WordPressu</span></p>
           </li>
-          <li class="stage" style="--u: 3">
+          <li class="stage">
             <span class="stage__leds" aria-hidden="true"><i class="led"></i><i class="led"></i><i class="led"></i></span>
             <span class="stage__num" aria-hidden="true">03</span>
             <div class="stage__body">
-              <p class="stage__when">Každý měsíc</p>
-              <h3>Provoz</h3>
-              <p class="stage__text">Měsíční paušál. Aktualizace, zálohy a dohled děláme my, vy děláte byznys.</p>
+              <p class="stage__when">Každý den</p>
+              <h3>Staráme se</h3>
+              <p class="stage__text">Hlídáme dostupnost, certifikáty a aktualizace. Když něco spadne, víme to dřív než vy.</p>
             </div>
-            <ul class="stage__list"><li>Aktualizace a záplaty</li><li>Reakce do 30 minut u 2U</li><li>Měsíční report</li></ul>
-            <p class="stage__chip"><strong>od 2 990 Kč</strong><span>měsíčně, bez DPH</span></p>
+            <ul class="stage__list"><li>Monitoring 24/7</li><li>Podpora od lidí</li><li>Aktualizace a záplaty</li></ul>
+            <p class="stage__chip"><strong>Bez starostí</strong><span>vy řešíte jen svůj byznys</span></p>
           </li>
       </ol>
+      <p class="stages__note">Máte vlastní servery nebo cluster? Začínáme auditem, který odečteme z první faktury. <a href="#cenik" data-tab="management">Správa serverů</a></p>
     </section>
 
     <!-- PRICING: tabs of rack units, rendered by main.js from plans.json -->
@@ -454,7 +455,7 @@
     </nav>
   </footer>
 </div>
-<script src="site.js?v=14" defer></script>
-<script src="main.js?v=14" defer></script>
+<script src="site.js?v=15" defer></script>
+<script src="main.js?v=15" defer></script>
 </body>
 </html>

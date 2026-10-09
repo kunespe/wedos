@@ -414,6 +414,12 @@
       e.preventDefault();
       select(tabs[(to + tabs.length) % tabs.length], true);
     });
+    // Links elsewhere on the page (<a href="#cenik" data-tab="management">) open the matching tab.
+    document.addEventListener('click', e => {
+      const a = e.target.closest('a[data-tab]');
+      const t = a && $('#tab-' + a.dataset.tab);
+      if (t) select(t);
+    });
 
     function planHTML(p, u) {
       const main = !!p.featured;
