@@ -77,9 +77,9 @@ export async function mailPaymentRequest(id: number, reminder: boolean) {
 		'',
 		'Po připsání platby vám pošleme daňový doklad.',
 		'',
-		'Tým SERVERO'
+		'Tým SERVEROS'
 	];
 	let sent = 0;
-	for (const addr of to) if (await sendMail(addr, `SERVERO: ${reminder ? 'připomínka platby' : 'výzva k platbě'} ${p.vs}`, lines.join('\n'))) sent++;
+	for (const addr of to) if (await sendMail(addr, `SERVEROS: ${reminder ? 'připomínka platby' : 'výzva k platbě'} ${p.vs}`, lines.join('\n'))) sent++;
 	return { to, sent };
 }

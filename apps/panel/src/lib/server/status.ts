@@ -69,7 +69,7 @@ export const COMPONENTS: ComponentDef[] = [
 	{
 		id: 'panel',
 		name: 'Klientský panel',
-		note: 'panel.servero.cz',
+		note: 'panel.serveros.cz',
 		now: 'max(up{job="servero-panel"})',
 		daily: 'max(avg_over_time(up{job="servero-panel"}[1d]))',
 		critical: false

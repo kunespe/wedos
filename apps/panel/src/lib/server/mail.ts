@@ -11,7 +11,7 @@ export async function sendMail(to: string, subject: string, text: string): Promi
 		return false;
 	}
 	try {
-		await transport.sendMail({ from: MAIL_FROM || 'SERVERO <info@servero.cz>', to, subject, text });
+		await transport.sendMail({ from: MAIL_FROM || 'SERVEROS <info@serveros.cz>', to, subject, text });
 		return true;
 	} catch (e) {
 		console.error('[mail] sending failed', e);

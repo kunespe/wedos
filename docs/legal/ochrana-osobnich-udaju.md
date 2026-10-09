@@ -1,4 +1,4 @@
-# Zásady ochrany osobních údajů SERVERO.CZ
+# Zásady ochrany osobních údajů SERVEROS.CZ
 
 > **⚠ Šablona, před zveřejněním nechat zkontrolovat právníkem.**
 > Údaje v hranatých závorkách doplnit. Ověřit seznam zpracovatelů a dobu uchování podle skutečného stavu.
@@ -12,15 +12,15 @@
 | Správce | [NÁZEV s.r.o. / JMÉNO A PŘÍJMENÍ] |
 | Sídlo | [ADRESA], Plzeň |
 | IČO | [IČO] |
-| Kontakt pro ochranu údajů | [gdpr@servero.cz] |
+| Kontakt pro ochranu údajů | [gdpr@serveros.cz] |
 
 Pověřence pro ochranu osobních údajů správce nejmenoval, protože mu to zákon neukládá.
 
-## 2. Dvě role SERVERO
+## 2. Dvě role SERVEROS
 
 | Role | Kdy | Co to znamená |
 |---|---|---|
-| **Správce** | Údaje o našich zákaznících (kontakty, fakturace, komunikace) a návštěvnících servero.cz | Řídí se těmito zásadami. |
+| **Správce** | Údaje o našich zákaznících (kontakty, fakturace, komunikace) a návštěvnících serveros.cz | Řídí se těmito zásadami. |
 | **Zpracovatel** | Data, která zákazník ukládá na náš hosting nebo servery (např. databáze jeho e-shopu) | Zpracováváme je jen podle pokynů zákazníka. Podmínky upravuje zpracovatelská smlouva (čl. 9). |
 
 ## 3. Jaké údaje zpracováváme a proč
@@ -33,7 +33,7 @@ Pověřence pro ochranu osobních údajů správce nejmenoval, protože mu to z�
 | Zákaznická podpora | obsah komunikace, záznamy tiketů | plnění smlouvy, písm. b) | po dobu smlouvy + [3 roky] |
 | Bezpečnost a provoz | IP adresy, technické logy (přístupy, chyby) | oprávněný zájem, písm. f) | [30 až 90 dní] |
 | Obchodní sdělení stávajícím zákazníkům | e-mail | oprávněný zájem, § 7 zák. č. 480/2004 Sb. | do odhlášení |
-| Analytika webu servero.cz | [anonymizované statistiky návštěvnosti] | [souhlas / oprávněný zájem] | [DOBA] |
+| Analytika webu serveros.cz | [anonymizované statistiky návštěvnosti] | [souhlas / oprávněný zájem] | [DOBA] |
 
 Údaje získáváme přímo od zákazníka (objednávka, komunikace) a z veřejných rejstříků (ARES).
 
@@ -71,13 +71,13 @@ Máte právo:
 - vznést námitku proti zpracování na základě oprávněného zájmu a proti obchodním sdělením,
 - odvolat souhlas, pokud je zpracování založeno na souhlasu.
 
-Žádost pošlete na [gdpr@servero.cz]. Vyřídíme ji do 1 měsíce.
+Žádost pošlete na [gdpr@serveros.cz]. Vyřídíme ji do 1 měsíce.
 
 Můžete podat stížnost u Úřadu pro ochranu osobních údajů, Pplk. Sochora 27, 170 00 Praha 7, www.uoou.gov.cz.
 
 ## 7. Cookies
 
-servero.cz používá [jen technicky nezbytné cookies / analytické cookies se souhlasem]. Klientský panel používá cookie pro přihlášení (nezbytná). Podrobnosti: [ODKAZ NA COOKIE LIŠTU].
+serveros.cz používá [jen technicky nezbytné cookies / analytické cookies se souhlasem]. Klientský panel používá cookie pro přihlášení (nezbytná). Podrobnosti: [ODKAZ NA COOKIE LIŠTU].
 
 ## 8. Porušení zabezpečení
 
@@ -101,4 +101,4 @@ Zákazníci služby Správa serverů dostávají samostatnou zpracovatelskou sml
 
 ## 10. Změny zásad
 
-Zásady můžeme aktualizovat. Aktuální verze je vždy na servero.cz. O podstatných změnách zákazníky informujeme e-mailem.
+Zásady můžeme aktualizovat. Aktuální verze je vždy na serveros.cz. O podstatných změnách zákazníky informujeme e-mailem.

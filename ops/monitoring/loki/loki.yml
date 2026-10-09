@@ -1,4 +1,4 @@
-# Loki single binary for SERVERO (127.0.0.1:3100), filesystem storage,
+# Loki single binary for SERVEROS (127.0.0.1:3100), filesystem storage,
 # 7 day retention enforced by the compactor. Tuned for a small box
 # (MemoryMax=200M in loki.service).
 auth_enabled: false

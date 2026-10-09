@@ -67,7 +67,7 @@
 				</div>
 				<div class="min-w-0 max-w-[85%] flex-1 rounded-[6px] border px-4 py-3 {staff ? 'border-accent/25 bg-info-bg' : 'border-line bg-surface'}">
 					<div class="mb-1 flex flex-wrap items-baseline justify-between gap-x-3 text-xs text-muted">
-						<span class="font-semibold text-ink">{staff ? `${name} · SERVERO` : m.mine ? `${name} (vy)` : name}</span>
+						<span class="font-semibold text-ink">{staff ? `${name} · SERVEROS` : m.mine ? `${name} (vy)` : name}</span>
 						<span title={dateTime(m.createdAt)}>{dateTime(m.createdAt)}</span>
 					</div>
 					<p class="text-sm break-words whitespace-pre-wrap">{m.body}</p>

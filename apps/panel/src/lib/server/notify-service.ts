@@ -20,8 +20,8 @@ export async function notifyServiceActive(serviceId: number): Promise<number> {
 		`Detail, dostupnost a další požadavky najdete v klientské zóně: ${ORIGIN}/app/sluzby/${s.id}`,
 		'Hesla e-mailem neposíláme. Přístup si vyžádáte v klientské zóně požadavkem „Přístup SFTP / SSH“.',
 		'',
-		'Tým SERVERO'
+		'Tým SERVEROS'
 	].join('\n');
-	const sent = await Promise.all(to.map((addr) => sendMail(addr, `SERVERO: ${s.label} běží`, text)));
+	const sent = await Promise.all(to.map((addr) => sendMail(addr, `SERVEROS: ${s.label} běží`, text)));
 	return sent.filter(Boolean).length;
 }

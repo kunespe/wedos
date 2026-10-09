@@ -114,8 +114,8 @@ export const actions: Actions = {
 			if (link && send) {
 				mailed = await sendMail(
 					order.email,
-					'SERVERO: přístup do klientské zóny',
-					`Dobrý den,\n\nzakládáme vaši službu. V klientské zóně uvidíte její stav, faktury a podporu.\nHeslo si nastavíte tady (odkaz platí 7 dní):\n\n${link}\n\nTým SERVERO`
+					'SERVEROS: přístup do klientské zóny',
+					`Dobrý den,\n\nzakládáme vaši službu. V klientské zóně uvidíte její stav, faktury a podporu.\nHeslo si nastavíte tady (odkaz platí 7 dní):\n\n${link}\n\nTým SERVEROS`
 				);
 			}
 			return {

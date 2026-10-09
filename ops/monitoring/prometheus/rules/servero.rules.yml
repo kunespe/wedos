@@ -1,4 +1,4 @@
-# Alert rules for SERVERO. Metric sources (all pushed by Alloy):
+# Alert rules for SERVEROS. Metric sources (all pushed by Alloy):
 #   job="node"           prometheus.exporter.unix (+ systemd + textfile collectors)
 #   job="mysql"          prometheus.exporter.mysql
 #   job="redis"          prometheus.exporter.redis

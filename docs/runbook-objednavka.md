@@ -1,6 +1,6 @@
 # Runbook: ruční vyřízení objednávky
 
-> Platí pro všechny objednávky z servero.cz. Objednávky zpracovává člověk, ne automat.
+> Platí pro všechny objednávky z serveros.cz. Objednávky zpracovává člověk, ne automat.
 > Ceny a kódy tarifů: `catalog/plans.json`. Obchodní kontext: `business-case.md`. Závazky vůči zákazníkovi: `legal/sla.md`.
 
 ## 0. Životní cyklus objednávky
@@ -12,7 +12,7 @@ new ──> contacted ──> provisioning ──> done
 
 | Stav | Kdy přepnout | Kdo |
 |---|---|---|
-| `new` | Automaticky po odeslání formuláře na servero.cz | systém |
+| `new` | Automaticky po odeslání formuláře na serveros.cz | systém |
 | `contacted` | Zákazníkovi jsme napsali nebo volali, údaje jsou kompletní | Petr (zástup Vojtěch) |
 | `provisioning` | Začali jsme zakládat službu | ten, kdo zakládá |
 | `done` | Služba běží, zákazník a služba jsou v panelu, pozvánka odeslána | ten, kdo zakládal |
@@ -40,7 +40,7 @@ Objednávka mimo pracovní dobu: časovač běží od 9:00 dalšího pracovního
 - [ ] Zkontrolovat úplnost: jméno, e-mail, telefon, fakturační údaje (IČO, DIČ, adresa), tarif, období (měsíc / rok), doména.
 - [ ] Ověřit IČO v ARES. Firma neexistuje nebo údaje nesedí: doptat se.
 - [ ] Rozpoznat podezřelou objednávku (nesmyslné údaje, freemail + neexistující firma, žádost o rozesílání e-mailů): `cancelled` s poznámkou, případně ověřit telefonem.
-- [ ] Kapacita: u web, wp, app zkontrolovat v monitor.servero.cz RAM a disk nodu. Nad 70 %: nahlásit Vojtěchovi (spouštěč nákupu dalšího nodu), objednávku založit na nodu s kapacitou.
+- [ ] Kapacita: u web, wp, app zkontrolovat v monitor.serveros.cz RAM a disk nodu. Nad 70 %: nahlásit Vojtěchovi (spouštěč nákupu dalšího nodu), objednávku založit na nodu s kapacitou.
 
 ### 2.2 Kontakt (`contacted`)
 
@@ -77,7 +77,7 @@ Objednávka mimo pracovní dobu: časovač běží od 9:00 dalšího pracovního
 - [ ] Web Plus: zapnout Redis (samostatná DB nebo prefix), připravit testovací prostředí (subdoména `test.` s heslem).
 - [ ] SSL: Let's Encrypt po nasměrování DNS. Do té doby dočasná adresa pro náhled.
 - [ ] Zálohy: ověřit, že nový web je v denním zálohovacím jobu (14 dní) a offsite kopii.
-- [ ] Monitoring: přidat HTTP kontrolu a expiraci SSL do monitor.servero.cz.
+- [ ] Monitoring: přidat HTTP kontrolu a expiraci SSL do monitor.serveros.cz.
 - [ ] Migrace (pokud chce): stáhnout soubory a DB, nahrát, upravit konfiguraci, ověřit na dočasné adrese, teprve pak přepnout DNS. Starý hosting nechat běžet do ověření.
 - [ ] DNS: A/AAAA na node, MX a SPF/DKIM/DMARC podle zvoleného mailového poskytovatele.
 - [ ] Zapsat do panelu (2.3), předat (2.4, šablona 5.2).
@@ -91,7 +91,7 @@ Kroky jako `web`, navíc:
 - [ ] Zařadit web do skriptu týdenních aktualizací (`operations/wordpress.json`, `operations/wp-maintenance.py`): záloha před aktualizací, ověření zálohy, aktualizace, kontrola HTTP 200 a vizuální kontrola.
 - [ ] Udělat první ruční běh aktualizace a zapsat výsledek.
 - [ ] Monitoring: dostupnost, SSL, odezva.
-- [ ] Zjistit, zda zákazník chce administrátorský účet WP pro nás (doporučeno samostatný účet `servero`).
+- [ ] Zjistit, zda zákazník chce administrátorský účet WP pro nás (doporučeno samostatný účet `serveros`).
 - [ ] Zapsat do panelu, předat (šablona 5.2 + doplněk WP).
 
 ### 3.3 `app`: Aplikace Node / Bun
@@ -114,10 +114,10 @@ Kroky jako `web`, navíc:
 | VPS M | CPX32 (4 vCPU, 8 GB) |
 | VPS L | CCX13 nebo větší podle zátěže, domluvit se zákazníkem |
 
-- [ ] Hetzner Cloud: vytvořit server v projektu SERVERO, lokalita Falkenstein / Norimberk (EU), Ubuntu LTS, náš SSH klíč, zapnout Hetzner Backups.
+- [ ] Hetzner Cloud: vytvořit server v projektu SERVEROS, lokalita Falkenstein / Norimberk (EU), Ubuntu LTS, náš SSH klíč, zapnout Hetzner Backups.
 - [ ] Pojmenovat `zakaznik-tarif-01`, štítky `customer=<id z panelu>`, `plan=<kód>`.
 - [ ] Hardening: nový admin uživatel, SSH jen klíčem, zakázat root login heslem, firewall (Hetzner Firewall + ufw), unattended-upgrades, fail2ban.
-- [ ] Monitoring: Alloy agent (metriky, logy) do monitor.servero.cz, alerty CPU, RAM, disk, dostupnost.
+- [ ] Monitoring: Alloy agent (metriky, logy) do monitor.serveros.cz, alerty CPU, RAM, disk, dostupnost.
 - [ ] Zálohy: Hetzner Backups + offsite záloha dat na Storage Box. Udělat zkušební obnovu jednoho souboru.
 - [ ] Software podle domluvy (CloudPanel, Docker, databáze, ...).
 - [ ] Root na vyžádání: jen po písemné žádosti, SSH klíč zákazníka, zapsat do poznámky, upozornit na omezení odpovědnosti (`legal/sla.md`).
@@ -144,7 +144,7 @@ Registrujeme přes reseller program Subreg (Gransy), do roku 2027 ručně, pak p
 
 **Registrace**
 - [ ] Ověřit dostupnost (whois / Subreg).
-- [ ] Založit nebo použít kontakt držitele: **držitelem je vždy zákazník**, ne SERVERO.
+- [ ] Založit nebo použít kontakt držitele: **držitelem je vždy zákazník**, ne SERVEROS.
 - [ ] Zaregistrovat na 1 rok, NSSET na naše DNS (nebo podle požadavku), zapnout automatické prodloužení u nás v panelu.
 - [ ] Zapsat do panelu: doména, datum expirace, ID v Subregu.
 
@@ -169,7 +169,7 @@ Hesla nikdy neposíláme e-mailem. Zákazník si heslo nastaví přes pozvánku.
 
 ### 5.1 První kontakt
 
-> **Předmět:** Vaše objednávka {tarif} na SERVERO.CZ
+> **Předmět:** Vaše objednávka {tarif} na SERVEROS.CZ
 >
 > Dobrý den, {jméno},
 >
@@ -183,12 +183,12 @@ Hesla nikdy neposíláme e-mailem. Zákazník si heslo nastaví přes pozvánku.
 > Jakmile budeme mít údaje, službu zprovozníme do pár hodin v pracovní době.
 >
 > S pozdravem
-> {jméno_technika}, SERVERO.CZ
-> {telefon} | podpora@servero.cz
+> {jméno_technika}, SERVEROS.CZ
+> {telefon} | podpora@serveros.cz
 
 ### 5.2 Předání: web a WordPress
 
-> **Předmět:** {tarif} je připraven: přístup do panelu SERVERO
+> **Předmět:** {tarif} je připraven: přístup do panelu SERVEROS
 >
 > Dobrý den, {jméno},
 >
@@ -211,11 +211,11 @@ Hesla nikdy neposíláme e-mailem. Zákazník si heslo nastaví přes pozvánku.
 > Kdyby cokoli nefungovalo, odpovězte na tento e-mail nebo volejte {telefon} (Po až Pá 9 až 17 h).
 >
 > S pozdravem
-> {jméno_technika}, SERVERO.CZ
+> {jméno_technika}, SERVEROS.CZ
 
 ### 5.3 Předání: aplikace
 
-> **Předmět:** Aplikace {název} běží na SERVERO
+> **Předmět:** Aplikace {název} běží na SERVEROS
 >
 > Dobrý den, {jméno},
 >
@@ -226,10 +226,10 @@ Hesla nikdy neposíláme e-mailem. Zákazník si heslo nastaví přes pozvánku.
 > - Logy: na požádání, nebo zjednodušeně v panelu.
 > - Při pádu se aplikace sama restartuje, o opakovaných pádech víme dřív než vy.
 >
-> Proměnné prostředí máme uložené bezpečně mimo repozitář. Změny posílejte na podpora@servero.cz.
+> Proměnné prostředí máme uložené bezpečně mimo repozitář. Změny posílejte na podpora@serveros.cz.
 >
 > S pozdravem
-> {jméno_technika}, SERVERO.CZ
+> {jméno_technika}, SERVEROS.CZ
 
 ### 5.4 Předání: VPS
 
@@ -245,7 +245,7 @@ Hesla nikdy neposíláme e-mailem. Zákazník si heslo nastaví přes pozvánku.
 > - Root přístup vám zřídíme na vyžádání: pošlete nám veřejný SSH klíč. Upozorňujeme, že změny provedené s root přístupem jdou mimo naši odpovědnost (viz SLA).
 >
 > S pozdravem
-> {jméno_technika}, SERVERO.CZ
+> {jméno_technika}, SERVEROS.CZ
 
 ### 5.5 Předání: správa serverů
 
@@ -256,13 +256,13 @@ Hesla nikdy neposíláme e-mailem. Zákazník si heslo nastaví přes pozvánku.
 > převzetí správy je hotové. Spravujeme: {seznam_serverů}.
 >
 > - Monitoring 24/7 a noční zálohy běží, zkušební obnova proběhla {datum}.
-> - Kontakt pro incidenty: {telefon_pohotovost}, běžné požadavky: podpora@servero.cz
+> - Kontakt pro incidenty: {telefon_pohotovost}, běžné požadavky: podpora@serveros.cz
 > - Reakční doby podle tarifu {tarif}: {reakční_doby}
 > - Přístup do panelu (přehled, reporty, faktury): {odkaz_pozvánky}
 > {jen 2U: - První měsíční report pošleme {datum}.}
 >
 > S pozdravem
-> Vojtěch Kotrč, SERVERO.CZ
+> Vojtěch Kotrč, SERVEROS.CZ
 
 ## 6. Zrušení objednávky (`cancelled`)
 

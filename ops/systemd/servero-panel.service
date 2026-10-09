@@ -1,5 +1,5 @@
 [Unit]
-Description=SERVERO customer panel (Node.js, 127.0.0.1:3000)
+Description=SERVEROS customer panel (Node.js, 127.0.0.1:3000)
 After=network.target mysql.service vw-dashboard-broker.service
 Wants=mysql.service
 

@@ -3,7 +3,7 @@
 	let { title, lead, children }: { title: string; lead?: string; children: Snippet } = $props();
 </script>
 
-<svelte:head><title>{title} · SERVERO</title></svelte:head>
+<svelte:head><title>{title} · SERVEROS</title></svelte:head>
 
 <div class="grid min-h-dvh lg:grid-cols-[1fr_minmax(420px,520px)]">
 	<!-- The rack face from the landing, reduced to a quiet backdrop. -->
@@ -21,13 +21,13 @@
 			{/each}
 		</div>
 		<div class="absolute bottom-10 left-16 text-white">
-			<div class="text-[44px] leading-none font-extrabold tracking-[0.12em]" style="font-variation-settings: 'wdth' 125">SERVERO</div>
+			<div class="text-[44px] leading-none font-extrabold tracking-[0.12em]" style="font-variation-settings: 'wdth' 125">SERVEROS</div>
 			<div class="mono mt-3 text-xs text-white/50">Klientská zóna a správa</div>
 		</div>
 	</div>
 	<div class="flex items-center justify-center bg-bg px-4 py-10">
 		<div class="w-full max-w-[380px]">
-			<div class="mb-8 font-extrabold tracking-[0.14em] lg:hidden" style="font-variation-settings: 'wdth' 118">SERVERO</div>
+			<div class="mb-8 font-extrabold tracking-[0.14em] lg:hidden" style="font-variation-settings: 'wdth' 118">SERVEROS</div>
 			<h1 class="text-[24px] font-extrabold tracking-[-0.01em]">{title}</h1>
 			{#if lead}<p class="mt-1.5 text-sm text-muted">{lead}</p>{/if}
 			<div class="mt-6">{@render children()}</div>

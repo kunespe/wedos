@@ -8,8 +8,11 @@ export const variables = defineEnvVars({
 	DATABASE_URL: { schema: z.url(), description: 'MySQL connection string for the panel database.' },
 	ORIGIN: { schema: z.url(), description: 'Public URL of the panel, used in invite links and e-mails.' },
 	PUBLIC_WEB_ORIGIN: {
-		schema: z.url(),
-		description: 'Origin of the servero.cz storefront allowed to POST /api/orders.'
+		schema: z
+			.string()
+			.transform((v) => v.split(',').map((o) => o.trim()).filter(Boolean))
+			.pipe(z.array(z.url()).min(1)),
+		description: 'Storefront origins allowed to call the public APIs (comma-separated; first is the main one).'
 	},
 	BROKER_SOCKET: { schema: optional, description: 'Unix socket of the root broker. Empty disables server operations.' },
 	PROMETHEUS_URL: { schema: optional, description: 'Prometheus HTTP API base URL. Empty hides metrics.' },

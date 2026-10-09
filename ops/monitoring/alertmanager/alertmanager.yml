@@ -1,16 +1,16 @@
-# Alertmanager for SERVERO (127.0.0.1:9093).
+# Alertmanager for SERVEROS (127.0.0.1:9093).
 # PLACEHOLDERS: replace the SMTP values and the Telegram chat_id. Secrets live
 # in files readable only by the alertmanager user (created by
 # install-monitoring.sh with empty content):
 #   /etc/alertmanager/secrets/smtp_password
 #   /etc/alertmanager/secrets/telegram_bot_token
 # Outbound port 25 is blocked on new Hetzner Cloud projects, so use a relay
-# with submission port 587 (for example the mailbox provider of servero.cz).
+# with submission port 587 (for example the mailbox provider of serveros.cz).
 global:
   resolve_timeout: 5m
   smtp_smarthost: "smtp.example.invalid:587"
-  smtp_from: "monitoring@servero.cz"
-  smtp_auth_username: "monitoring@servero.cz"
+  smtp_from: "monitoring@serveros.cz"
+  smtp_auth_username: "monitoring@serveros.cz"
   smtp_auth_password_file: /etc/alertmanager/secrets/smtp_password
   smtp_require_tls: true
 
@@ -42,12 +42,12 @@ inhibit_rules:
 receivers:
   - name: email
     email_configs:
-      - to: "admin@servero.cz"
+      - to: "admin@serveros.cz"
         send_resolved: true
 
   - name: email-and-telegram
     email_configs:
-      - to: "admin@servero.cz"
+      - to: "admin@serveros.cz"
         send_resolved: true
     telegram_configs:
       - bot_token_file: /etc/alertmanager/secrets/telegram_bot_token

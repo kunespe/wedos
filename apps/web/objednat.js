@@ -1,4 +1,4 @@
-/* Servero: order form. Plans come from plans.json, a copy of /catalog/plans.json (see main.js). */
+/* Serveros: order form. Plans come from plans.json, a copy of /catalog/plans.json (see main.js). */
 (() => {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -8,7 +8,7 @@
   /* ---------- Config ---------- */
   const ARES = 'https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/';
   const VAT = .21;
-  const MAIL = 'info@servero.cz';
+  const MAIL = 'info@serveros.cz';
 
   const kc = n => new Intl.NumberFormat('cs-CZ').format(Math.round(n));
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

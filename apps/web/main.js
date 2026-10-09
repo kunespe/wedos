@@ -137,7 +137,7 @@
     ['▸ build   docker build -t app:3f9c2e1', '✓ build   image 184 MB, 38 s'],
     ['▸ testy   npm test', '✓ testy   214 prošlo, 0 selhalo'],
     ['▸ deploy  rolling update 3/3', '✓ deploy  zdravé, 0 s výpadku'],
-    ['▸ živě    https://servero.cz', '✓ živě    200 OK, 84 ms'],
+    ['▸ živě    https://serveros.cz', '✓ živě    200 OK, 84 ms'],
   ];
   const addLog = (text, cls) => {
     const line = document.createElement('div');
@@ -309,7 +309,7 @@
       if (!res.ok) throw new Error(res.status);
       data = await res.json();
     } catch {
-      pricing.insertAdjacentHTML('afterend', '<p class="pricing__nojs">Ceník se teď nepodařilo načíst. Můžete rovnou <a href="objednat.html">objednat službu</a> nebo napsat na <a href="mailto:info@servero.cz">info@servero.cz</a>.</p>');
+      pricing.insertAdjacentHTML('afterend', '<p class="pricing__nojs">Ceník se teď nepodařilo načíst. Můžete rovnou <a href="objednat.html">objednat službu</a> nebo napsat na <a href="mailto:info@serveros.cz">info@serveros.cz</a>.</p>');
       return;
     }
     const mc = data.yearlyMonthsCharged, free = 12 - mc;

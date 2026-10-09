@@ -59,7 +59,7 @@ for (const site of snapshot.sites) {
 	if (!customer) {
 		const [{ id }] = await db
 			.insert(customers)
-			.values({ name: clientName, email: `doplnit+${domain}@servero.cz`, note: 'Převzato z Vytvořit web. Doplňte kontakt a IČO.' })
+			.values({ name: clientName, email: `doplnit+${domain}@serveros.cz`, note: 'Převzato z Vytvořit web. Doplňte kontakt a IČO.' })
 			.$returningId();
 		[customer] = await db.select().from(customers).where(eq(customers.id, id));
 	}

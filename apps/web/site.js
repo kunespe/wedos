@@ -1,4 +1,4 @@
-/* Servero: shared bits for every page. Loads before the page script, which finds them on window.servero. */
+/* Serveros: shared bits for every page. Loads before the page script, which finds them on window.servero. */
 window.servero = (() => {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -25,7 +25,7 @@ window.servero = (() => {
      A localhost override only applies while this page is served from localhost too,
      so a dev value left in the HTML never sends real orders to a dev machine. */
   const isLocal = h => /^(localhost|127\.0\.0\.1|\[::1\])$/.test(h);
-  let panel = 'https://panel.servero.cz';
+  let panel = 'https://panel.serveros.cz';
   const metaPanel = $('meta[name="servero-panel"]');
   if (metaPanel && metaPanel.content) {
     try {

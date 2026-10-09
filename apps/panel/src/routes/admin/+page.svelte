@@ -49,7 +49,7 @@
 				{/each}
 			</ul>
 		{:else}
-			<Empty title="Zatím žádné objednávky">Objednávky z webu servero.cz se objeví tady.</Empty>
+			<Empty title="Zatím žádné objednávky">Objednávky z webu serveros.cz se objeví tady.</Empty>
 		{/if}
 	</Panel>
 

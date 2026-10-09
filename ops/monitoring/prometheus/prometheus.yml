@@ -1,4 +1,4 @@
-# Prometheus for SERVERO (127.0.0.1:9090).
+# Prometheus for SERVEROS (127.0.0.1:9090).
 # Prometheus does not scrape anything itself except its own /metrics: Grafana
 # Alloy is the only agent and pushes everything via remote_write
 # (--web.enable-remote-write-receiver). Retention is set by flags in

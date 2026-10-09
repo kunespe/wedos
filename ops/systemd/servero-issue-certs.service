@@ -1,5 +1,5 @@
 [Unit]
-Description=Issue SERVERO TLS certificates once DNS points here
+Description=Issue SERVEROS TLS certificates once DNS points here
 After=network-online.target nginx.service
 Wants=network-online.target
 

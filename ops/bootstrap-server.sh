@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-time preparation of vytvorit-web for SERVERO. Run ON THE SERVER as root.
+# One-time preparation of vytvorit-web for SERVEROS. Run ON THE SERVER as root.
 #
 #   bootstrap-server.sh            dry run (default): prints what it would do
 #   bootstrap-server.sh --apply    creates users, directories, the panel database
@@ -16,8 +16,8 @@ MODE=dry-run
 [[ "${1:-}" == -h || "${1:-}" == --help ]] && { sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'; exit 0; }
 [[ $EUID -eq 0 ]] || { echo "run as root" >&2; exit 1; }
 
-DOMAINS=(servero.cz panel.servero.cz monitor.servero.cz)
-WEB_ROOT=/home/servero/htdocs/servero.cz
+DOMAINS=(serveros.cz panel.serveros.cz monitor.serveros.cz)
+WEB_ROOT=/home/servero/htdocs/serveros.cz
 ENV_FILE=/etc/servero-panel/env
 CERT_DIR=/etc/nginx/ssl-certificates
 DB_NAME=servero_panel
@@ -71,21 +71,21 @@ elif [[ -z "$DB_PASS" ]]; then
 elif [[ "$MODE" == apply ]]; then
     umask 077
     cat >"$ENV_FILE" <<ENV
-# SERVERO panel production settings. Documented in apps/panel/.env.example.
+# SERVEROS panel production settings. Documented in apps/panel/.env.example.
 DATABASE_URL=mysql://$DB_USER:$DB_PASS@127.0.0.1:3306/$DB_NAME
-ORIGIN=https://panel.servero.cz
-PUBLIC_WEB_ORIGIN=https://servero.cz
+ORIGIN=https://panel.serveros.cz
+PUBLIC_WEB_ORIGIN=https://serveros.cz
 BROKER_SOCKET=/run/vw-dashboard/broker.sock
 PROMETHEUS_URL=http://127.0.0.1:9090
 PROBES_FILE=/var/lib/servero-panel/probes.json
-GRAFANA_URL=https://monitor.servero.cz
+GRAFANA_URL=https://monitor.serveros.cz
 CLOUDPANEL_URL=https://2.31.25.249:8443
 # Empty until an SMTP relay on port 587 is set up (Hetzner blocks outbound 25); mail is logged meanwhile.
 SMTP_URL=
-MAIL_FROM=SERVERO <info@servero.cz>
-ORDER_NOTIFY_EMAIL=info@servero.cz
+MAIL_FROM=SERVEROS <info@serveros.cz>
+ORDER_NOTIFY_EMAIL=info@serveros.cz
 TURNSTILE_SECRET=
-SUPPLIER_NAME=SERVERO
+SUPPLIER_NAME=SERVEROS
 SUPPLIER_ICO=
 SUPPLIER_DIC=
 SUPPLIER_ADDRESS=Plzeň

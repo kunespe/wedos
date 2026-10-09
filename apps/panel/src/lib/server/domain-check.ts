@@ -1,7 +1,7 @@
 import { domainToASCII, domainToUnicode } from 'node:url';
 
 /**
- * Domain availability over RDAP, for the public search on servero.cz.
+ * Domain availability over RDAP, for the public search on serveros.cz.
  * .cz goes straight to CZ.NIC, other TLDs through the IANA bootstrap file.
  * RDAP answers 404 for a name nobody holds and 200 for a registered one;
  * anything else is "we do not know", never a guess.

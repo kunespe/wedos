@@ -2,7 +2,7 @@
 const e = process.env;
 export const DATABASE_URL = e.DATABASE_URL ?? '';
 export const ORIGIN = e.ORIGIN ?? 'http://localhost:5173';
-export const PUBLIC_WEB_ORIGIN = e.PUBLIC_WEB_ORIGIN ?? 'http://localhost:4410';
+export const PUBLIC_WEB_ORIGIN = (e.PUBLIC_WEB_ORIGIN ?? 'http://localhost:4410').split(',');
 export const BROKER_SOCKET = e.BROKER_SOCKET ?? '';
 export const PROMETHEUS_URL = e.PROMETHEUS_URL ?? '';
 export const PROBES_FILE = e.PROBES_FILE ?? '';
@@ -12,7 +12,7 @@ export const MAIL_FROM = '';
 export const ORDER_NOTIFY_EMAIL = '';
 export const TURNSTILE_SECRET = '';
 export const CLOUDPANEL_URL = e.CLOUDPANEL_URL ?? '';
-export const SUPPLIER_NAME = 'SERVERO';
+export const SUPPLIER_NAME = 'SERVEROS';
 export const SUPPLIER_ICO = '';
 export const SUPPLIER_DIC = '';
 export const SUPPLIER_ADDRESS = '';

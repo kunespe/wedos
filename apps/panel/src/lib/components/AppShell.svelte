@@ -40,7 +40,7 @@
 				<span class="flex h-[7px] w-5 items-center justify-end rounded-[2px] bg-chassis-2 pr-[3px]"><span class="size-[3px] rounded-full bg-led"></span></span>
 				<span class="flex h-[7px] w-5 items-center justify-end rounded-[2px] bg-chassis-2 pr-[3px]"><span class="size-[3px] rounded-full bg-amber"></span></span>
 			</span>
-			SERVERO
+			SERVEROS
 		</a>
 		<span class="mono rounded-[4px] border border-white/15 px-1.5 py-px text-[10px] text-white/55">{area}</span>
 	</div>
@@ -113,7 +113,7 @@
 		<button type="button" class="grid size-9 place-items-center text-white" aria-label="Otevřít menu" onclick={() => (drawer = true)}>
 			<Menu size={20} />
 		</button>
-		<span class="font-extrabold tracking-[0.14em] text-white" style="font-variation-settings: 'wdth' 118">SERVERO</span>
+		<span class="font-extrabold tracking-[0.14em] text-white" style="font-variation-settings: 'wdth' 118">SERVEROS</span>
 		<button type="button" class="grid size-9 place-items-center text-white" aria-label="Hledat" onclick={() => palette?.show()}>
 			<Search size={18} />
 		</button>

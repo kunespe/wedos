@@ -63,7 +63,7 @@ export const actions: Actions = {
 		});
 		await notifyTeam(
 			ticket.id,
-			`SERVERO: odpověď v požadavku #${ticket.id}: ${ticket.subject}`,
+			`SERVEROS: odpověď v požadavku #${ticket.id}: ${ticket.subject}`,
 			`${user.name} <${user.email}> odpověděl${ticket.status === 'closed' ? ' a znovu otevřel uzavřený požadavek' : ''}.\n\n${body}`
 		);
 		return { message: ticket.status === 'closed' ? 'Odesláno, požadavek je znovu otevřený.' : 'Odesláno. Ozveme se co nejdřív.' };

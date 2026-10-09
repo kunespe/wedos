@@ -8,7 +8,7 @@
 	}: { title: string; crumbs?: { href: string; label: string }[]; meta?: Snippet; actions?: Snippet } = $props();
 </script>
 
-<svelte:head><title>{title} · SERVERO</title></svelte:head>
+<svelte:head><title>{title} · SERVEROS</title></svelte:head>
 
 <header class="mb-5 flex flex-wrap items-end justify-between gap-3">
 	<div class="min-w-0">

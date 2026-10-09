@@ -1,5 +1,6 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { ORDER_NOTIFY_EMAIL, ORIGIN, PUBLIC_WEB_ORIGIN, TURNSTILE_SECRET } from '$app/env/private';
+import { ORDER_NOTIFY_EMAIL, ORIGIN, TURNSTILE_SECRET } from '$app/env/private';
+import { storefrontOrigins } from '#lib/server/public-api.ts';
 import { findPlan } from '#lib/server/catalog.ts';
 import { db } from '#lib/server/db/index.ts';
 import { orders } from '#lib/server/db/schema.ts';
@@ -8,7 +9,7 @@ import { czk, periodTotal } from '#lib/format.ts';
 import { fieldErrors, publicOrderSchema } from '#lib/orders.ts';
 
 const cors = {
-	'Access-Control-Allow-Origin': PUBLIC_WEB_ORIGIN,
+	'Access-Control-Allow-Origin': storefrontOrigins[0],
 	'Access-Control-Allow-Methods': 'POST, OPTIONS',
 	'Access-Control-Allow-Headers': 'Content-Type',
 	'Access-Control-Max-Age': '86400',
@@ -47,7 +48,7 @@ export const OPTIONS: RequestHandler = () => new Response(null, { status: 204, h
 export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	const ip = getClientAddress();
 	const origin = request.headers.get('origin');
-	if (origin && origin !== PUBLIC_WEB_ORIGIN && origin !== ORIGIN)
+	if (origin && !storefrontOrigins.includes(origin) && origin !== ORIGIN)
 		return json({ errors: { form: 'Nepovolený původ požadavku.' } }, { status: 403, headers: cors });
 	if (limited(ip)) return json({ errors: { form: 'Zkuste to prosím za chvíli.' } }, { status: 429, headers: cors });
 
@@ -113,8 +114,8 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		sendMail(ORDER_NOTIFY_EMAIL, `Nová objednávka #${id}: ${plan.name}`, `${summary}\n\nDetail: ${ORIGIN}/admin/objednavky/${id}`),
 		sendMail(
 			order.email,
-			`SERVERO: objednávka č. ${id} je u nás`,
-			`Dobrý den,\n\nděkujeme za objednávku. Ozveme se do pár hodin (v pracovní době) s přístupy a dalšími kroky.\n\n${summary}\n\nTým SERVERO\ninfo@servero.cz, +420 773 559 645`
+			`SERVEROS: objednávka č. ${id} je u nás`,
+			`Dobrý den,\n\nděkujeme za objednávku. Ozveme se do pár hodin (v pracovní době) s přístupy a dalšími kroky.\n\n${summary}\n\nTým SERVEROS\ninfo@serveros.cz, +420 773 559 645`
 		)
 	]);
 

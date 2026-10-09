@@ -1,4 +1,4 @@
-# Datasources for SERVERO Grafana. Copied to /etc/grafana/provisioning/datasources/.
+# Datasources for SERVEROS Grafana. Copied to /etc/grafana/provisioning/datasources/.
 # $GRAFANA_MYSQL_RO_PASSWORD comes from /etc/servero-monitoring/grafana.env.
 apiVersion: 1
 
@@ -38,7 +38,7 @@ datasources:
       implementation: prometheus
       handleGrafanaManagedAlerts: false
 
-  - name: Servero panel DB
+  - name: Serveros panel DB
     uid: servero-mysql
     type: mysql
     access: proxy

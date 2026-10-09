@@ -57,8 +57,8 @@
 </script>
 
 <svelte:head>
-	<title>Stav služeb · SERVERO</title>
-	<meta name="description" content="Aktuální dostupnost služeb SERVERO a historie za posledních 90 dní." />
+	<title>Stav služeb · SERVEROS</title>
+	<meta name="description" content="Aktuální dostupnost služeb SERVEROS a historie za posledních 90 dní." />
 </svelte:head>
 
 <div class="min-h-dvh bg-bg">
@@ -66,7 +66,7 @@
 	<header class="bg-chassis-3 text-white">
 		<div class="mx-auto max-w-[960px] px-4 pt-6 pb-10 sm:px-6">
 			<div class="flex items-center justify-between gap-4">
-				<a href="https://servero.cz" class="text-[20px] font-extrabold tracking-[0.12em]" style="font-variation-settings: 'wdth' 125">SERVERO</a>
+				<a href="https://serveros.cz" class="text-[20px] font-extrabold tracking-[0.12em]" style="font-variation-settings: 'wdth' 125">SERVEROS</a>
 				<span class="mono text-xs text-white/50">stav služeb</span>
 			</div>
 
@@ -110,7 +110,7 @@
 				<p class="mt-2 max-w-[60ch] text-muted">
 					Dohled nad weby a servery nasazujeme. Jakmile poběží, uvidíte tu dostupnost každé části služby a historii za
 					posledních 90 dní. Když něco nefunguje teď, napište na
-					<a class="underline" href="mailto:info@servero.cz">info@servero.cz</a> nebo volejte
+					<a class="underline" href="mailto:info@serveros.cz">info@serveros.cz</a> nebo volejte
 					<a class="underline" href="tel:+420773559645">+420 773 559 645</a>.
 				</p>
 			</section>
@@ -186,8 +186,8 @@
 	<footer class="mx-auto flex max-w-[960px] flex-wrap justify-between gap-3 border-t border-line px-4 py-6 text-xs text-muted sm:px-6">
 		<span>{status.enabled ? 'Měříme každou minutu z našeho monitoringu. ' : ''}Ukazujeme jen souhrnná čísla, žádné weby ani zákazníky jednotlivě.</span>
 		<span class="flex gap-4">
-			<a class="underline" href="https://servero.cz">servero.cz</a>
-			<a class="underline" href="mailto:info@servero.cz">info@servero.cz</a>
+			<a class="underline" href="https://serveros.cz">serveros.cz</a>
+			<a class="underline" href="mailto:info@serveros.cz">info@serveros.cz</a>
 		</span>
 	</footer>
 </div>

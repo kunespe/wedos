@@ -1,5 +1,5 @@
 [Unit]
-Description=Alertmanager (SERVERO, 127.0.0.1:9093)
+Description=Alertmanager (SERVEROS, 127.0.0.1:9093)
 Documentation=https://prometheus.io/docs/alerting/latest/alertmanager/
 After=network-online.target
 Wants=network-online.target

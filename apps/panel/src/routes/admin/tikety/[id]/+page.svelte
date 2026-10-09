@@ -46,7 +46,7 @@
 			<li class="rounded-[6px] border p-4 {m.internal ? 'border-amber/50 bg-warn-bg' : staff ? 'border-line bg-surface' : 'border-line bg-surface-2'}">
 				<div class="mb-1.5 flex flex-wrap items-center gap-2 text-xs text-muted">
 					<span class="font-semibold text-ink">{m.author ?? data.customer.name}</span>
-					<span>{staff ? 'SERVERO' : 'zákazník'}</span>
+					<span>{staff ? 'SERVEROS' : 'zákazník'}</span>
 					{#if m.internal}<span class="mono font-semibold text-warn">INTERNÍ</span>{/if}
 					<span class="ml-auto">{dateTime(m.createdAt)}</span>
 				</div>

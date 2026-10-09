@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Idempotent installer of the SERVERO monitoring stack on vytvorit-web.
+# Idempotent installer of the SERVEROS monitoring stack on vytvorit-web.
 #
 #   Grafana OSS + Grafana Alloy   apt.grafana.com (signed-by keyring, pinned versions)
 #   Prometheus, Alertmanager, Loki official GitHub release archives, pinned, sha256 verified
@@ -320,7 +320,7 @@ else
         "exporter:${exporter_pw}@(127.0.0.1:3306)/"
     write_secret_once /etc/servero-monitoring/grafana.env 0640 root "$(grp grafana)" "$(cat <<EOF
 # Grafana secrets for grafana-server.service (EnvironmentFile drop-in).
-# Admin password: initial login as "admin" at https://monitor.servero.cz
+# Admin password: initial login as "admin" at https://monitor.serveros.cz
 GF_SECURITY_ADMIN_PASSWORD=$(random_secret)
 # Signs cookies and encrypts datasource secrets; never change after first start.
 GF_SECURITY_SECRET_KEY=$(random_secret)
@@ -424,7 +424,7 @@ fi
 say "Next steps"
 note "1. Run /etc/servero-monitoring/mysql-users.sql as MySQL admin, then: systemctl restart alloy grafana-server"
 note "2. Fill SMTP and Telegram secrets in /etc/alertmanager/secrets/ and GF_SMTP_PASSWORD, then restart"
-note "3. Deploy ops/nginx/monitor.servero.cz.conf with ops/deploy.sh (cert required)"
+note "3. Deploy ops/nginx/monitor.serveros.cz.conf with ops/deploy.sh (cert required)"
 if ((${#WARNINGS[@]})); then
     say "Warnings"
     for w in "${WARNINGS[@]}"; do note "- $w"; done

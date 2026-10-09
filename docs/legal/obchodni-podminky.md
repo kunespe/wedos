@@ -1,4 +1,4 @@
-# Obchodní podmínky SERVERO.CZ
+# Obchodní podmínky SERVEROS.CZ
 
 > **⚠ Šablona, před zveřejněním nechat zkontrolovat právníkem.**
 > Údaje v hranatých závorkách doplnit. Rozhodnout, zda provozovatelem bude s.r.o. nebo OSVČ, a podle toho upravit článek 1.
@@ -14,9 +14,9 @@
 | IČO | [IČO] |
 | DIČ | [DIČ / neplátce DPH] |
 | Zápis | [Obchodní rejstřík vedený Krajským soudem v Plzni, oddíl C, vložka XXXX / živnostenský rejstřík] |
-| E-mail | podpora@servero.cz |
+| E-mail | podpora@serveros.cz |
 | Telefon | [TELEFON] |
-| Web | servero.cz |
+| Web | serveros.cz |
 
 (dále „poskytovatel")
 
@@ -26,11 +26,11 @@
 
 2.2 Zákazníkem může být podnikatel nebo spotřebitel. Ustanovení označená „jen pro spotřebitele" platí pouze pro spotřebitele ve smyslu § 419 občanského zákoníku.
 
-2.3 Nedílnou součástí smlouvy jsou: tyto OP, aktuální ceník na servero.cz, dokument [SLA](sla.md) a [Zásady ochrany osobních údajů](ochrana-osobnich-udaju.md). U smluv na správu serverů může být uzavřena individuální smlouva, která má před OP přednost.
+2.3 Nedílnou součástí smlouvy jsou: tyto OP, aktuální ceník na serveros.cz, dokument [SLA](sla.md) a [Zásady ochrany osobních údajů](ochrana-osobnich-udaju.md). U smluv na správu serverů může být uzavřena individuální smlouva, která má před OP přednost.
 
 ## 3. Uzavření smlouvy
 
-3.1 Zákazník odešle objednávku formulářem na servero.cz. Objednávka je návrh na uzavření smlouvy.
+3.1 Zákazník odešle objednávku formulářem na serveros.cz. Objednávka je návrh na uzavření smlouvy.
 
 3.2 Objednávku zpracovává člověk. Poskytovatel zákazníka kontaktuje, může si vyžádat doplnění nebo ověření údajů.
 
@@ -40,7 +40,7 @@
 
 ## 4. Cena a platební podmínky
 
-4.1 Ceny jsou uvedeny v ceníku na servero.cz, v Kč, [bez DPH / poskytovatel není plátcem DPH].
+4.1 Ceny jsou uvedeny v ceníku na serveros.cz, v Kč, [bez DPH / poskytovatel není plátcem DPH].
 
 4.2 Služby se platí předem na zvolené období (měsíc nebo rok). Při roční platbě zákazník platí 10 měsíců.
 
@@ -140,7 +140,7 @@
 
 ## 13. Jen pro spotřebitele
 
-13.1 **Odstoupení do 14 dnů.** Spotřebitel může od smlouvy uzavřené distančně odstoupit do 14 dnů od uzavření bez udání důvodu, e-mailem na podpora@servero.cz. Vzorový formulář: [ODKAZ].
+13.1 **Odstoupení do 14 dnů.** Spotřebitel může od smlouvy uzavřené distančně odstoupit do 14 dnů od uzavření bez udání důvodu, e-mailem na podpora@serveros.cz. Vzorový formulář: [ODKAZ].
 
 13.2 Pokud spotřebitel výslovně požádá o zahájení služby před uplynutím lhůty k odstoupení (např. o okamžité zřízení a migraci), uhradí poměrnou část ceny za služby poskytnuté do odstoupení. U registrace domény nelze po jejím provedení odstoupit (§ 1837 občanského zákoníku, služba plně poskytnutá / zboží upravené na přání).
 

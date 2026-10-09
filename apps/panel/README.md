@@ -1,11 +1,11 @@
-# SERVERO panel
+# SERVEROS panel
 
-Klientská zóna a administrace SERVERO na `panel.servero.cz`. SvelteKit 3 (Svelte 5), TypeScript, Tailwind 4, Drizzle nad MySQL 8.4.
+Klientská zóna a administrace SERVEROS na `panel.serveros.cz`. SvelteKit 3 (Svelte 5), TypeScript, Tailwind 4, Drizzle nad MySQL 8.4.
 
 - **Zákazník** (`/app`) vidí své služby, jejich dostupnost, domény, předplatné a podporu.
 - **Správce** (`/admin`) vyřizuje objednávky, zakládá zákazníky a služby a obsluhuje server přes stávající broker.
 
-Zřizování je ruční: objednávka ze servero.cz přijde do `/admin/objednavky`. Správce ji převede na zákazníka a službu ve stavu „Zřizujeme“, server připraví podle `docs/runbook-objednavka.md` a pak službu přepne na „Běží“. Panel sám nic na serveru nespouští, kromě akcí, které správce výslovně klikne. Ty jdou přes `dashboard/broker.py` (Unix socket, pevný seznam operací).
+Zřizování je ruční: objednávka ze serveros.cz přijde do `/admin/objednavky`. Správce ji převede na zákazníka a službu ve stavu „Zřizujeme“, server připraví podle `docs/runbook-objednavka.md` a pak službu přepne na „Běží“. Panel sám nic na serveru nespouští, kromě akcí, které správce výslovně klikne. Ty jdou přes `dashboard/broker.py` (Unix socket, pevný seznam operací).
 
 ## Lokální vývoj
 
@@ -47,7 +47,7 @@ Testy: `pnpm check`, `pnpm test`. Databázové testy potřebují `TEST_DATABASE_
 - `src/lib/server/fulfilment.ts`: převod objednávky na zákazníka, účet a službu.
 - `src/lib/server/broker.ts`: klient root brokeru; `snapshot.ts` načítá stav serveru.
 - `src/lib/server/probes.ts`: zapisuje cíle pro monitoring (Alloy blackbox) z aktivních služeb.
-- `src/routes/api/orders`: veřejné API objednávkového formuláře (CORS jen pro servero.cz, honeypot, limit).
+- `src/routes/api/orders`: veřejné API objednávkového formuláře (CORS jen pro serveros.cz, honeypot, limit).
 - `src/routes/internal/metrics`: obchodní metriky pro Prometheus, jen z loopbacku.
 
 ## Zabezpečení

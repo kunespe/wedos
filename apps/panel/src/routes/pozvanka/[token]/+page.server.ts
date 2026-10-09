@@ -18,7 +18,7 @@ async function findInvite(token: string) {
 
 export const load: PageServerLoad = async ({ params }) => {
 	const row = await findInvite(params.token);
-	if (!row || row.user.disabled) error(410, 'Odkaz už neplatí. Požádejte nás o nový na info@servero.cz.');
+	if (!row || row.user.disabled) error(410, 'Odkaz už neplatí. Požádejte nás o nový na info@serveros.cz.');
 	return { email: row.user.email, name: row.user.name, purpose: row.invite.purpose };
 };
 

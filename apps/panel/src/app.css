@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-/* SERVERO panel: the landing's rack, turned into a quiet workplace. */
+/* SERVEROS panel: the landing's rack, turned into a quiet workplace. */
 
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 

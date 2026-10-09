@@ -1,8 +1,8 @@
-# SERVERO ops: monitoring a nasazení
+# SERVEROS ops: monitoring a nasazení
 
 Provozní vrstva pro server `vytvorit-web` (Hetzner Cloud, 2.31.25.249, Ubuntu 26.04):
 monitoring (Grafana, Prometheus, Loki, Alertmanager, Alloy), nginx vhosty pro
-`servero.cz`, `panel.servero.cz`, `monitor.servero.cz`, systemd jednotky a skripty
+`serveros.cz`, `panel.serveros.cz`, `monitor.serveros.cz`, systemd jednotky a skripty
 pro instalaci a nasazení. Bez Dockeru: nativní binárky a apt balíčky pod systemd,
 každá služba s `MemoryMax`.
 
@@ -15,12 +15,12 @@ Oba skripty jsou ve výchozím stavu **dry run** a nic nemění. Změny dělá a
 | `bootstrap-server.sh --apply` | Hotovo: uživatelé `servero` a `servero-panel`, DB `servero_panel`, `/etc/servero-panel/env`, certbot, klíče certifikátů `0600`, ufw |
 | ufw | Aktivní: 22, 80, 443/tcp+udp, 8443. Port 8080 a interní porty jsou zvenku zavřené |
 | Panel | Běží (`servero-panel.service`), migrace a ceník nahrané, převzaté weby centrumarete.cz a jrmontaze.cz, admin pozván |
-| Web servero.cz | Nasazený v `/home/servero/htdocs/servero.cz` |
+| Web serveros.cz | Nasazený v `/home/servero/htdocs/serveros.cz` |
 | Monitoring | Prometheus, Loki, Alloy, Alertmanager, Grafana běží; všechny cíle `up` |
 | Certifikáty | Zatím self-signed. `servero-issue-certs.timer` každou hodinu zkusí Let's Encrypt, jakmile DNS ukáže na 2.31.25.249 |
 
 Zbývá:
-1. **DNS** u Váš-hosting: `servero.cz`, `www`, `panel`, `monitor` jako A záznam na `2.31.25.249`. Certifikáty pak naskočí samy do hodiny (nebo hned: `systemctl start servero-issue-certs`).
+1. **DNS** u Váš-hosting: `serveros.cz`, `www`, `panel`, `monitor` jako A záznam na `2.31.25.249`. Certifikáty pak naskočí samy do hodiny (nebo hned: `systemctl start servero-issue-certs`).
 2. **SMTP relay** (port 587; Hetzner blokuje odchozí 25): doplnit `SMTP_URL` v `/etc/servero-panel/env`, `smtp_*` v `alertmanager.yml` a `/etc/alertmanager/secrets/smtp_password`, `GF_SMTP_PASSWORD`. Do té doby panel e-maily jen loguje (`journalctl -u servero-panel`).
 3. **Telegram** pro alerty: token do `/etc/alertmanager/secrets/telegram_bot_token` (bez koncového nového řádku) a `chat_id` do `alertmanager.yml`.
 4. **Platby**: `SUPPLIER_*`, `PAYMENT_ACCOUNT`, `PAYMENT_IBAN`, `VAT_RATE` v `/etc/servero-panel/env`, pak `systemctl restart servero-panel`.
@@ -31,9 +31,9 @@ Zbývá:
 ```mermaid
 flowchart LR
     internet((Internet)) -->|443| nginx[nginx :80/:443]
-    nginx -->|servero.cz| static[/home/servero/htdocs/servero.cz/]
-    nginx -->|panel.servero.cz| panel[servero-panel<br/>Node 127.0.0.1:3000]
-    nginx -->|monitor.servero.cz| grafana[Grafana<br/>127.0.0.1:3001]
+    nginx -->|serveros.cz| static[/home/servero/htdocs/serveros.cz/]
+    nginx -->|panel.serveros.cz| panel[servero-panel<br/>Node 127.0.0.1:3000]
+    nginx -->|monitor.serveros.cz| grafana[Grafana<br/>127.0.0.1:3001]
     nginx -->|weby klientů| varnish[Varnish :6081] --> backend[nginx :8080] --> php[PHP-FPM]
     panel -->|Unix socket| broker[vw-dashboard-broker]
     panel -->|probes.json| probes[(/var/lib/servero-panel/probes.json)]
@@ -83,10 +83,10 @@ Prometheus sám nic nescrapuje (kromě sebe). Všechny metriky posílá Alloy p�
 | `monitoring/grafana/provisioning/` | `/etc/grafana/provisioning/` | Datasources (Prometheus, Loki, Alertmanager, MySQL) a poskytovatel dashboardů |
 | `monitoring/grafana/dashboards/*.json` | `/var/lib/grafana/dashboards/servero/` | Dashboardy: server, MySQL, weby, zálohy, logy, byznys |
 | `nginx/00-servero-common.conf` | `/etc/nginx/sites-enabled/` | Rate-limit zóny a websocket `map` (http kontext) |
-| `nginx/servero-acme.conf` | `/etc/nginx/sites-enabled/` | Port 80: ACME http-01 a 301 na HTTPS pro všechny SERVERO hosty |
-| `nginx/servero.cz.conf` | `/etc/nginx/sites-enabled/` | Statický web, www na apex, gzip, cache, bezpečnostní hlavičky, CSP |
-| `nginx/panel.servero.cz.conf` | `/etc/nginx/sites-enabled/` | Proxy na panel, rate limit `/login` a `/api/orders`, `/internal/` je 404 |
-| `nginx/monitor.servero.cz.conf` | `/etc/nginx/sites-enabled/` | Proxy na Grafanu včetně Grafana Live websocketu |
+| `nginx/servero-acme.conf` | `/etc/nginx/sites-enabled/` | Port 80: ACME http-01 a 301 na HTTPS pro všechny SERVEROS hosty |
+| `nginx/serveros.cz.conf` | `/etc/nginx/sites-enabled/` | Statický web, www na apex, gzip, cache, bezpečnostní hlavičky, CSP |
+| `nginx/panel.serveros.cz.conf` | `/etc/nginx/sites-enabled/` | Proxy na panel, rate limit `/login` a `/api/orders`, `/internal/` je 404 |
+| `nginx/monitor.serveros.cz.conf` | `/etc/nginx/sites-enabled/` | Proxy na Grafanu včetně Grafana Live websocketu |
 | `nginx/servero/*.conf` | `/etc/nginx/servero/` | Sdílené bezpečnostní hlavičky a proxy hlavičky |
 | `systemd/*.service`, `*.timer`, `*.service.d/` | `/etc/systemd/system/` | Jednotky a drop-iny s `MemoryMax` |
 
@@ -112,7 +112,7 @@ službu a `Restart=on-failure` ji znovu spustí.
 
 ## Instalace monitoringu
 
-1. **Certifikát pro `monitor.servero.cz`** (a další hosty, viz níže).
+1. **Certifikát pro `monitor.serveros.cz`** (a další hosty, viz níže).
 2. Nahrát `ops/` na server (bez reloadu čehokoli kromě nginx konfigurace):
    ```sh
    ops/deploy.sh --only ops            # náhled
@@ -144,27 +144,27 @@ službu a `Restart=on-failure` ji znovu spustí.
    - SMTP v `monitoring/grafana/grafana.ini` (`[smtp] host`, `user`)
 
    Nové projekty na Hetzneru mají blokovaný odchozí port 25, proto relay přes 587.
-6. Přihlášení: `https://monitor.servero.cz`, uživatel `admin`, heslo z
+6. Přihlášení: `https://monitor.serveros.cz`, uživatel `admin`, heslo z
    `GF_SECURITY_ADMIN_PASSWORD`. Další správce přidat v Grafaně (registrace je vypnutá).
 
 ### Certifikáty
 
 TLS vhosty čekají na `/etc/nginx/ssl-certificates/<doména>.crt` a `.key` (konvence
 CloudPanelu). `deploy.sh` vhost bez certifikátu přeskočí s varováním. Port 80 všech
-SERVERO hostů obsluhuje `servero-acme.conf`, takže první vydání funguje i bez TLS
-vhostu. Výzvy hledá v `/var/www/acme` a potom v kořeni webu `servero.cz`.
+SERVEROS hostů obsluhuje `servero-acme.conf`, takže první vydání funguje i bez TLS
+vhostu. Výzvy hledá v `/var/www/acme` a potom v kořeni webu `serveros.cz`.
 
 Varianta s certbotem (není nainstalovaný, rozhodnout s kolegou):
 
 ```sh
 apt-get install certbot
-certbot certonly --webroot -w /var/www/acme -d monitor.servero.cz \
-  --deploy-hook 'install -m 0600 $RENEWED_LINEAGE/privkey.pem /etc/nginx/ssl-certificates/monitor.servero.cz.key;
-                 install -m 0644 $RENEWED_LINEAGE/fullchain.pem /etc/nginx/ssl-certificates/monitor.servero.cz.crt;
+certbot certonly --webroot -w /var/www/acme -d monitor.serveros.cz \
+  --deploy-hook 'install -m 0600 $RENEWED_LINEAGE/privkey.pem /etc/nginx/ssl-certificates/monitor.serveros.cz.key;
+                 install -m 0644 $RENEWED_LINEAGE/fullchain.pem /etc/nginx/ssl-certificates/monitor.serveros.cz.crt;
                  systemctl reload nginx'
 ```
 
-Pro `servero.cz` jde také Let's Encrypt v CloudPanelu, pokud je web založený jako
+Pro `serveros.cz` jde také Let's Encrypt v CloudPanelu, pokud je web založený jako
 statický web CloudPanelu (uživatel `servero`).
 
 ## Nasazení (`deploy.sh`)
@@ -187,7 +187,7 @@ Dry run:
 
 `--apply` navíc:
 - záloha `/etc/nginx` a `/etc/systemd/system` do `/root/servero-deploy-backups/etc-<čas>.tar.gz`,
-- web do `/home/servero/htdocs/servero.cz` (vlastník `servero`),
+- web do `/home/servero/htdocs/serveros.cz` (vlastník `servero`),
 - panel do `/opt/servero-panel`; po změně `package.json` nebo lockfile spustí na serveru
   `corepack pnpm install --prod --frozen-lockfile` (nativní moduly jako `@node-rs/argon2`
   se musí nainstalovat pro Linux, `node_modules` se z Macu nekopíruje),
@@ -248,8 +248,8 @@ a `include /etc/nginx/sites-enabled/*.conf`, self-signed certifikáty v
   (`/var/backups/vytvorit-web/` je prázdný, S3 není připojené) a `wordpress.json`
   má `enabled: true`. Weby bez zálohy mají `servero_backup_last_success_timestamp_seconds 0`.
   Do připojení S3 lze alert umlčet v Alertmanageru.
-- **CloudPanel a `servero.cz.conf`.** Pokud se `servero.cz` založí v CloudPanelu, CloudPanel
-  zapíše vlastní `/etc/nginx/sites-enabled/servero.cz.conf`. `deploy.sh` ho přepíše naší
+- **CloudPanel a `serveros.cz.conf`.** Pokud se `serveros.cz` založí v CloudPanelu, CloudPanel
+  zapíše vlastní `/etc/nginx/sites-enabled/serveros.cz.conf`. `deploy.sh` ho přepíše naší
   verzí; úprava vhostu v CloudPanelu nebo jeho Let's Encrypt může soubor znovu přepsat.
   Po takové akci je potřeba `deploy.sh --only ops --apply`.
 - **CSP statického webu** povoluje inline skripty (právní stránky je mají). Až se přidá
@@ -277,4 +277,4 @@ a `include /etc/nginx/sites-enabled/*.conf`, self-signed certifikáty v
    Přesunout do šifrované zálohy mimo server a smazat.
 5. **Privátní klíče certifikátů** v `/etc/nginx/ssl-certificates/*.key` mají práva `0644`.
    Nastavit `0600 root:root` (nginx master běží jako root).
-6. Zvážit `allow`/`deny` pro `monitor.servero.cz` (připravené zakomentované ve vhostu).
+6. Zvážit `allow`/`deny` pro `monitor.serveros.cz` (připravené zakomentované ve vhostu).

@@ -41,7 +41,7 @@ async function replyToCustomer(event: Parameters<Actions[string]>[0], ticket: Aw
 		.where(and(eq(users.customerId, ticket.customerId), eq(users.disabled, false), isNotNull(users.passwordHash)));
 	await Promise.all(
 		recipients.map((r) =>
-			sendMail(r.email, `Re: ${ticket.subject} [#${ticket.id}]`, `${body}\n\n${event.locals.user!.name}, SERVERO\n\nOdpovědět můžete v klientské zóně: ${ORIGIN}/app/podpora/${ticket.id}`)
+			sendMail(r.email, `Re: ${ticket.subject} [#${ticket.id}]`, `${body}\n\n${event.locals.user!.name}, SERVEROS\n\nOdpovědět můžete v klientské zóně: ${ORIGIN}/app/podpora/${ticket.id}`)
 		)
 	);
 }

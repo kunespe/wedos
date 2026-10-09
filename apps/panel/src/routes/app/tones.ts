@@ -41,4 +41,4 @@ export const TEXT_TONE: Record<Tone, string> = {
 	off: 'text-muted'
 };
 
-export const CONTACT = { email: 'info@servero.cz', phone: '+420 773 559 645', tel: '+420773559645' };
+export const CONTACT = { email: 'info@serveros.cz', phone: '+420 773 559 645', tel: '+420773559645' };

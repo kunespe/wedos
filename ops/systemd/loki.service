@@ -1,5 +1,5 @@
 [Unit]
-Description=Loki (SERVERO, single binary, 127.0.0.1:3100)
+Description=Loki (SERVEROS, single binary, 127.0.0.1:3100)
 Documentation=https://grafana.com/docs/loki/latest/
 After=network-online.target
 Wants=network-online.target

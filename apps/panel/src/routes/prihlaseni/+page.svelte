@@ -9,7 +9,7 @@
 	let busy = $state(false);
 </script>
 
-<AuthCard title="Přihlášení" lead="Klientská zóna a správa služeb SERVERO.">
+<AuthCard title="Přihlášení" lead="Klientská zóna a správa služeb SERVEROS.">
 	<FormMessage {form} />
 	<form
 		method="POST"
@@ -35,6 +35,6 @@
 	</form>
 	<p class="mt-6 text-xs text-muted">
 		Přístup posíláme po zřízení služby. Zapomenuté heslo? Napište na
-		<a class="underline" href="mailto:info@servero.cz">info@servero.cz</a>.
+		<a class="underline" href="mailto:info@serveros.cz">info@serveros.cz</a>.
 	</p>
 </AuthCard>

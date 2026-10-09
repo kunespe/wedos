@@ -1,8 +1,12 @@
 import { PUBLIC_WEB_ORIGIN } from '$app/env/private';
 
-/** CORS headers for read-only endpoints the servero.cz storefront calls with fetch. */
+/** Storefront origins allowed to call the public APIs; several while serveros.cz replaces servero.cz. */
+export const storefrontOrigins: readonly string[] = PUBLIC_WEB_ORIGIN;
+
+/** CORS headers for read-only endpoints the serveros.cz storefront calls with fetch.
+ * The hook in hooks.server.ts swaps the origin for the caller's when it is another allowed one. */
 export const publicGetCors = {
-	'Access-Control-Allow-Origin': PUBLIC_WEB_ORIGIN,
+	'Access-Control-Allow-Origin': storefrontOrigins[0],
 	'Access-Control-Allow-Methods': 'GET, OPTIONS',
 	'Access-Control-Max-Age': '86400',
 	Vary: 'Origin'

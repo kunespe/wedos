@@ -9,7 +9,7 @@ import { paymentRequests, services } from './db/schema';
 export class PaymentError extends Error {}
 
 export const supplier = () => ({
-	name: SUPPLIER_NAME || 'SERVERO',
+	name: SUPPLIER_NAME || 'SERVEROS',
 	ico: SUPPLIER_ICO,
 	dic: SUPPLIER_DIC,
 	address: SUPPLIER_ADDRESS,
@@ -98,6 +98,6 @@ export async function markPaid(db: Db, id: number, invoiceRef = '') {
 /** SVG QR code for a request, or null when the bank account is not configured yet. */
 export async function paymentQr(p: { amount: number; vs: string; description: string; dueDate: string }) {
 	if (!PAYMENT_IBAN) return null;
-	const text = spayd({ iban: PAYMENT_IBAN, amount: p.amount, vs: p.vs, message: `SERVERO ${p.vs}`, dueDate: p.dueDate });
+	const text = spayd({ iban: PAYMENT_IBAN, amount: p.amount, vs: p.vs, message: `SERVEROS ${p.vs}`, dueDate: p.dueDate });
 	return QRCode.toString(text, { type: 'svg', margin: 0, errorCorrectionLevel: 'M' });
 }

@@ -1,4 +1,4 @@
-// Grafana Alloy: the single monitoring agent on vytvorit-web (SERVERO).
+// Grafana Alloy: the single monitoring agent on vytvorit-web (SERVEROS).
 // Metrics -> Prometheus remote_write (127.0.0.1:9090), logs -> Loki (127.0.0.1:3100).
 // Installed as /etc/alloy/config.alloy. UI/metrics of Alloy itself: 127.0.0.1:12345.
 //

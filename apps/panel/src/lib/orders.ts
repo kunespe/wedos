@@ -4,7 +4,7 @@ import type { OrderStatus } from './constants';
 const DOMAIN = /^(?=.{3,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{1,62}$/;
 const trimmed = (max: number) => z.string().trim().max(max, `Maximálně ${max} znaků.`);
 
-/** The body servero.cz/objednat.html sends to POST /api/orders. */
+/** The body serveros.cz/objednat.html sends to POST /api/orders. */
 export const publicOrderSchema = z
 	.object({
 		plan: z.string().trim().min(1, 'Vyberte tarif.').max(40),

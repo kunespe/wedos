@@ -90,8 +90,8 @@ export const actions: Actions = {
 		if (form.get('send') === '1')
 			mailed = await sendMail(
 				user.email,
-				user.passwordHash ? 'SERVERO: nastavení nového hesla' : 'SERVERO: přístup do klientské zóny',
-				`Dobrý den,\n\n${user.passwordHash ? 'nové heslo si nastavíte' : 'heslo do klientské zóny si nastavíte'} na tomto odkazu (platí ${user.passwordHash ? '24 hodin' : '7 dní'}):\n\n${link}\n\nTým SERVERO`
+				user.passwordHash ? 'SERVEROS: nastavení nového hesla' : 'SERVEROS: přístup do klientské zóny',
+				`Dobrý den,\n\n${user.passwordHash ? 'nové heslo si nastavíte' : 'heslo do klientské zóny si nastavíte'} na tomto odkazu (platí ${user.passwordHash ? '24 hodin' : '7 dní'}):\n\n${link}\n\nTým SERVEROS`
 			);
 		await audit(event, user.passwordHash ? 'user_reset' : 'user_invite', user.email);
 		return { message: mailed ? 'Odkaz odeslán e-mailem.' : 'Odkaz vygenerován.', invite: link, inviteFor: user.email };

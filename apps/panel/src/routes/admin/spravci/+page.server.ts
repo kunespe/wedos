@@ -58,10 +58,10 @@ async function targetAdmin(id: number) {
 async function deliver(email: string, name: string, link: string, purpose: 'invite' | 'reset') {
 	return sendMail(
 		email,
-		purpose === 'invite' ? 'SERVERO: pozvánka do administrace' : 'SERVERO: nové heslo do administrace',
+		purpose === 'invite' ? 'SERVEROS: pozvánka do administrace' : 'SERVEROS: nové heslo do administrace',
 		purpose === 'invite'
-			? `Dobrý den, ${name},\n\nmáte přístup do administrace SERVERO. Heslo si nastavíte tady (odkaz platí 7 dní):\n\n${link}\n\nPo nastavení hesla si zapnete dvoufázové ověření.\n\nTým SERVERO`
-			: `Dobrý den, ${name},\n\nnové heslo do administrace SERVERO si nastavíte tady (odkaz platí 24 hodin):\n\n${link}\n\nPokud jste o změnu nežádali, ozvěte se kolegům.\n\nTým SERVERO`
+			? `Dobrý den, ${name},\n\nmáte přístup do administrace SERVEROS. Heslo si nastavíte tady (odkaz platí 7 dní):\n\n${link}\n\nPo nastavení hesla si zapnete dvoufázové ověření.\n\nTým SERVEROS`
+			: `Dobrý den, ${name},\n\nnové heslo do administrace SERVEROS si nastavíte tady (odkaz platí 24 hodin):\n\n${link}\n\nPokud jste o změnu nežádali, ozvěte se kolegům.\n\nTým SERVEROS`
 	);
 }
 

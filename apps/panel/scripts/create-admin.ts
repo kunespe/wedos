@@ -1,5 +1,5 @@
 // Creates an admin account and prints a one-time link to set the password.
-// Usage: pnpm admin:create email@servero.cz "Jméno Příjmení"
+// Usage: pnpm admin:create email@serveros.cz "Jméno Příjmení"
 import { eq } from 'drizzle-orm';
 import { createInvite, inviteUrl } from '../src/lib/server/auth/invites.ts';
 import { createDb } from '../src/lib/server/db/client.ts';

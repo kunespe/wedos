@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deploy SERVERO to vytvorit-web from this repository (run on the admin machine).
+# Deploy SERVEROS to vytvorit-web from this repository (run on the admin machine).
 #
 #   ops/deploy.sh                    dry run (default): rsync -n previews, remote
 #                                    diffs of nginx/systemd files, nginx -t on a
@@ -17,7 +17,7 @@
 #   RSYNC=path       rsync binary (default: rsync in PATH)
 #
 # Components:
-#   web    apps/web/            -> /home/servero/htdocs/servero.cz/
+#   web    apps/web/            -> /home/servero/htdocs/serveros.cz/
 #   panel  apps/panel build     -> /opt/servero-panel/ (+ pnpm install --prod on the server)
 #   ops    ops/                 -> /opt/servero-ops/ (for install-monitoring.sh),
 #          ops/nginx/*          -> /etc/nginx/sites-enabled/ and /etc/nginx/servero/,
@@ -30,7 +30,7 @@ SERVER_IP=${SERVER_IP:-${HOST#*@}}
 RSYNC=${RSYNC:-rsync}
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OPS="$REPO/ops"
-WEB_ROOT=/home/servero/htdocs/servero.cz
+WEB_ROOT=/home/servero/htdocs/serveros.cz
 PANEL_DIR=/opt/servero-panel
 OPS_REMOTE=/opt/servero-ops
 BACKUP_DIR=/root/servero-deploy-backups
@@ -85,7 +85,7 @@ done
 vhost_cert() { echo "${1%.conf}"; }
 vhost_hosts() {
     case "$1" in
-        servero.cz.conf) echo "servero.cz www.servero.cz" ;;
+        serveros.cz.conf) echo "serveros.cz www.serveros.cz" ;;
         *) echo "${1%.conf}" ;;
     esac
 }
@@ -100,18 +100,20 @@ remote true || die "cannot ssh to $HOST"
 FACTS="$(remote bash -s <<'EOF'
 set -u
 echo "servero_user=$(id -u servero >/dev/null 2>&1 && echo yes || echo no)"
-echo "web_root=$([ -d /home/servero/htdocs/servero.cz ] && echo yes || echo no)"
+echo "web_root=$([ -d /home/servero/htdocs/serveros.cz ] && echo yes || echo no)"
 echo "panel_user=$(id -u servero-panel >/dev/null 2>&1 && echo yes || echo no)"
 echo "panel_env=$([ -f /etc/servero-panel/env ] && echo yes || echo no)"
 echo "panel_modules=$([ -d /opt/servero-panel/node_modules ] && echo yes || echo no)"
 echo "corepack=$([ -x /opt/node/bin/corepack ] && echo yes || echo no)"
-for d in servero.cz panel.servero.cz monitor.servero.cz; do
+for d in serveros.cz panel.serveros.cz monitor.serveros.cz servero.cz; do
     if [ -s "/etc/nginx/ssl-certificates/$d.crt" ] && [ -s "/etc/nginx/ssl-certificates/$d.key" ]; then
         echo "cert_$d=yes"
     else
         echo "cert_$d=no"
     fi
 done
+# The rebrand switch: servero.cz becomes a redirect only once serveros.cz serves a trusted certificate.
+echo "serveros_live=$(openssl x509 -in /etc/nginx/ssl-certificates/serveros.cz.crt -noout -issuer 2>/dev/null | grep -q "Let's Encrypt" && echo yes || echo no)"
 EOF
 )"
 fact() { sed -n "s/^$1=//p" <<<"$FACTS"; }
@@ -132,7 +134,7 @@ if want ops; then
     mkdir -p "$STAGE/nginx/sites" "$STAGE/nginx/servero" "$STAGE/systemd"
     cp "$OPS/nginx/00-servero-common.conf" "$OPS/nginx/servero-acme.conf" "$STAGE/nginx/sites/"
     cp "$OPS"/nginx/servero/*.conf "$STAGE/nginx/servero/"
-    for vhost in servero.cz.conf panel.servero.cz.conf monitor.servero.cz.conf; do
+    for vhost in serveros.cz.conf panel.serveros.cz.conf monitor.serveros.cz.conf; do
         cert="$(vhost_cert "$vhost")"
         if [[ "$(fact "cert_$cert")" == yes ]]; then
             cp "$OPS/nginx/$vhost" "$STAGE/nginx/sites/"
@@ -143,6 +145,14 @@ if want ops; then
             warn "skip $vhost: /etc/nginx/ssl-certificates/$cert.crt/.key missing (issue the cert first, see ops/README.md)"
         fi
     done
+    : > "$STAGE/obsolete"
+    if [[ "$(fact serveros_live)" == yes && "$(fact cert_servero.cz)" == yes ]]; then
+        cp "$OPS/nginx/servero.cz.conf" "$STAGE/nginx/sites/"
+        printf '%s\n' /etc/nginx/sites-enabled/panel.servero.cz.conf /etc/nginx/sites-enabled/monitor.servero.cz.conf >> "$STAGE/obsolete"
+        note "stage servero.cz.conf (old domain now redirects to serveros.cz)"
+    else
+        note "servero.cz keeps its current vhosts until serveros.cz has a Let's Encrypt certificate"
+    fi
     cp "$OPS/systemd/servero-panel.service" "$OPS"/systemd/servero-issue-certs.{service,timer} "$STAGE/systemd/"
 
     REMOTE_TMP="$(remote mktemp -d /tmp/servero-deploy.XXXXXX)"
@@ -220,7 +230,7 @@ if want web; then
         note "web: apps/web/ -> $WEB_ROOT/"
         rs -n "${WEB_RSYNC_ARGS[@]}" "$REPO/apps/web/" "$HOST:$WEB_ROOT/" | sed 's/^/      /'
     else
-        warn "web: $WEB_ROOT does not exist; create the CloudPanel static site servero.cz (user servero) first"
+        warn "web: $WEB_ROOT does not exist; create the CloudPanel static site serveros.cz (user servero) first"
     fi
 fi
 if want panel; then
@@ -237,7 +247,7 @@ if want ops; then
         || note "      ($OPS_REMOTE does not exist yet; everything is new)"
 fi
 
-# health [all|existing]: new SERVERO hosts are only checked after an apply.
+# health [all|existing]: new SERVEROS hosts are only checked after an apply.
 health() {
     say "Health checks (curl --resolve <host>:443:$SERVER_IP)"
     local failed=0 h code hosts=("${EXISTING_SITES[@]}")
@@ -336,6 +346,15 @@ put() {  # put SRC DST MODE: install with rollback record
     echo "    installed $dst"
     case "$dst" in /etc/systemd/*) echo "UNIT_CHANGED" ;; esac
 }
+retire() {  # retire PATH: remove an obsolete vhost with rollback record
+    local path=$1
+    [ -e "$path" ] || return 0
+    cp -a "$path" "$ROLLBACK/$(echo "$path" | tr / _)"
+    echo "restore $path" >> "$ROLLBACK/list"
+    rm -f "$path"
+    changed=1
+    echo "    removed $path"
+}
 rollback() {
     echo "    rolling back nginx/systemd files" >&2
     while read -r action path; do
@@ -348,6 +367,7 @@ rollback() {
 install -d -m 0755 /var/www/acme /etc/nginx/servero
 for f in "$STAGE"/nginx/servero/*.conf; do put "$f" "/etc/nginx/servero/${f##*/}" 0644; done
 for f in "$STAGE"/nginx/sites/*.conf; do put "$f" "/etc/nginx/sites-enabled/${f##*/}" 0644; done
+while read -r obsolete; do [ -n "$obsolete" ] && retire "$obsolete"; done < "$STAGE/obsolete"
 put "$STAGE/systemd/servero-panel.service" /etc/systemd/system/servero-panel.service 0644
 put "$STAGE/systemd/servero-issue-certs.service" /etc/systemd/system/servero-issue-certs.service 0644
 put "$STAGE/systemd/servero-issue-certs.timer" /etc/systemd/system/servero-issue-certs.timer 0644

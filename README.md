@@ -1,24 +1,24 @@
-# SERVERO · hosting, servery a klientský panel
+# SERVEROS · hosting, servery a klientský panel
 
 [![Tests](https://github.com/kunespe/wedos/actions/workflows/tests.yml/badge.svg)](https://github.com/kunespe/wedos/actions/workflows/tests.yml)
 
-SERVERO přebírá hosting „Vytvořit web“ a nabízí webhosting, spravovaný WordPress, aplikace, spravované VPS a správu serverů. Zřízení dělá člověk do pár hodin, ne automat.
+SERVEROS přebírá hosting „Vytvořit web“ a nabízí webhosting, spravovaný WordPress, aplikace, spravované VPS a správu serverů. Zřízení dělá člověk do pár hodin, ne automat.
 
 | Část | Kde | Co dělá |
 | --- | --- | --- |
-| `apps/web` | servero.cz | Prezentace, ceník a objednávkový formulář (statické HTML/CSS/JS) |
-| `apps/panel` | panel.servero.cz | Klientská zóna a administrace (SvelteKit 3, MySQL); viz [README](apps/panel/README.md) |
+| `apps/web` | serveros.cz | Prezentace, ceník a objednávkový formulář (statické HTML/CSS/JS) |
+| `apps/panel` | panel.serveros.cz | Klientská zóna a administrace (SvelteKit 3, MySQL); viz [README](apps/panel/README.md) |
 | `catalog/plans.json` | | Jediný zdroj ceníku pro web i panel (CI hlídá, že se shodují) |
 | `dashboard/` | | Root broker (`broker.py`), Fakturor adaptér a původní Flask dashboard, dokud ho panel nenahradí |
 | `operations/` | | Údržba WordPressů a zálohy přes Restic |
-| `ops/` | monitor.servero.cz | Grafana, Prometheus, Loki, Alloy, Alertmanager, nginx, systemd a `deploy.sh`; viz [ops/README](ops/README.md) |
+| `ops/` | monitor.serveros.cz | Grafana, Prometheus, Loki, Alloy, Alertmanager, nginx, systemd a `deploy.sh`; viz [ops/README](ops/README.md) |
 | `docs/` | | [Business case](docs/business-case.md), [runbook objednávky](docs/runbook-objednavka.md), šablony obchodních podmínek, GDPR a SLA |
 
 ```mermaid
 flowchart LR
-    zakaznik[Zákazník] -->|objednávka| web[servero.cz]
-    web -->|POST /api/orders| panel[panel.servero.cz]
-    tym[Tým SERVERO] --> panel
+    zakaznik[Zákazník] -->|objednávka| web[serveros.cz]
+    web -->|POST /api/orders| panel[panel.serveros.cz]
+    tym[Tým SERVEROS] --> panel
     panel -->|Unix socket, pevný seznam operací| broker[broker.py, root]
     broker --> cp[CloudPanel]
     broker --> fakturor[Fakturor]

@@ -1,4 +1,4 @@
-# SLA: smlouva o úrovni služeb SERVERO.CZ
+# SLA: smlouva o úrovni služeb SERVEROS.CZ
 
 > **⚠ Šablona, před zveřejněním nechat zkontrolovat právníkem.**
 > Před zveřejněním ověřit, že cílové hodnoty odpovídají reálné kapacitě týmu (2 lidé) a infrastruktury (jeden sdílený node v prvním roce).
@@ -44,12 +44,12 @@ Do nedostupnosti se nepočítá:
 | 2U Provoz | **30 min** | **30 min** (24/7) | 4 pracovní hodiny |
 | 4U Na míru | podle smlouvy | podle smlouvy | podle smlouvy |
 
-Poskytovatel o většině incidentů ví dřív než zákazník (monitoring 24/7). Kritické incidenty hlaste telefonem na [TELEFON POHOTOVOSTI], běžné požadavky na podpora@servero.cz.
+Poskytovatel o většině incidentů ví dřív než zákazník (monitoring 24/7). Kritické incidenty hlaste telefonem na [TELEFON POHOTOVOSTI], běžné požadavky na podpora@serveros.cz.
 
 ## 4. Správa serverů (1U, 2U, 4U)
 
 - Poskytovatel garantuje reakci, monitoring, zálohy a aktualizace. Dostupnost serverů závisí i na hardwaru a poskytovateli, kterého si zákazník zvolil, proto ji SLA negarantuje, pokud servery neprovozuje poskytovatel.
-- Pokud servery provozuje poskytovatel (u Hetzneru v rámci SERVERO), platí dostupnost jako u VPS.
+- Pokud servery provozuje poskytovatel (u Hetzneru v rámci SERVEROS), platí dostupnost jako u VPS.
 - Bezpečnostní aktualizace: kritické do [48 h] od vydání, ostatní v pravidelném okně [1x týdně].
 - 2U Provoz: měsíční report (dostupnost, incidenty, aktualizace, zálohy, doporučení).
 
@@ -99,5 +99,5 @@ Cíle zřízení nejsou podkladem pro kompenzaci.
 ## 8. Komunikace incidentů
 
 - Plánovaná údržba: e-mail nejméně 48 h předem.
-- Neplánovaný výpadek delší než 15 min: informace na [status.servero.cz / e-mailem] do 30 min.
+- Neplánovaný výpadek delší než 15 min: informace na [status.serveros.cz / e-mailem] do 30 min.
 - Po kritickém incidentu delším než 1 h: krátká zpráva o příčině a opatřeních do 3 pracovních dnů.

@@ -9,7 +9,7 @@
 
 <AuthCard
 	title={data.purpose === 'invite' ? `Vítejte, ${data.name.split(' ')[0]}` : 'Nové heslo'}
-	lead={data.purpose === 'invite' ? 'Nastavte si heslo ke klientské zóně SERVERO.' : 'Zvolte nové heslo k účtu.'}
+	lead={data.purpose === 'invite' ? 'Nastavte si heslo ke klientské zóně SERVEROS.' : 'Zvolte nové heslo k účtu.'}
 >
 	<FormMessage {form} />
 	<form method="POST" class="flex flex-col gap-4">

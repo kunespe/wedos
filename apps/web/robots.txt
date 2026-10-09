@@ -1,5 +1,5 @@
-# servero.cz: everything public may be indexed. The panel (panel.servero.cz) sends its own noindex.
+# serveros.cz: everything public may be indexed. The panel (panel.serveros.cz) sends its own noindex.
 User-agent: *
 Allow: /
 
-Sitemap: https://servero.cz/sitemap.xml
+Sitemap: https://serveros.cz/sitemap.xml

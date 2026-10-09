@@ -13,7 +13,7 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 			adapter: adapter({ out: 'build' }),
-			// The public order form on servero.cz posts here; /api/orders sets its own CORS headers.
+			// The public order form on serveros.cz posts here; /api/orders sets its own CORS headers.
 			csrf: { trustedOrigins: [] }
 		})
 	]

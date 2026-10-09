@@ -8,7 +8,7 @@ export function newTotpSecret(): string {
 }
 
 export const totpUri = (secret: string, email: string) =>
-	createTOTPKeyURI('SERVERO', email, decodeBase64(secret), 30, 6);
+	createTOTPKeyURI('SERVEROS', email, decodeBase64(secret), 30, 6);
 
 /** Accepts the previous and next 30 s window to tolerate clock drift. */
 export function verifyTotp(secret: string, code: string): boolean {

@@ -1,5 +1,5 @@
 [Unit]
-Description=Hourly check whether SERVERO certificates can be issued
+Description=Hourly check whether SERVEROS certificates can be issued
 
 [Timer]
 OnBootSec=5min

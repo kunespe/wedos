@@ -121,7 +121,7 @@ export const actions: Actions = {
 		await audit(event, 'ticket_create', `#${ticketId}`, `${category}: ${subject}`);
 		await notifyTeam(
 			ticketId,
-			`SERVERO: ${def.urgent ? 'NALÉHAVÉ, ' : ''}nový požadavek #${ticketId}: ${subject}`,
+			`SERVEROS: ${def.urgent ? 'NALÉHAVÉ, ' : ''}nový požadavek #${ticketId}: ${subject}`,
 			[`${user.name} <${user.email}> založil požadavek „${def.label}“.`, summary, d.body ? `Poznámka:\n${d.body}` : ''].filter(Boolean).join('\n\n')
 		);
 		redirect(303, `/app/podpora/${ticketId}?nove=1`);

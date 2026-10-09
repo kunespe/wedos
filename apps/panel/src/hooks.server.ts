@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { Handle, ServerInit } from '@sveltejs/kit/hooks';
 import { clearSessionCookie, SESSION_COOKIE, validateSession } from '#lib/server/auth/session.ts';
 import { refreshProbes } from '#lib/server/probes.ts';
+import { storefrontOrigins } from '#lib/server/public-api.ts';
 
 // Services can change outside the panel (imports, direct SQL), so rebuild the monitoring targets on start.
 export const init: ServerInit = () => {
@@ -43,6 +44,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	const response = await resolve(event);
+	// Public APIs answer CORS for any configured storefront origin, not only the first one.
+	const origin = event.request.headers.get('origin');
+	if (origin && response.headers.has('Access-Control-Allow-Origin') && storefrontOrigins.includes(origin))
+		response.headers.set('Access-Control-Allow-Origin', origin);
 	response.headers.set('X-Content-Type-Options', 'nosniff');
 	response.headers.set('Referrer-Policy', 'same-origin');
 	response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');

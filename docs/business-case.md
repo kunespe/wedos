@@ -1,4 +1,4 @@
-# SERVERO.CZ: business case
+# SERVEROS.CZ: business case
 
 > Stav k 9. 10. 2026. Ceny bez DPH. Kurz 1 EUR ≈ 24,27 Kč.
 > Řádky označené **[P]** jsou předpoklady, ne ověřená fakta. Před rozhodnutím je potvrdit nebo přepočítat.
@@ -6,12 +6,12 @@
 
 ## 1. Shrnutí
 
-- **Co:** SERVERO.CZ je hosting a správa serverů z Plzně, s člověkem na druhé straně. Webhosting, spravovaný WordPress, aplikace (Node/Bun), spravované VPS a správa cizích serverů.
+- **Co:** SERVEROS.CZ je hosting a správa serverů z Plzně, s člověkem na druhé straně. Webhosting, spravovaný WordPress, aplikace (Node/Bun), spravované VPS a správa cizích serverů.
 - **Kdo:** Vojtěch Kotrč (infrastruktura, CI/CD, webzi.cz) a Petr Kuneš (klienti, plánování, provoz, digitality.marketing).
-- **Odkud:** SERVERO přebírá hostingovou část značky Vytvořit web (klienti centrumarete.cz a jrmontaze.cz na Hetzner Cloud, 2.31.25.249). Vytvořit web zůstává webovým studiem a hosting SERVERO přeprodává.
+- **Odkud:** SERVEROS přebírá hostingovou část značky Vytvořit web (klienti centrumarete.cz a jrmontaze.cz na Hetzner Cloud, 2.31.25.249). Vytvořit web zůstává webovým studiem a hosting SERVEROS přeprodává.
 - **Proč to vyjde:** trh se drží modelu „akce na první rok, pak 2 až 3x dráž". My nabízíme stejnou cenu i po prvním roce, onboarding člověkem a migraci zdarma do pár hodin. Nesoutěžíme s VEDOS za 39 Kč, vyhráváme na spravovaném WordPressu, aplikacích, VPS a správě serverů, kde chybí transparentní nabídka mezi ~500 a 1 500+ Kč.
 - **Cíl roku 1:** 30 hostingů/WP, 5 VPS, 3 smlouvy na správu, **MRR ~28 000 Kč**. Provozní bod zvratu (bez mezd zakladatelů) je ~5 300 Kč měsíčně, tedy např. 2 smlouvy 1U Start.
-- **Infrastruktura:** servero.cz (výloha a objednávky), panel.servero.cz (SvelteKit klientský portál a administrace, „jednodušší WEDOS"), monitor.servero.cz (Grafana, Prometheus, Loki, Alloy, Alertmanager). Fakturace přes Fakturor.
+- **Infrastruktura:** serveros.cz (výloha a objednávky), panel.serveros.cz (SvelteKit klientský portál a administrace, „jednodušší WEDOS"), monitor.serveros.cz (Grafana, Prometheus, Loki, Alloy, Alertmanager). Fakturace přes Fakturor.
 
 ## 2. Trh a konkurence
 
@@ -173,7 +173,7 @@ U správy serverů hradí zákazník svou infrastrukturu sám. Pokud ji provozuj
 | Pojištění odpovědnosti (IT služby) | 500 | **[P]** ~6 000 Kč/rok |
 | Nástroje (správce hesel, status page, apod.) | 300 | **[P]** |
 | Marketing (SEO obsah, drobné kampaně) | 2 000 | **[P]** |
-| Vlastní domény | 30 | servero.cz a varianty |
+| Vlastní domény | 30 | serveros.cz a varianty |
 | **Celkem** | **~5 300** | bez mezd zakladatelů |
 
 Sdílené nody nejsou ve fixních nákladech, protože jsou rozpočítány do slotů (6.1). Pozor: jsou to skokové náklady. První node už platíme. Každý další node (CPX32, 861 + 172 Kč zálohy = ~1 030 Kč) přidá kapacitu ~60 slotů.
@@ -223,14 +223,14 @@ Bod zvratu včetně ohodnocení času (500 Kč/h) v základním mixu (marže po 
 
 Poznámky:
 - Základní a optimistický scénář přesáhnou kapacitu prvního nodu (~30 slotů), druhý node je nutný v průběhu roku.
-- Čísla nezahrnují stávající klienty Vytvořit web (centrumarete.cz, jrmontaze.cz). Ti se převedou na tarify SERVERO a jsou bonus nad scénářem.
+- Čísla nezahrnují stávající klienty Vytvořit web (centrumarete.cz, jrmontaze.cz). Ti se převedou na tarify SERVEROS a jsou bonus nad scénářem.
 - Jednorázové příjmy (audity, CI/CD, hodiny, domény) nejsou v MRR. **[P]** Základ: 3 audity + 2 CI/CD + 20 h práce za rok ≈ 59 000 Kč.
 
 ## 10. Obchodní kanály
 
 | Kanál | Co uděláme | Očekávání v roce 1 **[P]** |
 |---|---|---|
-| Klienti Vytvořit web | Převod hostingu na SERVERO, studio přeprodává hosting dalším klientům | 10 až 15 hostingů/WP |
+| Klienti Vytvořit web | Převod hostingu na SERVEROS, studio přeprodává hosting dalším klientům | 10 až 15 hostingů/WP |
 | webzi.cz (Vojtěch) | Nabídka VPS, CI/CD a správy stávajícím klientům a kontaktům | 2 až 3 VPS, 1 až 2 smlouvy na správu |
 | digitality.marketing (Petr) | WP Provoz k marketingovým zakázkám, klienti potřebují rychlý a hlídaný web | 5 až 10 WP Provoz |
 | Doporučení | Odměna doporučiteli: 1 měsíc zdarma za každého nového platícího klienta | 3 až 5 zákazníků |
@@ -240,7 +240,7 @@ Poznámky:
 
 | Oblast | Nastavení |
 |---|---|
-| Objednávka | Ruční. Objednávka z servero.cz padá do inboxu v panelu (stavy `new`, `contacted`, `provisioning`, `done`, `cancelled`). Postup: `runbook-objednavka.md`. |
+| Objednávka | Ruční. Objednávka z serveros.cz padá do inboxu v panelu (stavy `new`, `contacted`, `provisioning`, `done`, `cancelled`). Postup: `runbook-objednavka.md`. |
 | SLA onboardingu | Kontakt do 1 h, zprovoznění **do pár hodin v pracovní době** (cíl do 4 pracovních hodin). VPS do 4 h, správa serverů kick-off do 2 pracovních dnů. |
 | Pracovní doba podpory | Po až Pá 9:00 až 17:00 **[P]**, e-mail a telefon, odpověď podle `legal/sla.md` (4 pracovní hodiny až 1 pracovní den podle tarifu). |
 | Pohotovost (on-call) | Alertmanager posílá kritické alerty (výpadek nodu, disk nad 90 %, selhaná záloha) na telefon. Týdenní střídání Vojtěch / Petr, eskalace vždy na Vojtěcha (infrastruktura). Mimo pracovní dobu: best-effort pro hosting, garantovaná reakce jen podle `legal/sla.md` (2U Provoz, 4U Na míru). |
@@ -264,7 +264,7 @@ Poznámky:
 
 | Období | Milník |
 |---|---|
-| **Q4 2026** | Spuštění servero.cz a panel.servero.cz (objednávky, inbox, zákazníci, služby, pozvánky). Převod klientů Vytvořit web. Fakturor napojení. Monitor.servero.cz v provozu. Právní dokumenty po kontrole právníkem. |
+| **Q4 2026** | Spuštění serveros.cz a panel.serveros.cz (objednávky, inbox, zákazníci, služby, pozvánky). Převod klientů Vytvořit web. Fakturor napojení. Monitor.serveros.cz v provozu. Právní dokumenty po kontrole právníkem. |
 | **Q1 2027** | Skriptované WP aktualizace s ověřenou zálohou. Reseller Subreg pro domény (ruční). Prvních 10 zákazníků mimo Vytvořit web. |
 | **Q2 2027** | Druhý node (CPX32, ~861 Kč) při 70 % RAM nebo disku. Částečná automatizace: založení webu v CloudPanel z panelu, odeslání pozvánky. |
 | **Q3 2027** | Subreg API: registrace a prodloužení domén z panelu. Status page. Vyhodnocení roku 1 proti scénářům. |
