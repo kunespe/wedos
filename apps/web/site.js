@@ -25,7 +25,8 @@ window.servero = (() => {
      A localhost override only applies while this page is served from localhost too,
      so a dev value left in the HTML never sends real orders to a dev machine. */
   const isLocal = h => /^(localhost|127\.0\.0\.1|\[::1\])$/.test(h);
-  let panel = 'https://panel.serveros.cz';
+  // Served from the old servero.cz (until it redirects), talk to the panel on that domain too.
+  let panel = /(^|\.)servero\.cz$/.test(location.hostname) ? 'https://panel.servero.cz' : 'https://panel.serveros.cz';
   const metaPanel = $('meta[name="servero-panel"]');
   if (metaPanel && metaPanel.content) {
     try {

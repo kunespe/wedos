@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=7">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -360,44 +360,6 @@
       <p class="dsearch__note">Ověřujeme .cz i většinu dalších koncovek. Registraci potvrdíme e-mailem, než doménu objednáme.</p>
     </section>
 
-    <!-- TEAM: datacenter access badges -->
-    <section class="sec wrap team" id="tym" aria-labelledby="tym-h">
-      <div class="sec__head">
-        <h2 id="tym-h">Dva lidi s přístupem do racku</h2>
-        <p>Žádné call centrum. Voláte přímo nám.</p>
-      </div>
-      <div class="badges">
-        <article class="badge">
-          <span class="badge__clip" aria-hidden="true"></span>
-          <div class="badge__card">
-            <div class="badge__top"><span class="badge__logo">serveros</span><span class="badge__chip" aria-hidden="true"></span></div>
-            <img src="assets/img/vojtech.webp" alt="Vojtěch Kotrč" width="900" height="1110" loading="lazy">
-            <h3>Vojtěch Kotrč</h3>
-            <p>Infrastruktura, CI/CD a vše, co běží v terminálu.</p>
-            <div class="badge__foot">
-              <span><i class="led led--on"></i>Ve službě</span>
-              <a href="https://webzi.cz" target="_blank" rel="noopener">webzi.cz</a>
-            </div>
-            <span class="badge__code" aria-hidden="true"></span>
-          </div>
-        </article>
-        <article class="badge">
-          <span class="badge__clip" aria-hidden="true"></span>
-          <div class="badge__card">
-            <div class="badge__top"><span class="badge__logo">serveros</span><span class="badge__chip" aria-hidden="true"></span></div>
-            <img src="assets/img/petr.jpg" alt="Petr Kuneš" width="800" height="800" loading="lazy">
-            <h3>Petr Kuneš</h3>
-            <p>Klienti, plánování a provoz, aby to dávalo smysl i v rozpočtu.</p>
-            <div class="badge__foot">
-              <span><i class="led led--on"></i>Ve službě</span>
-              <a href="https://digitality.marketing" target="_blank" rel="noopener">digitality.marketing</a>
-            </div>
-            <span class="badge__code" aria-hidden="true"></span>
-          </div>
-        </article>
-      </div>
-    </section>
-
     <!-- FAQ: details/summary, no script -->
     <section class="sec wrap faq" id="faq" aria-labelledby="faq-h">
       <div class="sec__head">
@@ -434,6 +396,23 @@
           <div class="faq__a"><p>Doménu .cz registrujeme za 249 Kč ročně bez DPH a stejnou cenu platíte i při prodloužení. U ostatních koncovek cenu potvrdíme předem. Dostupnost si ověříte <a href="#domena">výše na stránce</a>.</p></div>
         </details>
       </div>
+    </section>
+
+    <!-- Team: deliberately small, a quiet strip before the contact block -->
+    <section class="wrap crew" id="tym" aria-labelledby="tym-h">
+      <h2 class="crew__title" id="tym-h">Kdo jsme</h2>
+      <ul class="crew__list">
+        <li class="crew__item">
+          <img src="assets/img/vojtech.webp" alt="" width="96" height="128" loading="lazy">
+          <div><strong>Vojtěch Kotrč</strong><span>Infrastruktura a CI/CD</span></div>
+          <a href="https://webzi.cz" target="_blank" rel="noopener">webzi.cz</a>
+        </li>
+        <li class="crew__item">
+          <img src="assets/img/petr.jpg" alt="" width="96" height="128" loading="lazy">
+          <div><strong>Petr Kuneš</strong><span>Klienti a provoz</span></div>
+          <a href="https://digitality.marketing" target="_blank" rel="noopener">digitality.marketing</a>
+        </li>
+      </ul>
     </section>
 
     <!-- CTA -->
