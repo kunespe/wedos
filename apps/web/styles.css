@@ -1,5 +1,28 @@
 /* Serveros: the page is a server rack. Rails on the edges, units in between. */
 
+/* Self-hosted variable fonts (SIL OFL, files from Google Fonts: Archivo v25, JetBrains Mono v24).
+   One file per subset covers every weight/width; latin-ext carries the Czech diacritics. */
+@font-face {
+  font-family: "Archivo"; font-style: normal; font-weight: 300 900; font-stretch: 62% 125%; font-display: swap;
+  src: url("assets/fonts/archivo-v25-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Archivo"; font-style: normal; font-weight: 300 900; font-stretch: 62% 125%; font-display: swap;
+  src: url("assets/fonts/archivo-v25-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "JetBrains Mono"; font-style: normal; font-weight: 400 600; font-display: swap;
+  src: url("assets/fonts/jetbrainsmono-v24-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "JetBrains Mono"; font-style: normal; font-weight: 400 600; font-display: swap;
+  src: url("assets/fonts/jetbrainsmono-v24-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
   --paper: #E7EAEE;      /* cold aisle */
   --paper-2: #D9DEE4;
@@ -39,6 +62,8 @@ body {
   overflow-x: hidden;
 }
 img { max-width: 100%; display: block; }
+/* <picture> only picks the source; the <img> inside keeps its own layout rules (.tray img, .pipe__bg, ...) */
+picture { display: contents; }
 a { color: inherit; }
 h1, h2, h3 { margin: 0; font-weight: 750; line-height: 1; }
 p { margin: 0; }
@@ -406,56 +431,48 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .facts li { font-size: 15px; color: #4a525b; max-width: 26ch; }
 .facts b { display: block; margin-bottom: 6px; font-size: clamp(24px, 2.4vw, 34px); color: var(--ink); font-weight: 750; font-variation-settings: "wdth" 115; letter-spacing: -.01em; }
 
-/* ---------- Process: patch panel ---------- */
-.patch { position: relative; }
-.patch__panel { /* a 1U patch strip: same 3-column grid as the step cards, so each port sits above its step */
-  position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: center;
-  height: 112px; border-radius: 8px; counter-reset: port;
-  background: linear-gradient(180deg, var(--chassis-2), var(--chassis) 55%, var(--chassis-3));
-  box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 24px 40px -24px rgba(18,22,27,.6);
+/* ---------- Process: three rack units, powered on one after another ---------- */
+.stages { display: grid; gap: 6px; margin: 0; padding: 6px; list-style: none; border-radius: 10px; background: #c9cfd6; box-shadow: inset 0 1px 0 rgba(255,255,255,.5); counter-reset: none; }
+.stage {
+  position: relative; display: grid; align-items: center;
+  grid-template-columns: 22px clamp(120px, 13vw, 200px) minmax(0, 1.2fr) minmax(0, 1fr) 190px;
+  gap: 0 clamp(18px, 2.6vw, 40px); min-height: 150px; padding: 26px clamp(22px, 3vw, 40px) 26px 26px;
+  border-radius: 6px; color: var(--paper);
+  background: linear-gradient(180deg, var(--chassis-2), var(--chassis) 60%, var(--chassis-3));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+  opacity: .55; transition: opacity .6s var(--ease);
 }
-.patch__screw { position: absolute; top: 50%; margin-top: -6px; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #d6dbe0, #6e767f); box-shadow: 0 0 0 3px rgba(0,0,0,.25); }
-.patch__label {
-  position: absolute; top: 10px; left: 46px; font: 500 10px/1 var(--mono); letter-spacing: .14em; color: var(--steel-dk);
+.stage.is-on { opacity: 1; }
+.stage__leds { display: grid; gap: 10px; justify-items: center; }
+.stage .led { transition: background .3s, box-shadow .3s; transition-delay: calc(var(--i, 0) * 90ms); }
+.stage__leds .led:nth-child(2) { --i: 1; }
+.stage__leds .led:nth-child(3) { --i: 2; }
+.stage.is-on .stage__leds .led { background: var(--led); box-shadow: 0 0 8px 1px rgba(54,224,143,.6); }
+.stage.is-on .stage__leds .led:nth-child(2) { background: var(--amber); box-shadow: 0 0 8px 1px rgba(255,180,59,.55); }
+.stage__num {
+  font-size: clamp(56px, 7vw, 108px); line-height: .8; font-weight: 900; letter-spacing: -.04em;
+  font-variation-settings: "wdth" 125; color: transparent; -webkit-text-stroke: 1.5px rgba(231,234,238,.28);
+  transition: color .6s var(--ease), -webkit-text-stroke-color .6s var(--ease);
 }
-.patch__screw:first-child { left: 16px; }
-.patch__screw:last-child { right: 16px; }
-.patch__panel .port { justify-self: center; }
-.patch__cable { display: block; width: 100%; height: 120px; margin-top: -18px; overflow: visible; position: relative; z-index: 0; }
-.patch__cable path {
-  fill: none; stroke: var(--cable); stroke-width: 9; stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 6px 6px rgba(46,108,246,.25));
+.stage.is-on .stage__num { color: var(--paper); -webkit-text-stroke-color: transparent; }
+.stage__when { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--amber); }
+.stage h3 { margin-top: 10px; font-size: clamp(28px, 3vw, 44px); line-height: 1; font-variation-settings: "wdth" 118; letter-spacing: -.015em; }
+.stage__text { margin-top: 10px; font-size: 16.5px; line-height: 1.5; color: #b9c0c8; max-width: 38ch; }
+.stage__list { display: grid; gap: 9px; margin: 0; padding: 0 0 0 clamp(18px, 2.6vw, 40px); list-style: none; border-left: 1px solid rgba(255,255,255,.08); }
+.stage__list li { font: 400 13.5px/1.4 var(--mono); color: #d5dae0; }
+.stage__list li::before { content: "> "; color: var(--led); }
+.stage__chip { /* a small LCD: value + note */
+  display: grid; gap: 4px; justify-self: stretch; padding: 12px 14px; border-radius: 6px;
+  font: 500 12px/1.3 var(--mono); color: rgba(255,180,59,.7); background: #120e08; box-shadow: inset 0 0 0 1px rgba(255,180,59,.22);
 }
-.port {
-  position: relative; z-index: 1; display: grid; place-items: center; width: 84px; height: 72px;
-  background: #15181c; border-radius: 6px; counter-increment: port;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 0 0 4px rgba(0,0,0,.25);
-}
-.port i { /* RJ45 socket */
-  width: 44px; height: 34px; background: #050607; margin-top: 8px;
-  clip-path: polygon(0 0, 100% 0, 100% 72%, 72% 72%, 72% 100%, 28% 100%, 28% 72%, 0 72%);
-}
-.port::before { content: counter(port, decimal-leading-zero); position: absolute; top: 6px; left: 8px; font: 500 10px/1 var(--mono); color: var(--steel); }
-.port::after { content: ""; position: absolute; top: 8px; right: 8px; width: 6px; height: 6px; border-radius: 50%; background: #3a4047; transition: background .3s, box-shadow .3s; }
-.port.is-linked::after { background: var(--led); box-shadow: 0 0 6px 1px rgba(54,224,143,.7); }
-
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 8px 0 0; padding: 0; list-style: none; }
-.step {
-  display: grid; align-content: start; gap: 12px; padding: 26px 26px 24px; border-radius: 10px;
-  background: #fbfcfd; box-shadow: 0 0 0 1px rgba(18,22,27,.08), 0 20px 40px -30px rgba(18,22,27,.4);
-}
-.step__when { display: flex; align-items: center; gap: 8px; font: 500 12px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--steel-dk); }
-.step__when .led { transition: background .3s, box-shadow .3s; }
-.step.is-linked .step__when .led { background: var(--led); box-shadow: 0 0 6px 1px rgba(54,224,143,.7); }
-.step h3 { font-size: clamp(26px, 2.6vw, 36px); font-variation-settings: "wdth" 115; letter-spacing: -.01em; }
-.step__text { font-size: 16.5px; color: #3b424a; }
-.step__list { display: grid; gap: 8px; margin: 4px 0 0; padding: 14px 0 0; list-style: none; border-top: 1px solid rgba(18,22,27,.08); }
-.step__list li { position: relative; padding-left: 22px; font-size: 15px; color: #2f353c; }
-.step__list li::before { content: ""; position: absolute; left: 2px; top: .5em; width: 9px; height: 9px; border-radius: 2px; background: var(--cable); opacity: .85; }
-.step__chip {
-  justify-self: start; margin-top: 6px; padding: 7px 12px; border-radius: 999px;
-  background: rgba(46,108,246,.08); color: #1c4fc4; font-size: 13.5px; font-weight: 650;
+.stage__chip strong { font-size: 17px; font-weight: 500; color: var(--amber); text-shadow: 0 0 10px rgba(255,180,59,.35); }
+@media (max-width: 1020px) {
+  .stage { grid-template-columns: 22px auto minmax(0, 1fr); grid-template-areas: "leds num body" "leds num list" "leds num chip"; row-gap: 16px; }
+  .stage__leds { grid-area: leds; align-self: start; padding-top: 8px; }
+  .stage__num { grid-area: num; align-self: start; }
+  .stage__body { grid-area: body; }
+  .stage__list { grid-area: list; padding-left: 0; border-left: 0; }
+  .stage__chip { grid-area: chip; justify-self: start; min-width: 200px; }
 }
 
 /* ---------- Pricing: tabs + 1U / 2U / 4U ---------- */
@@ -1074,8 +1091,8 @@ textarea.input { min-height: 120px; resize: vertical; }
   .log { font-size: 12px; }
   .facts { grid-template-columns: 1fr; }
   .bars { height: 48px; gap: 1px; }
-  .patch__panel, .patch__cable { display: none; }
-  .steps { grid-template-columns: 1fr; gap: 16px; margin-top: 0; }
+  .stage { grid-template-columns: 14px minmax(0, 1fr); grid-template-areas: "leds num" "leds body" "leds list" "leds chip"; padding: 22px 20px; }
+  .stage__num { font-size: 56px; }
   .plan { grid-template-columns: 16px 1fr 16px; }
   .plan__body { grid-template-columns: 1fr auto; padding: 18px 14px; }
   .plan__size { grid-column: 1; grid-row: 1; }

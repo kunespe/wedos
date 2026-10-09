@@ -223,45 +223,23 @@
   }
   realBars();
 
-  /* ---------- Patch cable + parallax (scroll-driven) ---------- */
-  const cable = $('.patch__cable path');
-  const ports = $$('.patch__panel .port');
-  const stepCards = $$('.steps .step');
-  const patch = $('.patch');
-  let cableLen = 0;
-  // Route the cable from the measured port centres (viewBox is 1000 wide), loops hang below the panel.
-  function routeCable() {
-    const box = patch.getBoundingClientRect();
-    if (!box.width || ports.length < 3) return;
-    const x = ports.map(el => { const b = el.getBoundingClientRect(); return ((b.left + b.width / 2 - box.left) / box.width) * 1000; });
-    cable.setAttribute('d', `M ${x[0]} 0 C ${x[0]} 120, ${x[1]} 120, ${x[1]} 0 C ${x[1]} 120, ${x[2]} 120, ${x[2]} 0`);
-    cableLen = cable.getTotalLength();
-    cable.style.strokeDasharray = cableLen;
+  /* ---------- Process: each rack unit powers on as it scrolls into view ---------- */
+  const stages = $$('.stages .stage');
+  if (reduced || !('IntersectionObserver' in window)) stages.forEach(el => el.classList.add('is-on'));
+  else {
+    const io = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('is-on'); io.unobserve(e.target); }
+    }), { rootMargin: '0px 0px -25% 0px', threshold: .4 });
+    stages.forEach(el => io.observe(el));
   }
-  if (cable) {
-    routeCable();
-    addEventListener('resize', () => { routeCable(); onScroll(); });
-    cableLen = cable.getTotalLength();
-    cable.style.strokeDasharray = cableLen;
-    cable.style.strokeDashoffset = reduced ? 0 : cableLen;
-    if (reduced) [...ports, ...stepCards].forEach(el => el.classList.add('is-linked'));
-  }
+
+  /* ---------- Parallax (scroll-driven) ---------- */
   const photo = $('.photo'), photoImg = $('.photo__img');
 
   let ticking = false;
   function onScroll() {
     updatePos();
     if (!reduced) {
-      // The cable draws while the panel scrolls from the lower third to the middle of the screen;
-      // each port (and its step card) lights up when the cable reaches it.
-      const r = patch.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, (innerHeight * .8 - r.top) / (innerHeight * .4)));
-      cable.style.strokeDashoffset = cableLen * (1 - p);
-      [0.02, .5, .97].forEach((at, i) => {
-        ports[i]?.classList.toggle('is-linked', p >= at);
-        stepCards[i]?.classList.toggle('is-linked', p >= at);
-      });
-
       const pr = photo.getBoundingClientRect();
       if (pr.bottom > 0 && pr.top < innerHeight) {
         const t = (pr.top + pr.height / 2 - innerHeight / 2) / innerHeight;

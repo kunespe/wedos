@@ -26,7 +26,7 @@
 </script>
 
 <PageHeader title="Zálohy">
-	{#snippet meta()}Zálohy WordPressů, které vznikají před každou aktualizací.{/snippet}
+	{#snippet meta()}<Pill tone="act">Brzy</Pill> Noční zálohy serveru do AWS (S3) připravujeme. Níže jsou zálohy WordPressů před aktualizacemi.{/snippet}
 </PageHeader>
 
 {#if !data.backups}

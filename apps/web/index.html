@@ -23,10 +23,9 @@
   <!-- Panel origin for local dev (domain search, status bars). site.js honours a localhost value only
        when this page is itself served from localhost, so production always uses https://panel.serveros.cz. -->
   <meta name="servero-panel" content="http://localhost:5190">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=11">
+  <!-- Archivo and JetBrains Mono are self-hosted (@font-face in styles.css); preload the latin face the first paint needs -->
+  <link rel="preload" href="/assets/fonts/archivo-v25-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css?v=11s">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -137,7 +136,7 @@
               <li>Bezpečnostní záplaty každý týden</li>
               <li>Ladění webů, databází a cache</li>
             </ul>
-            <img src="assets/img/circuit.jpg" alt="" loading="lazy" width="1800" height="1200">
+            <picture><source type="image/avif" srcset="assets/img/circuit-640.avif 640w, assets/img/circuit-1280.avif 1280w, assets/img/circuit-1800.avif 1800w" sizes="(max-width: 760px) 92vw, 40vw"><img src="assets/img/circuit-1280.webp" srcset="assets/img/circuit-640.webp 640w, assets/img/circuit-1280.webp 1280w, assets/img/circuit-1800.webp 1800w" sizes="(max-width: 760px) 92vw, 40vw" alt="" loading="lazy" decoding="async" width="1800" height="1200"></picture>
           </div></div>
         </article>
 
@@ -157,7 +156,7 @@
               <li>Automatické testy a náhledové verze</li>
               <li>Návrat na předchozí verzi během vteřin</li>
             </ul>
-            <img src="assets/img/rack.jpg" alt="" loading="lazy" width="1800" height="1350">
+            <picture><source type="image/avif" srcset="assets/img/rack-640.avif 640w, assets/img/rack-1280.avif 1280w, assets/img/rack-1800.avif 1800w" sizes="(max-width: 760px) 92vw, 40vw"><img src="assets/img/rack-1280.webp" srcset="assets/img/rack-640.webp 640w, assets/img/rack-1280.webp 1280w, assets/img/rack-1800.webp 1800w" sizes="(max-width: 760px) 92vw, 40vw" alt="" loading="lazy" decoding="async" width="1800" height="1350"></picture>
           </div></div>
         </article>
 
@@ -177,7 +176,7 @@
               <li>Infrastruktura jako kód (Terraform)</li>
               <li>Hlídáme výdaje a škrtáme zbytečné</li>
             </ul>
-            <img src="assets/img/earth.jpg" alt="" loading="lazy" width="1800" height="1198">
+            <picture><source type="image/avif" srcset="assets/img/earth-640.avif 640w, assets/img/earth-1280.avif 1280w, assets/img/earth-1800.avif 1800w" sizes="(max-width: 760px) 92vw, 40vw"><img src="assets/img/earth-1280.webp" srcset="assets/img/earth-640.webp 640w, assets/img/earth-1280.webp 1280w, assets/img/earth-1800.webp 1800w" sizes="(max-width: 760px) 92vw, 40vw" alt="" loading="lazy" decoding="async" width="1800" height="1198"></picture>
           </div></div>
         </article>
 
@@ -197,7 +196,7 @@
               <li>Reakce do 30 minut</li>
               <li>Veřejná status stránka pro vaše klienty</li>
             </ul>
-            <img src="assets/img/server-room.jpg" alt="" loading="lazy" width="1800" height="1010">
+            <picture><source type="image/avif" srcset="assets/img/server-room-640.avif 640w, assets/img/server-room-1280.avif 1280w, assets/img/server-room-1800.avif 1800w" sizes="(max-width: 760px) 92vw, 40vw"><img src="assets/img/server-room-1280.webp" srcset="assets/img/server-room-640.webp 640w, assets/img/server-room-1280.webp 1280w, assets/img/server-room-1800.webp 1800w" sizes="(max-width: 760px) 92vw, 40vw" alt="" loading="lazy" decoding="async" width="1800" height="1010"></picture>
           </div></div>
         </article>
 
@@ -217,7 +216,7 @@
               <li>Každou noc, historie 30 dní</li>
               <li>Zkušební obnova jednou měsíčně</li>
             </ul>
-            <img src="assets/img/datacenter.jpg" alt="" loading="lazy" width="1800" height="1200">
+            <picture><source type="image/avif" srcset="assets/img/datacenter-640.avif 640w, assets/img/datacenter-1280.avif 1280w, assets/img/datacenter-1800.avif 1800w" sizes="(max-width: 760px) 92vw, 40vw"><img src="assets/img/datacenter-1280.webp" srcset="assets/img/datacenter-640.webp 640w, assets/img/datacenter-1280.webp 1280w, assets/img/datacenter-1800.webp 1800w" sizes="(max-width: 760px) 92vw, 40vw" alt="" loading="lazy" decoding="async" width="1800" height="1200"></picture>
           </div></div>
         </article>
 
@@ -237,7 +236,7 @@
               <li>SSL certifikáty se obnovují samy</li>
               <li>Audit a jasný plán opatření</li>
             </ul>
-            <img src="assets/img/cables.jpg" alt="" loading="lazy" width="1800" height="1200">
+            <picture><source type="image/avif" srcset="assets/img/cables-640.avif 640w, assets/img/cables-1280.avif 1280w, assets/img/cables-1800.avif 1800w" sizes="(max-width: 760px) 92vw, 40vw"><img src="assets/img/cables-1280.webp" srcset="assets/img/cables-640.webp 640w, assets/img/cables-1280.webp 1280w, assets/img/cables-1800.webp 1800w" sizes="(max-width: 760px) 92vw, 40vw" alt="" loading="lazy" decoding="async" width="1800" height="1200"></picture>
           </div></div>
         </article>
       </div>
@@ -245,7 +244,7 @@
 
     <!-- PIPELINE -->
     <section class="pipe" aria-labelledby="pipe-h">
-      <img class="pipe__bg" src="assets/img/rack.jpg" alt="" loading="lazy" width="1800" height="1350">
+      <picture><source type="image/avif" srcset="assets/img/rack-640.avif 640w, assets/img/rack-1280.avif 1280w, assets/img/rack-1800.avif 1800w" sizes="100vw"><img class="pipe__bg" src="assets/img/rack-1280.webp" srcset="assets/img/rack-640.webp 640w, assets/img/rack-1280.webp 1280w, assets/img/rack-1800.webp 1800w" sizes="100vw" alt="" loading="lazy" decoding="async" width="1800" height="1350"></picture>
       <div class="wrap pipe__inner">
         <h2 id="pipe-h">Git push. <br>A za minutu je to venku.</h2>
         <ol class="stations" aria-label="Průběh nasazení">
@@ -262,7 +261,7 @@
 
     <!-- PHOTO BAND -->
     <section class="photo" aria-label="Noční služba">
-      <img class="photo__img" src="assets/img/server-room.jpg" alt="Serverová skříň plná kabelů v datacentru" loading="lazy" width="1800" height="1010">
+      <picture><source type="image/avif" srcset="assets/img/server-room-640.avif 640w, assets/img/server-room-1280.avif 1280w, assets/img/server-room-1800.avif 1800w" sizes="100vw"><img class="photo__img" src="assets/img/server-room-1280.webp" srcset="assets/img/server-room-640.webp 640w, assets/img/server-room-1280.webp 1280w, assets/img/server-room-1800.webp 1800w" sizes="100vw" alt="Serverová skříň plná kabelů v datacentru" loading="lazy" decoding="async" width="1800" height="1010"></picture>
       <p class="photo__text wrap"><span>Když server spadne ve tři ráno, vstáváme my. Ne vy.</span></p>
     </section>
 
@@ -284,60 +283,47 @@
       </ul>
     </section>
 
-    <!-- PROCESS: patch panel. Ports on a rack strip, the cable in its own band below, steps as cards -->
+    <!-- PROCESS: three rack units that power on in order as they scroll into view -->
     <section class="sec wrap process" aria-labelledby="proc-h">
       <div class="sec__head">
         <h2 id="proc-h">Jak začneme</h2>
         <p>Tři kroky, žádný dlouhý projekt. Převzetí obvykle do dvou týdnů.</p>
       </div>
-      <div class="patch">
-        <div class="patch__panel" aria-hidden="true">
-          <span class="patch__screw"></span>
-          <span class="patch__label">PATCH 01</span>
-          <span class="port"><i></i></span>
-          <span class="port"><i></i></span>
-          <span class="port"><i></i></span>
-          <span class="patch__screw"></span>
-        </div>
-        <svg class="patch__cable" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M 166 0 C 166 120, 500 120, 500 0 C 500 120, 834 120, 834 0"/>
-        </svg>
-        <ol class="steps">
-          <li class="step">
-            <p class="step__when"><i class="led"></i>Krok 1 · den 1 až 5</p>
-            <h3>Audit</h3>
-            <p class="step__text">Projdeme servery, aplikace a zálohy. Sepíšeme, co hoří a co počká.</p>
-            <ul class="step__list">
-              <li>Bezpečnost a aktualizace</li>
-              <li>Zálohy včetně zkušební obnovy</li>
-              <li>Výkon a zbytečné náklady</li>
-            </ul>
-            <p class="step__chip">4 900 Kč, odečteme z první faktury</p>
+      <ol class="stages">
+          <li class="stage" style="--u: 1">
+            <span class="stage__leds" aria-hidden="true"><i class="led"></i><i class="led"></i><i class="led"></i></span>
+            <span class="stage__num" aria-hidden="true">01</span>
+            <div class="stage__body">
+              <p class="stage__when">Den 1 až 5</p>
+              <h3>Audit</h3>
+              <p class="stage__text">Projdeme servery, aplikace a zálohy. Sepíšeme, co hoří a co počká.</p>
+            </div>
+            <ul class="stage__list"><li>Bezpečnost a aktualizace</li><li>Zálohy a zkušební obnova</li><li>Výkon a zbytečné náklady</li></ul>
+            <p class="stage__chip"><strong>4 900 Kč</strong><span>odečteme z první faktury</span></p>
           </li>
-          <li class="step">
-            <p class="step__when"><i class="led"></i>Krok 2 · druhý týden</p>
-            <h3>Převzetí</h3>
-            <p class="step__text">Převezmeme přístupy, zdokumentujeme infrastrukturu a zapneme dohled.</p>
-            <ul class="step__list">
-              <li>Přístupy a dokumentace na jednom místě</li>
-              <li>Monitoring a upozornění 24/7</li>
-              <li>Ověřené zálohy každou noc</li>
-            </ul>
-            <p class="step__chip">Bez výpadku</p>
+          <li class="stage" style="--u: 2">
+            <span class="stage__leds" aria-hidden="true"><i class="led"></i><i class="led"></i><i class="led"></i></span>
+            <span class="stage__num" aria-hidden="true">02</span>
+            <div class="stage__body">
+              <p class="stage__when">Druhý týden</p>
+              <h3>Převzetí</h3>
+              <p class="stage__text">Převezmeme přístupy, zdokumentujeme infrastrukturu a zapneme dohled.</p>
+            </div>
+            <ul class="stage__list"><li>Přístupy a dokumentace</li><li>Monitoring a upozornění 24/7</li><li>Ověřené zálohy každou noc</li></ul>
+            <p class="stage__chip"><strong>Bez výpadku</strong><span>převzetí za provozu</span></p>
           </li>
-          <li class="step">
-            <p class="step__when"><i class="led"></i>Krok 3 · každý měsíc</p>
-            <h3>Provoz</h3>
-            <p class="step__text">Měsíční paušál. Aktualizace, zálohy a dohled děláme my, vy děláte byznys.</p>
-            <ul class="step__list">
-              <li>Aktualizace a bezpečnostní záplaty</li>
-              <li>Reakce do 30 minut u tarifu 2U</li>
-              <li>Měsíční report, co se dělo</li>
-            </ul>
-            <p class="step__chip">od 2 990 Kč / měs.</p>
+          <li class="stage" style="--u: 3">
+            <span class="stage__leds" aria-hidden="true"><i class="led"></i><i class="led"></i><i class="led"></i></span>
+            <span class="stage__num" aria-hidden="true">03</span>
+            <div class="stage__body">
+              <p class="stage__when">Každý měsíc</p>
+              <h3>Provoz</h3>
+              <p class="stage__text">Měsíční paušál. Aktualizace, zálohy a dohled děláme my, vy děláte byznys.</p>
+            </div>
+            <ul class="stage__list"><li>Aktualizace a záplaty</li><li>Reakce do 30 minut u 2U</li><li>Měsíční report</li></ul>
+            <p class="stage__chip"><strong>od 2 990 Kč</strong><span>měsíčně, bez DPH</span></p>
           </li>
-        </ol>
-      </div>
+      </ol>
     </section>
 
     <!-- PRICING: tabs of rack units, rendered by main.js from plans.json -->
@@ -431,12 +417,12 @@
       <h2 class="crew__title" id="tym-h">Kdo jsme</h2>
       <ul class="crew__list">
         <li class="crew__item">
-          <img src="assets/img/vojtech.webp" alt="Vojtěch Kotrč" width="208" height="276" loading="lazy">
+          <picture><source type="image/avif" srcset="assets/img/vojtech-320.avif 320w, assets/img/vojtech-640.avif 640w" sizes="(max-width: 760px) 84px, 104px"><img src="assets/img/vojtech-320.webp" srcset="assets/img/vojtech-320.webp 320w, assets/img/vojtech-640.webp 640w" sizes="(max-width: 760px) 84px, 104px" alt="Vojtěch Kotrč" width="208" height="276" loading="lazy" decoding="async"></picture>
           <div><strong>Vojtěch Kotrč</strong><span>Infrastruktura, CI/CD a vše, co běží v terminálu.</span></div>
           <a href="https://webzi.cz" target="_blank" rel="noopener">webzi.cz</a>
         </li>
         <li class="crew__item">
-          <img src="assets/img/petr.jpg" alt="Petr Kuneš" width="208" height="276" loading="lazy">
+          <picture><source type="image/avif" srcset="assets/img/petr-320.avif 320w, assets/img/petr-640.avif 640w" sizes="(max-width: 760px) 84px, 104px"><img src="assets/img/petr-320.webp" srcset="assets/img/petr-320.webp 320w, assets/img/petr-640.webp 640w" sizes="(max-width: 760px) 84px, 104px" alt="Petr Kuneš" width="208" height="276" loading="lazy" decoding="async"></picture>
           <div><strong>Petr Kuneš</strong><span>Klienti, plánování a provoz.</span></div>
           <a href="https://digitality.marketing" target="_blank" rel="noopener">digitality.marketing</a>
         </li>
@@ -445,7 +431,7 @@
 
     <!-- CTA -->
     <section class="cta" id="kontakt" aria-labelledby="cta-h">
-      <img class="cta__bg" src="assets/img/earth.jpg" alt="" loading="lazy" width="1800" height="1198">
+      <picture><source type="image/avif" srcset="assets/img/earth-640.avif 640w, assets/img/earth-1280.avif 1280w, assets/img/earth-1800.avif 1800w" sizes="100vw"><img class="cta__bg" src="assets/img/earth-1280.webp" srcset="assets/img/earth-640.webp 640w, assets/img/earth-1280.webp 1280w, assets/img/earth-1800.webp 1800w" sizes="100vw" alt="" loading="lazy" decoding="async" width="1800" height="1198"></picture>
       <div class="wrap cta__inner">
         <h2 id="cta-h">Spěte klidně.</h2>
         <p class="cta__sub">Napište, jaké servery máte. Do 24 hodin se ozveme s návrhem.</p>
@@ -468,6 +454,6 @@
   </footer>
 </div>
 <script src="site.js?v=11"></script>
-<script src="main.js?v=11"></script>
+<script src="main.js?v=11s"></script>
 </body>
 </html>

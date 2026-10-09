@@ -74,6 +74,9 @@
 						>
 							<Icon size={16} strokeWidth={1.75} />
 							<span class="flex-1 truncate">{item.label}</span>
+							{#if item.soon}
+								<span class="mono rounded-[4px] border border-white/15 px-1.5 py-px text-[10px] text-white/50">brzy</span>
+							{/if}
 							{#if item.badge}
 								<span class="mono flex items-center gap-1.5 text-[11px] text-white/80"><Led state="warn" />{item.badge}</span>
 							{/if}
