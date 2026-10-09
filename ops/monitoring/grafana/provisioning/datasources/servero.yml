@@ -2,7 +2,10 @@
 # $GRAFANA_MYSQL_RO_PASSWORD comes from /etc/servero-monitoring/grafana.env.
 apiVersion: 1
 
-deleteDatasources: []
+# The panel DB datasource was renamed in the SERVEROS rebrand; drop the old name so its uid can be reused.
+deleteDatasources:
+  - name: Servero panel DB
+    orgId: 1
 
 datasources:
   - name: Prometheus
