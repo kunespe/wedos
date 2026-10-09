@@ -1,0 +1,30 @@
+[Unit]
+Description=Loki (SERVERO, single binary, 127.0.0.1:3100)
+Documentation=https://grafana.com/docs/loki/latest/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=loki
+Group=loki
+ExecStart=/opt/loki/current/loki -config.file=/etc/loki/loki.yml
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=60
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ReadWritePaths=/var/lib/loki
+MemoryMax=200M
+# Go GC targets this soft limit, well under MemoryMax, to avoid OOM kills.
+Environment=GOMEMLIMIT=170MiB
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

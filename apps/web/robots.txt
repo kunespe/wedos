@@ -1,0 +1,5 @@
+# servero.cz: everything public may be indexed. The panel (panel.servero.cz) sends its own noindex.
+User-agent: *
+Allow: /
+
+Sitemap: https://servero.cz/sitemap.xml

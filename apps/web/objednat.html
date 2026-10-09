@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Objednávka | Servero</title>
+  <meta name="description" content="Objednejte webhosting, spravované VPS nebo správu serverů. Přístupy pošleme do pár hodin.">
+  <meta name="theme-color" content="#E7EAEE">
+  <!-- Panel API origin for local dev. objednat.js honours a localhost value only when this page
+       is itself served from localhost, so production always falls back to https://panel.servero.cz. -->
+  <meta name="servero-panel" content="http://localhost:5190">
+  <link rel="canonical" href="https://servero.cz/objednat.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Servero">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:url" content="https://servero.cz/objednat.html">
+  <meta property="og:title" content="Objednávka | Servero">
+  <meta property="og:description" content="Objednejte webhosting, spravované VPS nebo správu serverů. Přístupy pošleme do pár hodin.">
+  <meta property="og:image" content="https://servero.cz/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=6">
+  <noscript><style>.order__grid { display: none; }</style></noscript>
+</head>
+<body>
+<div class="rack">
+  <div class="rail rail--l" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
+
+  <header class="top wrap">
+    <a class="logo" href="index.html" aria-label="Servero, domů">servero<span>.cz</span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="index.html#sluzby">Služby</a>
+      <a href="index.html#cenik">Ceník</a>
+      <a href="index.html#tym">Kdo jsme</a>
+      <a href="navody/">Návody</a>
+      <a class="nav__login" href="https://panel.servero.cz" data-panel-path="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a class="btn btn--sm" href="index.html#kontakt"><i class="led led--on"></i>Kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top" class="wrap">
+    <div class="page-head">
+      <p class="kicker"><i class="led led--on"></i>nová jednotka do racku</p>
+      <h1>Objednávka</h1>
+      <p>Vyplňte pár údajů. Zbytek doladíme do pár hodin a pošleme přístupy.</p>
+    </div>
+
+    <noscript><p class="pricing__nojs">Formulář potřebuje JavaScript. Objednávku nám klidně pošlete e-mailem na <a href="mailto:info@servero.cz?subject=Objedn%C3%A1vka">info@servero.cz</a>.</p></noscript>
+
+    <div class="order__grid">
+      <form class="slots" id="order" novalidate>
+
+        <section class="slot">
+          <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+          <fieldset class="slot__body">
+            <legend class="slot__legend"><span>01</span>Služba</legend>
+            <fieldset class="seg">
+              <legend class="sr-only">Období platby</legend>
+              <label><input type="radio" name="period" value="month" checked><span>Měsíčně</span></label>
+              <label><input type="radio" name="period" value="year"><span>Ročně <small class="seg__free"></small></span></label>
+            </fieldset>
+            <div class="pick" role="radiogroup" aria-label="Služba" aria-describedby="err-plan"></div>
+            <p class="field__err" id="err-plan" hidden></p>
+          </fieldset>
+          <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+        </section>
+
+        <section class="slot">
+          <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+          <fieldset class="slot__body">
+            <legend class="slot__legend"><span>02</span>Doména</legend>
+            <div class="fields">
+              <fieldset class="seg field--full">
+                <legend class="sr-only">Doména</legend>
+                <label><input type="radio" name="domainMode" value="own" checked><span>Mám vlastní</span></label>
+                <label><input type="radio" name="domainMode" value="register"><span>Chci registrovat novou</span></label>
+              </fieldset>
+              <div class="field field--full">
+                <label class="field__label" for="f-domain">Doména</label>
+                <div class="field__row">
+                  <input class="input" id="f-domain" name="domain" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="vasefirma.cz" aria-describedby="hint-domain domain-status err-domain">
+                  <button class="btn btn--ghost domain-check" type="button" hidden>Ověřit dostupnost</button>
+                </div>
+                <p class="field__hint" id="hint-domain">Nepovinné. Doménu můžete doplnit i později.</p>
+                <p class="dom-status" id="domain-status" aria-live="polite" hidden></p>
+                <p class="field__err" id="err-domain" hidden></p>
+              </div>
+            </div>
+          </fieldset>
+          <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+        </section>
+
+        <section class="slot">
+          <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+          <fieldset class="slot__body">
+            <legend class="slot__legend"><span>03</span>Kontakt</legend>
+            <div class="fields">
+              <div class="field field--full">
+                <label class="field__label" for="f-name">Jméno a příjmení <b aria-hidden="true">*</b></label>
+                <input class="input" id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="err-name">
+                <p class="field__err" id="err-name" hidden></p>
+              </div>
+              <div class="field">
+                <label class="field__label" for="f-email">E-mail <b aria-hidden="true">*</b></label>
+                <input class="input" id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="err-email">
+                <p class="field__err" id="err-email" hidden></p>
+              </div>
+              <div class="field">
+                <label class="field__label" for="f-phone">Telefon</label>
+                <input class="input" id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+420" aria-describedby="err-phone">
+                <p class="field__err" id="err-phone" hidden></p>
+              </div>
+            </div>
+          </fieldset>
+          <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+        </section>
+
+        <section class="slot">
+          <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+          <fieldset class="slot__body">
+            <legend class="slot__legend"><span>04</span>Fakturace</legend>
+            <div class="fields">
+              <div class="field field--full">
+                <label class="field__label" for="f-ico">IČO</label>
+                <div class="field__row">
+                  <input class="input" id="f-ico" name="ico" type="text" inputmode="numeric" autocomplete="off" maxlength="10" aria-describedby="err-ico ares-status">
+                  <button class="btn btn--ghost ares" type="button">Načíst z ARES</button>
+                </div>
+                <p class="field__err" id="err-ico" hidden></p>
+                <p class="ares-status" id="ares-status" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label class="field__label" for="f-company">Firma</label>
+                <input class="input" id="f-company" name="company" type="text" autocomplete="organization" aria-describedby="err-company">
+                <p class="field__err" id="err-company" hidden></p>
+              </div>
+              <div class="field">
+                <label class="field__label" for="f-dic">DIČ</label>
+                <input class="input" id="f-dic" name="dic" type="text" autocomplete="off" placeholder="CZ12345678" aria-describedby="err-dic">
+                <p class="field__err" id="err-dic" hidden></p>
+              </div>
+              <div class="field field--full">
+                <label class="field__label" for="f-address">Adresa</label>
+                <input class="input" id="f-address" name="address" type="text" autocomplete="street-address" aria-describedby="err-address">
+                <p class="field__err" id="err-address" hidden></p>
+              </div>
+            </div>
+          </fieldset>
+          <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+        </section>
+
+        <section class="slot">
+          <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+          <fieldset class="slot__body">
+            <legend class="slot__legend"><span>05</span>Poznámka</legend>
+            <div class="field">
+              <label class="sr-only" for="f-note">Poznámka</label>
+              <textarea class="input" id="f-note" name="note" rows="4" maxlength="2000" placeholder="Co u vás běží, termín, cokoli dalšího." aria-describedby="err-note"></textarea>
+              <p class="field__err" id="err-note" hidden></p>
+            </div>
+            <div class="hp" aria-hidden="true">
+              <label for="f-website">Web</label>
+              <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+          </fieldset>
+          <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+        </section>
+      </form>
+
+      <aside class="summary" aria-labelledby="sum-h">
+        <span class="ear"><i class="screw"></i><i class="screw"></i></span>
+        <div class="summary__body">
+          <p class="summary__top"><span id="sum-h">souhrn</span><span aria-hidden="true"><i class="led led--on"></i><i class="led led--act"></i></span></p>
+          <div>
+            <p class="summary__name">Vyberte službu</p>
+            <p class="summary__meta"></p>
+          </div>
+          <p class="lcd" aria-live="polite"><span class="lcd__text">-- Kč</span><i class="lcd__cursor" aria-hidden="true"></i></p>
+          <dl class="summary__rows"></dl>
+          <p class="summary__vat"></p>
+          <div class="field">
+            <label class="check">
+              <input type="checkbox" name="consent" form="order" required aria-describedby="err-consent">
+              <span>Souhlasím s <a href="obchodni-podminky.html" target="_blank">obchodními podmínkami</a> a beru na vědomí <a href="ochrana-osobnich-udaju.html" target="_blank">zpracování osobních údajů</a>. <b aria-hidden="true">*</b></span>
+            </label>
+            <p class="field__err" id="err-consent" hidden></p>
+          </div>
+          <div class="alert" role="alert" hidden></div>
+          <button class="btn btn--light order__submit" type="submit" form="order"><i class="led led--on"></i><span>Odeslat objednávku</span></button>
+        </div>
+        <span class="ear"><i class="screw"></i><i class="screw"></i></span>
+      </aside>
+    </div>
+
+    <section class="done" tabindex="-1" aria-labelledby="done-h" hidden>
+      <span class="ear"><i class="screw"></i><span class="ear__label">OK</span><i class="screw"></i></span>
+      <div class="done__body">
+        <p class="done__leds" aria-hidden="true"><span><i class="led led--on"></i>net</span><span><i class="led led--on"></i>sys</span><span><i class="led led--act"></i>objednávka</span></p>
+        <h2 class="lcd lcd--big" id="done-h"><span class="done__id">Objednávka je u nás.</span><i class="lcd__cursor" aria-hidden="true"></i></h2>
+        <p class="done__sub">Ozveme se do pár hodin s přístupy.</p>
+        <a class="btn btn--light" href="index.html">Zpět na úvod</a>
+      </div>
+      <span class="ear"><i class="screw"></i><span class="ear__label">A1</span><i class="screw"></i></span>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© <span class="year">2026</span> Servero.cz, Plzeň</span>
+    <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
+    <nav class="foot__links" aria-label="Odkazy v patičce">
+      <a href="navody/">Návody</a>
+      <a href="https://panel.servero.cz/stav" data-panel-path="/stav">Stav služeb</a>
+      <a href="obchodni-podminky.html">Obchodní podmínky</a>
+      <a href="ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="#top">Zpět nahoru</a>
+    </nav>
+  </footer>
+</div>
+<script src="site.js?v=5"></script>
+<script src="objednat.js?v=6"></script>
+</body>
+</html>

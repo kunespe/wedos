@@ -1,0 +1,333 @@
+// Grafana Alloy: the single monitoring agent on vytvorit-web (SERVERO).
+// Metrics -> Prometheus remote_write (127.0.0.1:9090), logs -> Loki (127.0.0.1:3100).
+// Installed as /etc/alloy/config.alloy. UI/metrics of Alloy itself: 127.0.0.1:12345.
+//
+// Secrets (created by install-monitoring.sh, mode 0640 root:alloy):
+//   /etc/alloy/secrets/mysql_dsn   e.g. exporter:PASSWORD@(127.0.0.1:3306)/
+
+// ---------------------------------------------------------------- outputs
+
+prometheus.remote_write "local" {
+	endpoint {
+		url = "http://127.0.0.1:9090/api/v1/write"
+	}
+	external_labels = {
+		host = "vytvorit-web",
+	}
+}
+
+loki.write "local" {
+	endpoint {
+		url = "http://127.0.0.1:3100/loki/api/v1/push"
+	}
+	external_labels = {
+		host = "vytvorit-web",
+	}
+}
+
+// ---------------------------------------------------------------- host
+
+prometheus.exporter.unix "node" {
+	set_collectors = [
+		"cpu", "diskstats", "filesystem", "loadavg", "meminfo", "netdev",
+		"netstat", "pressure", "stat", "time", "uname", "vmstat", "systemd", "textfile",
+	]
+
+	filesystem {
+		fs_types_exclude     = "^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs|tmpfs)$"
+		mount_points_exclude = "^/(dev|proc|run|sys|snap|var/lib/docker/.+)($|/)"
+	}
+
+	systemd {
+		unit_include = "(nginx|mysql|clp-agent|clp-nginx|clp-php-fpm|varnish|redis-server|php[0-9.]+-fpm|vw-dashboard|vw-dashboard-broker|servero-panel|grafana-server|prometheus|loki|alloy|alertmanager|vytvorit-web-wordpress|servero-backup-metrics|fail2ban|postfix)\\.service"
+	}
+
+	// servero_backups.prom from servero-backup-metrics.timer
+	textfile {
+		directory = "/var/lib/node_exporter/textfile"
+	}
+}
+
+discovery.relabel "node" {
+	targets = prometheus.exporter.unix.node.targets
+
+	rule {
+		target_label = "job"
+		replacement  = "node"
+	}
+
+	rule {
+		target_label = "instance"
+		replacement  = "vytvorit-web"
+	}
+}
+
+prometheus.scrape "node" {
+	targets         = discovery.relabel.node.output
+	scrape_interval = "30s"
+	forward_to      = [prometheus.remote_write.local.receiver]
+}
+
+// ---------------------------------------------------------------- MySQL (read-only exporter user)
+
+local.file "mysql_dsn" {
+	filename  = "/etc/alloy/secrets/mysql_dsn"
+	is_secret = true
+}
+
+prometheus.exporter.mysql "mysql" {
+	data_source_name = local.file.mysql_dsn.content
+}
+
+discovery.relabel "mysql" {
+	targets = prometheus.exporter.mysql.mysql.targets
+
+	rule {
+		target_label = "job"
+		replacement  = "mysql"
+	}
+
+	rule {
+		target_label = "instance"
+		replacement  = "127.0.0.1:3306"
+	}
+}
+
+prometheus.scrape "mysql" {
+	targets         = discovery.relabel.mysql.output
+	scrape_interval = "60s"
+	forward_to      = [prometheus.remote_write.local.receiver]
+}
+
+// ---------------------------------------------------------------- Redis
+
+prometheus.exporter.redis "redis" {
+	redis_addr = "127.0.0.1:6379"
+}
+
+discovery.relabel "redis" {
+	targets = prometheus.exporter.redis.redis.targets
+
+	rule {
+		target_label = "job"
+		replacement  = "redis"
+	}
+
+	rule {
+		target_label = "instance"
+		replacement  = "127.0.0.1:6379"
+	}
+}
+
+prometheus.scrape "redis" {
+	targets         = discovery.relabel.redis.output
+	scrape_interval = "60s"
+	forward_to      = [prometheus.remote_write.local.receiver]
+}
+
+// ---------------------------------------------------------------- Blackbox probes from the panel
+// The panel writes /var/lib/servero-panel/probes.json in file_sd format:
+// [{"targets":["https://example.cz"],"labels":{"service_id":"12","customer_id":"3","domain":"example.cz"}}]
+// Every entry is probed twice: http_2xx against the URL and tls against domain:443.
+
+discovery.file "probes" {
+	files            = ["/var/lib/servero-panel/probes.json"]
+	refresh_interval = "1m"
+}
+
+discovery.relabel "probes_http" {
+	targets = discovery.file.probes.targets
+
+	rule {
+		source_labels = ["domain"]
+		target_label  = "name"
+		replacement   = "http_$1"
+	}
+
+	rule {
+		target_label = "module"
+		replacement  = "http_2xx"
+	}
+}
+
+discovery.relabel "probes_tls" {
+	targets = discovery.file.probes.targets
+
+	rule {
+		source_labels = ["domain"]
+		target_label  = "__address__"
+		replacement   = "$1:443"
+	}
+
+	rule {
+		source_labels = ["domain"]
+		target_label  = "name"
+		replacement   = "tls_$1"
+	}
+
+	rule {
+		target_label = "module"
+		replacement  = "tls"
+	}
+}
+
+prometheus.exporter.blackbox "probes" {
+	config  = "{ modules: { http_2xx: { prober: http, timeout: 8s, http: { preferred_ip_protocol: ip4, follow_redirects: true, valid_status_codes: [] } }, tls: { prober: tcp, timeout: 8s, tcp: { preferred_ip_protocol: ip4, tls: true } } } }"
+	targets = array.concat(discovery.relabel.probes_http.output, discovery.relabel.probes_tls.output)
+}
+
+discovery.relabel "blackbox" {
+	targets = prometheus.exporter.blackbox.probes.targets
+
+	rule {
+		target_label = "job"
+		replacement  = "blackbox"
+	}
+
+	rule {
+		source_labels = ["__param_module"]
+		target_label  = "probe_module"
+	}
+
+	rule {
+		source_labels = ["domain"]
+		target_label  = "instance"
+	}
+}
+
+prometheus.scrape "blackbox" {
+	targets         = discovery.relabel.blackbox.output
+	scrape_interval = "60s"
+	scrape_timeout  = "10s"
+	forward_to      = [prometheus.remote_write.local.receiver]
+}
+
+// ---------------------------------------------------------------- Panel + monitoring stack self-metrics
+
+prometheus.scrape "panel" {
+	targets = [{
+		__address__      = "127.0.0.1:3000",
+		__metrics_path__ = "/internal/metrics",
+		job              = "servero-panel",
+		instance         = "servero-panel",
+	}]
+	scrape_interval = "60s"
+	forward_to      = [prometheus.remote_write.local.receiver]
+}
+
+prometheus.scrape "stack" {
+	targets = [
+		{__address__ = "127.0.0.1:3100", job = "loki"},
+		{__address__ = "127.0.0.1:9093", job = "alertmanager"},
+		{__address__ = "127.0.0.1:3001", job = "grafana"},
+		{__address__ = "127.0.0.1:12345", job = "alloy"},
+	]
+	scrape_interval = "60s"
+	forward_to      = [prometheus.remote_write.local.receiver]
+}
+
+// nginx stub_status: skipped on purpose. Alloy has no nginx exporter component,
+// and stub_status returns plain text, not the Prometheus format. Request rates
+// and status codes come from the access logs in Loki (see logs.json dashboard).
+
+// ---------------------------------------------------------------- Logs: journald
+
+loki.relabel "journal" {
+	forward_to = []
+
+	rule {
+		source_labels = ["__journal__systemd_unit"]
+		target_label  = "unit"
+	}
+
+	rule {
+		source_labels = ["__journal_priority_keyword"]
+		target_label  = "level"
+	}
+
+	rule {
+		source_labels = ["__journal_syslog_identifier"]
+		target_label  = "syslog_identifier"
+	}
+}
+
+loki.source.journal "journal" {
+	max_age       = "12h"
+	relabel_rules = loki.relabel.journal.rules
+	labels        = {job = "journal"}
+	forward_to    = [loki.write.local.receiver]
+}
+
+// ---------------------------------------------------------------- Logs: nginx + CloudPanel sites
+
+local.file_match "nginx_global" {
+	path_targets = [{
+		__path__ = "/var/log/nginx/*.log",
+		job      = "nginx",
+		site     = "_global",
+	}]
+	sync_period = "1m"
+}
+
+// CloudPanel site logs: /home/<siteuser>/logs/{nginx,php,varnish-cache}/*.log
+// Rotated files (access.log-YYYY-MM-DD) do not end in .log and are skipped.
+local.file_match "site_logs" {
+	path_targets = [{__path__ = "/home/*/logs/*/*.log"}]
+	sync_period  = "1m"
+}
+
+discovery.relabel "site_logs" {
+	targets = local.file_match.site_logs.targets
+
+	rule {
+		source_labels = ["__path__"]
+		regex         = "/home/([^/]+)/logs/([^/]+)/([^/]+)\\.log"
+		target_label  = "site"
+		replacement   = "$1"
+	}
+
+	rule {
+		source_labels = ["__path__"]
+		regex         = "/home/([^/]+)/logs/([^/]+)/([^/]+)\\.log"
+		target_label  = "job"
+		replacement   = "$2"
+	}
+
+	rule {
+		source_labels = ["__path__"]
+		regex         = "/home/([^/]+)/logs/([^/]+)/([^/]+)\\.log"
+		target_label  = "log"
+		replacement   = "$3"
+	}
+}
+
+loki.source.file "nginx_global" {
+	targets       = local.file_match.nginx_global.targets
+	forward_to    = [loki.process.access.receiver]
+	tail_from_end = true
+}
+
+loki.source.file "site_logs" {
+	targets       = discovery.relabel.site_logs.output
+	forward_to    = [loki.process.access.receiver]
+	tail_from_end = true
+}
+
+// Extract the HTTP status code from nginx "main"/combined access lines as a
+// low-cardinality label so dashboards can count 4xx/5xx without regex parsing.
+loki.process "access" {
+	stage.regex {
+		expression = "^\\S+ \\S+ \\S+ \\[[^\\]]+\\] \"[^\"]*\" (?P<status>\\d{3}) "
+	}
+
+	stage.template {
+		source   = "status_class"
+		template = "{{ if .status }}{{ printf \"%.1s\" .status }}xx{{ end }}"
+	}
+
+	stage.labels {
+		values = {status_class = ""}
+	}
+
+	forward_to = [loki.write.local.receiver]
+}

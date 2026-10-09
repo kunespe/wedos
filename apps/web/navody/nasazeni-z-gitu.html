@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nasazení aplikace z Gitu | Návody Servero</title>
+  <meta name="description" content="Jak u Servero nasazujeme aplikace Node.js a Bun z Gitu: požadavky na aplikaci, průběh pipeline, reverse proxy a restart při pádu.">
+  <meta name="theme-color" content="#E7EAEE">
+  <link rel="canonical" href="https://servero.cz/navody/nasazeni-z-gitu.html">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Servero">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:url" content="https://servero.cz/navody/nasazeni-z-gitu.html">
+  <meta property="og:title" content="Nasazení aplikace z Gitu | Návody Servero">
+  <meta property="og:description" content="Jak u Servero nasazujeme aplikace Node.js a Bun z Gitu: požadavky na aplikaci, průběh pipeline, reverse proxy a restart při pádu.">
+  <meta property="og:image" content="https://servero.cz/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=6">
+</head>
+<body>
+<div class="rack">
+  <div class="rail rail--l" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
+
+  <header class="top wrap">
+    <a class="logo" href="../index.html" aria-label="Servero, domů">servero<span>.cz</span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="../index.html#sluzby">Služby</a>
+      <a href="../index.html#cenik">Ceník</a>
+      <a href="../index.html#tym">Kdo jsme</a>
+      <a href="./" aria-current="page">Návody</a>
+      <a class="nav__login" href="https://panel.servero.cz" data-panel-path="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a class="btn btn--sm" href="../index.html#kontakt"><i class="led led--on"></i>Kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top" class="wrap page">
+    <div class="page-head">
+      <p class="crumbs"><a href="../index.html">servero.cz</a><span aria-hidden="true">/</span><a href="./">návody</a><span aria-hidden="true">/</span><span>08</span></p>
+      <h1>Nasazení aplikace z Gitu</h1>
+      <p>V tarifu Aplikace Node / Bun nastavíme nasazení z Gitu za vás. Pushnete do hlavní větve a za chvíli je nová verze venku.</p>
+    </div>
+
+    <div class="doc">
+      <article class="prose">
+        <h2 id="beh">Jak aplikace u nás běží</h2>
+        <ul>
+          <li>Jako služba systemd pod vlastním uživatelem, s pamětí podle tarifu (1 GB RAM). Když spadne, systém ji sám znovu spustí.</li>
+          <li>Před ní stojí nginx jako reverse proxy. Řeší HTTPS s certifikátem Let's Encrypt a předává požadavky na port aplikace na <code>127.0.0.1</code>.</li>
+          <li>Výstup aplikace (stdout a stderr) jde do logu, při potížích do něj nahlédneme spolu s vámi.</li>
+        </ul>
+
+        <h2 id="pozadavky">Co má aplikace splňovat</h2>
+        <ul>
+          <li>Port bere z proměnné <code>PORT</code> a poslouchá na <code>127.0.0.1</code>, ne na <code>0.0.0.0</code>.</li>
+          <li>V <code>package.json</code> má skript <code>start</code>, případně i <code>build</code>.</li>
+          <li>Má zamčené závislosti: <code>package-lock.json</code>, <code>pnpm-lock.yaml</code> nebo <code>bun.lock</code>.</li>
+          <li>Konfiguraci čte z proměnných prostředí. Tajné hodnoty nepatří do repozitáře, uložíme je přímo na server.</li>
+          <li>Ideálně má adresu pro kontrolu zdraví, třeba <code>/health</code>, která vrátí 200.</li>
+        </ul>
+        <pre><code>// Node.js (Express, Fastify i čisté http fungují stejně)
+const port = Number(process.env.PORT ?? 3000);
+server.listen(port, '127.0.0.1');
+
+// Bun
+Bun.serve({ port: Number(process.env.PORT ?? 3000), hostname: '127.0.0.1', fetch: app.fetch });</code></pre>
+
+        <h2 id="pipeline">Jak probíhá nasazení</h2>
+        <p>Typické nastavení vypadá takto, detaily přizpůsobíme vašemu projektu:</p>
+        <ol>
+          <li>Push do hlavní větve spustí pipeline v GitHub Actions nebo GitLab CI.</li>
+          <li>Pipeline nainstaluje závislosti, spustí testy a sestaví aplikaci. Když testy neprojdou, nic se nenasadí.</li>
+          <li>Sestavená verze se přes SSH, s klíčem určeným jen pro nasazení, nahraje na server vedle té současné.</li>
+          <li>Služba se přepne na novou verzi a ověří se, že odpovídá. Předchozí verze zůstává na serveru, takže návrat zpět je otázka chvíle.</li>
+        </ol>
+
+        <h2 id="potrebujeme">Co od vás potřebujeme</h2>
+        <ul>
+          <li>Přístup k repozitáři na GitHubu nebo GitLabu, abychom mohli nastavit pipeline.</li>
+          <li>Seznam proměnných prostředí a jejich hodnoty, předané bezpečnou cestou.</li>
+          <li>Verzi Node.js nebo Bunu, kterou aplikace potřebuje.</li>
+          <li>Doménu, na které má aplikace běžet (viz <a href="domena-dns.html">Jak nasměrovat doménu</a>).</li>
+        </ul>
+        <p>Databázi MySQL k aplikaci založíme na požádání, v klientském panelu je na to požadavek <strong>Nová databáze</strong>. Když aplikace potřebuje víc výkonu nebo vlastní služby, hodí se <a href="../index.html#cenik">spravované VPS</a>.</p>
+
+        <nav class="doc__next" aria-label="Další návod">
+          <a class="btn btn--ghost" href="ssl.html">‹ SSL certifikát</a>
+        </nav>
+      </article>
+
+      <aside class="doc__side" aria-label="Další návody a kontakt">
+        <nav class="side-unit" aria-labelledby="side-guides">
+          <h2 id="side-guides">Návody</h2>
+          <ul>
+            <li><a href="domena-dns.html"><i class="led"></i>Jak nasměrovat doménu</a></li>
+            <li><a href="sftp.html"><i class="led"></i>Připojení přes SFTP</a></li>
+            <li><a href="prenos-webu.html"><i class="led"></i>Přenos webu k nám</a></li>
+            <li><a href="wordpress.html"><i class="led"></i>WordPress u nás</a></li>
+            <li><a href="zalohy.html"><i class="led"></i>Zálohy a obnova</a></li>
+            <li><a href="email.html"><i class="led"></i>E-mail k doméně</a></li>
+            <li><a href="ssl.html"><i class="led"></i>SSL certifikát</a></li>
+            <li><a href="nasazeni-z-gitu.html" aria-current="page"><i class="led"></i>Nasazení aplikace z Gitu</a></li>
+          </ul>
+        </nav>
+        <div class="side-unit">
+          <h2>Pomoc</h2>
+          <p>Nevíte si rady? Napište na <a href="mailto:info@servero.cz">info@servero.cz</a> nebo volejte <a href="tel:+420773559645">+420 773 559 645</a>.</p>
+          <p>Klienti založí požadavek v <a href="https://panel.servero.cz/app/podpora" data-panel-path="/app/podpora">klientském panelu</a>.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© <span class="year">2026</span> Servero.cz, Plzeň</span>
+    <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
+    <nav class="foot__links" aria-label="Odkazy v patičce">
+      <a href="./">Návody</a>
+      <a href="https://panel.servero.cz/stav" data-panel-path="/stav">Stav služeb</a>
+      <a href="../obchodni-podminky.html">Obchodní podmínky</a>
+      <a href="../ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="#top">Zpět nahoru</a>
+    </nav>
+  </footer>
+</div>
+<script src="../site.js?v=5"></script>
+</body>
+</html>

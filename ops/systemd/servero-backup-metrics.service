@@ -1,0 +1,16 @@
+[Unit]
+Description=Write WordPress backup freshness metrics for Alloy (textfile)
+
+[Service]
+Type=oneshot
+# Runs as root because /var/backups/vytvorit-web is 0700 root.
+ExecStart=/usr/bin/python3 /usr/local/sbin/servero-backup-metrics
+Nice=10
+IOSchedulingClass=idle
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/node_exporter/textfile
+MemoryMax=64M
+TimeoutStartSec=2min

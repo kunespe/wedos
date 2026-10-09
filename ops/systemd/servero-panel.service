@@ -1,0 +1,39 @@
+[Unit]
+Description=SERVERO customer panel (Node.js, 127.0.0.1:3000)
+After=network.target mysql.service vw-dashboard-broker.service
+Wants=mysql.service
+
+[Service]
+Type=simple
+User=servero-panel
+Group=servero-panel
+# Membership in vw-dashboard lets the panel reach /run/vw-dashboard/broker.sock (mode 0660 root:vw-dashboard).
+SupplementaryGroups=vw-dashboard
+WorkingDirectory=/opt/servero-panel
+EnvironmentFile=/etc/servero-panel/env
+Environment=NODE_ENV=production PORT=3000 HOST=127.0.0.1
+ExecStart=/usr/local/bin/node build/index.js
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+# /var/lib/servero-panel holds probes.json (read by Alloy) and runtime state.
+StateDirectory=servero-panel
+StateDirectoryMode=0755
+ReadWritePaths=/var/lib/servero-panel
+MemoryMax=300M
+UMask=0022
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jak nasměrovat doménu | Návody Servero</title>
+  <meta name="description" content="Jak nasměrovat doménu na hosting Servero: A záznam na 2.31.25.249, CNAME pro www, změna nameserverů a ověření.">
+  <meta name="theme-color" content="#E7EAEE">
+  <link rel="canonical" href="https://servero.cz/navody/domena-dns.html">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Servero">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:url" content="https://servero.cz/navody/domena-dns.html">
+  <meta property="og:title" content="Jak nasměrovat doménu | Návody Servero">
+  <meta property="og:description" content="Jak nasměrovat doménu na hosting Servero: A záznam na 2.31.25.249, CNAME pro www, změna nameserverů a ověření.">
+  <meta property="og:image" content="https://servero.cz/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=6">
+</head>
+<body>
+<div class="rack">
+  <div class="rail rail--l" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
+
+  <header class="top wrap">
+    <a class="logo" href="../index.html" aria-label="Servero, domů">servero<span>.cz</span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="../index.html#sluzby">Služby</a>
+      <a href="../index.html#cenik">Ceník</a>
+      <a href="../index.html#tym">Kdo jsme</a>
+      <a href="./" aria-current="page">Návody</a>
+      <a class="nav__login" href="https://panel.servero.cz" data-panel-path="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a class="btn btn--sm" href="../index.html#kontakt"><i class="led led--on"></i>Kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top" class="wrap page">
+    <div class="page-head">
+      <p class="crumbs"><a href="../index.html">servero.cz</a><span aria-hidden="true">/</span><a href="./">návody</a><span aria-hidden="true">/</span><span>01</span></p>
+      <h1>Jak nasměrovat doménu</h1>
+      <p>Aby web běžel u nás, musí doména ukazovat na náš server. Stačí dva záznamy v DNS.</p>
+    </div>
+
+    <div class="doc">
+      <article class="prose">
+        <h2 id="zaznamy">Co nastavit</h2>
+        <p>U správce DNS vaší domény (obvykle u registrátora, kde doménu platíte) nastavte tyto záznamy. Místo <code>firma.cz</code> použijte svou doménu.</p>
+        <div class="table"><table>
+          <thead><tr><th>Název</th><th>Typ</th><th>Hodnota</th><th>TTL</th></tr></thead>
+          <tbody>
+          <tr><td><code>@</code> (samotná doména)</td><td>A</td><td><code>2.31.25.249</code></td><td>3600</td></tr>
+          <tr><td><code>www</code></td><td>CNAME</td><td><code>firma.cz.</code></td><td>3600</td></tr>
+          </tbody>
+        </table></div>
+        <p>Pro <code>www</code> můžete místo CNAME použít i A záznam se stejnou IP adresou. Výsledek je stejný.</p>
+        <div class="callout callout--warn"><b>Starý AAAA záznam smažte.</b>Pokud má doména AAAA (IPv6) záznam, který vede na předchozí hosting, část návštěvníků by chodila dál tam a nešel by vystavit SSL certifikát. AAAA nastavujte jen podle adresy, kterou vám případně pošleme.</div>
+
+        <h2 id="nesahat">Na co nesahat</h2>
+        <ul>
+          <li>Záznamy <strong>MX</strong> a TXT pro e-mail (SPF, DKIM, DMARC) nechte, jak jsou. Pošta běží jinde než web a nasměrování webu ji neovlivní.</li>
+          <li>Ověřovací TXT záznamy od Googlu, Microsoftu nebo Seznamu také nechte.</li>
+        </ul>
+
+        <h2 id="ns">Změna nameserverů</h2>
+        <p>Druhá možnost je svěřit nám celé DNS. U registrátora pak změníte nameservery (NS) na ty, které vám pošleme spolu s přístupy, a všechny záznamy pro web i e-mail nastavíme my. Před změnou nám pošlete výpis současných záznamů, ať nevypadne pošta.</p>
+        <p>Když máte doménu registrovanou přes nás, DNS spravujeme my. Změnu záznamu si vyžádáte v <a href="https://panel.servero.cz/app/podpora" data-panel-path="/app/podpora">klientském panelu</a> v sekci Podpora, požadavek <strong>Změna DNS záznamu</strong>.</p>
+
+        <h2 id="jak-dlouho">Jak dlouho to trvá</h2>
+        <p>Nový záznam obvykle platí do hodiny. Starý ale může v mezipaměti vydržet tak dlouho, kolik byla jeho TTL, běžně 1 až 24 hodin. Změna nameserverů může trvat až 48 hodin. Před plánovaným přepnutím proto snižte TTL na 300 sekund aspoň den předem.</p>
+
+        <h2 id="overeni">Jak ověřit, že to funguje</h2>
+        <pre><code>dig +short firma.cz A
+dig +short www.firma.cz
+
+# Windows (PowerShell nebo cmd)
+nslookup firma.cz</code></pre>
+        <p>Obě odpovědi musí končit adresou <code>2.31.25.249</code>. Certifikát pro HTTPS vystavíme, jakmile doména ukazuje na nás, viz <a href="ssl.html">SSL certifikát</a>.</p>
+
+        <nav class="doc__next" aria-label="Další návod">
+          <a class="btn" href="sftp.html"><i class="led led--on"></i>Připojení přes SFTP ›</a>
+        </nav>
+      </article>
+
+      <aside class="doc__side" aria-label="Další návody a kontakt">
+        <nav class="side-unit" aria-labelledby="side-guides">
+          <h2 id="side-guides">Návody</h2>
+          <ul>
+            <li><a href="domena-dns.html" aria-current="page"><i class="led"></i>Jak nasměrovat doménu</a></li>
+            <li><a href="sftp.html"><i class="led"></i>Připojení přes SFTP</a></li>
+            <li><a href="prenos-webu.html"><i class="led"></i>Přenos webu k nám</a></li>
+            <li><a href="wordpress.html"><i class="led"></i>WordPress u nás</a></li>
+            <li><a href="zalohy.html"><i class="led"></i>Zálohy a obnova</a></li>
+            <li><a href="email.html"><i class="led"></i>E-mail k doméně</a></li>
+            <li><a href="ssl.html"><i class="led"></i>SSL certifikát</a></li>
+            <li><a href="nasazeni-z-gitu.html"><i class="led"></i>Nasazení aplikace z Gitu</a></li>
+          </ul>
+        </nav>
+        <div class="side-unit">
+          <h2>Pomoc</h2>
+          <p>Nevíte si rady? Napište na <a href="mailto:info@servero.cz">info@servero.cz</a> nebo volejte <a href="tel:+420773559645">+420 773 559 645</a>.</p>
+          <p>Klienti založí požadavek v <a href="https://panel.servero.cz/app/podpora" data-panel-path="/app/podpora">klientském panelu</a>.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© <span class="year">2026</span> Servero.cz, Plzeň</span>
+    <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
+    <nav class="foot__links" aria-label="Odkazy v patičce">
+      <a href="./">Návody</a>
+      <a href="https://panel.servero.cz/stav" data-panel-path="/stav">Stav služeb</a>
+      <a href="../obchodni-podminky.html">Obchodní podmínky</a>
+      <a href="../ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="#top">Zpět nahoru</a>
+    </nav>
+  </footer>
+</div>
+<script src="../site.js?v=5"></script>
+</body>
+</html>

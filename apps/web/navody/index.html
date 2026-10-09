@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Návody | Servero</title>
+  <meta name="description" content="Krátké návody k hostingu Servero: DNS, SFTP, přenos webu, WordPress, zálohy, e-mail, SSL a nasazení z Gitu.">
+  <meta name="theme-color" content="#E7EAEE">
+  <link rel="canonical" href="https://servero.cz/navody/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Servero">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:url" content="https://servero.cz/navody/">
+  <meta property="og:title" content="Návody | Servero">
+  <meta property="og:description" content="Krátké návody k hostingu Servero: DNS, SFTP, přenos webu, WordPress, zálohy, e-mail, SSL a nasazení z Gitu.">
+  <meta property="og:image" content="https://servero.cz/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=6">
+</head>
+<body>
+<div class="rack">
+  <div class="rail rail--l" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
+
+  <header class="top wrap">
+    <a class="logo" href="../index.html" aria-label="Servero, domů">servero<span>.cz</span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="../index.html#sluzby">Služby</a>
+      <a href="../index.html#cenik">Ceník</a>
+      <a href="../index.html#tym">Kdo jsme</a>
+      <a href="./" aria-current="page">Návody</a>
+      <a class="nav__login" href="https://panel.servero.cz" data-panel-path="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a class="btn btn--sm" href="../index.html#kontakt"><i class="led led--on"></i>Kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top" class="wrap page">
+    <div class="page-head">
+      <p class="crumbs"><a href="../index.html">servero.cz</a><span aria-hidden="true">/</span><span>návody</span></p>
+      <h1>Návody</h1>
+      <p>Krátce a k věci: co u nás lidé řeší nejčastěji. Když tu odpověď nenajdete, napište na <a href="mailto:info@servero.cz">info@servero.cz</a>.</p>
+    </div>
+    <ul class="guides">
+        <li><a class="guide" href="domena-dns.html">
+          <span class="guide__n">01</span>
+          <h2>Jak nasměrovat doménu</h2>
+          <p>DNS záznamy A a CNAME na náš server, nebo změna nameserverů.</p>
+          <i class="led" aria-hidden="true"></i>
+        </a></li>
+        <li><a class="guide" href="sftp.html">
+          <span class="guide__n">02</span>
+          <h2>Připojení přes SFTP</h2>
+          <p>FileZilla, WinSCP a přihlášení SSH klíčem místo hesla.</p>
+          <i class="led" aria-hidden="true"></i>
+        </a></li>
+        <li><a class="guide" href="prenos-webu.html">
+          <span class="guide__n">03</span>
+          <h2>Přenos webu k nám</h2>
+          <p>Co od vás potřebujeme a jak migrace probíhá bez výpadku.</p>
+          <i class="led" aria-hidden="true"></i>
+        </a></li>
+        <li><a class="guide" href="wordpress.html">
+          <span class="guide__n">04</span>
+          <h2>WordPress u nás</h2>
+          <p>Aktualizace, ověřené zálohy, hlídání. Co děláme a co ne.</p>
+          <i class="led" aria-hidden="true"></i>
+        </a></li>
+        <li><a class="guide" href="zalohy.html">
+          <span class="guide__n">05</span>
+          <h2>Zálohy a obnova</h2>
+          <p>Co a jak často zálohujeme a jak si říct o obnovu.</p>
+          <i class="led" aria-hidden="true"></i>
+        </a></li>
+        <li><a class="guide" href="email.html">
+          <span class="guide__n">06</span>
+          <h2>E-mail k doméně</h2>
+          <p>MX, SPF, DKIM a DMARC pro Seznam, Google a Microsoft 365.</p>
+          <i class="led" aria-hidden="true"></i>
+        </a></li>
+        <li><a class="guide" href="ssl.html">
+          <span class="guide__n">07</span>
+          <h2>SSL certifikát</h2>
+          <p>Let's Encrypt zdarma, obnova automaticky. Co dělat, když zámek chybí.</p>
+          <i class="led" aria-hidden="true"></i>
+        </a></li>
+        <li><a class="guide" href="nasazeni-z-gitu.html">
+          <span class="guide__n">08</span>
+          <h2>Nasazení aplikace z Gitu</h2>
+          <p>Node.js a Bun: co má aplikace splňovat a jak běží CI/CD.</p>
+          <i class="led" aria-hidden="true"></i>
+        </a></li>
+    </ul>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© <span class="year">2026</span> Servero.cz, Plzeň</span>
+    <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
+    <nav class="foot__links" aria-label="Odkazy v patičce">
+      <a href="./">Návody</a>
+      <a href="https://panel.servero.cz/stav" data-panel-path="/stav">Stav služeb</a>
+      <a href="../obchodni-podminky.html">Obchodní podmínky</a>
+      <a href="../ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="#top">Zpět nahoru</a>
+    </nav>
+  </footer>
+</div>
+<script src="../site.js?v=5"></script>
+</body>
+</html>

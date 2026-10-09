@@ -1,0 +1,55 @@
+# promtool test rules ops/monitoring/prometheus/servero.rules.test.yml
+# (run from ops/monitoring/prometheus, see ops/README.md)
+rule_files:
+  - rules/servero.rules.yml
+
+evaluation_interval: 1m
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="blackbox",probe_module="http_2xx",domain="example.cz",service_id="12",customer_id="3"}'
+        values: "1 1 0 0 0 0"
+      - series: 'servero_backup_last_success_timestamp_seconds{site="example.cz",user="example",path="/home/example/htdocs/example.cz"}'
+        # promtool starts at time()=0, so a negative timestamp means "older than 26 h".
+        values: "-100000x30"
+      - series: 'servero_backup_maintenance_enabled'
+        values: "1x30"
+      - series: 'node_systemd_unit_state{job="node",name="nginx.service",state="failed"}'
+        values: "0 0 1 1 1 1"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: SiteDown
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+              job: blackbox
+              probe_module: http_2xx
+              domain: example.cz
+              service_id: "12"
+              customer_id: "3"
+            exp_annotations:
+              summary: "Web example.cz nedostupny"
+              description: "HTTP probe na example.cz (sluzba 12, zakaznik 3) selhava dele nez 2 minuty."
+      - eval_time: 20m
+        alertname: BackupStale
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              site: example.cz
+              user: example
+              path: /home/example/htdocs/example.cz
+            exp_annotations:
+              summary: "Zaloha webu example.cz je starsi nez 26 h"
+              description: "Posledni uspesna zaloha /home/example/htdocs/example.cz je starsi nez 26 hodin (0 = zadna zaloha). Zkontrolujte vytvorit-web-wordpress.service."
+      - eval_time: 5m
+        alertname: SystemdUnitFailed
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+              job: node
+              name: nginx.service
+              state: failed
+            exp_annotations:
+              summary: "Jednotka nginx.service je ve stavu failed"
+              description: "systemd hlasi nginx.service jako failed. journalctl -u nginx.service -n 100"

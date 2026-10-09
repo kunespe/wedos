@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zálohy a obnova | Návody Servero</title>
+  <meta name="description" content="Jak Servero zálohuje weby a servery a jak požádat o obnovu souborů nebo databáze ze zálohy v klientském panelu.">
+  <meta name="theme-color" content="#E7EAEE">
+  <link rel="canonical" href="https://servero.cz/navody/zalohy.html">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Servero">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:url" content="https://servero.cz/navody/zalohy.html">
+  <meta property="og:title" content="Zálohy a obnova | Návody Servero">
+  <meta property="og:description" content="Jak Servero zálohuje weby a servery a jak požádat o obnovu souborů nebo databáze ze zálohy v klientském panelu.">
+  <meta property="og:image" content="https://servero.cz/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=6">
+</head>
+<body>
+<div class="rack">
+  <div class="rail rail--l" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
+
+  <header class="top wrap">
+    <a class="logo" href="../index.html" aria-label="Servero, domů">servero<span>.cz</span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="../index.html#sluzby">Služby</a>
+      <a href="../index.html#cenik">Ceník</a>
+      <a href="../index.html#tym">Kdo jsme</a>
+      <a href="./" aria-current="page">Návody</a>
+      <a class="nav__login" href="https://panel.servero.cz" data-panel-path="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a class="btn btn--sm" href="../index.html#kontakt"><i class="led led--on"></i>Kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top" class="wrap page">
+    <div class="page-head">
+      <p class="crumbs"><a href="../index.html">servero.cz</a><span aria-hidden="true">/</span><a href="./">návody</a><span aria-hidden="true">/</span><span>05</span></p>
+      <h1>Zálohy a obnova</h1>
+      <p>Záloha má smysl jen tehdy, když jde obnovit. Tady je, co zálohujeme a jak si o obnovu řeknete.</p>
+    </div>
+
+    <div class="doc">
+      <article class="prose">
+        <h2 id="co">Co a jak často zálohujeme</h2>
+        <ul>
+          <li><strong>Web Start</strong>: denní záloha, 14 dní zpět.</li>
+          <li><strong>WP Provoz</strong>: záloha před každou týdenní aktualizací, ověřená stažením zpět a porovnáním s originálem.</li>
+          <li><strong>Správa serverů</strong>: zálohy každou noc.</li>
+          <li><strong>Spravované VPS</strong>: zálohy jsou v ceně, rozsah a historii potvrdíme při zřízení.</li>
+        </ul>
+        <p>U ostatních služeb vám rozsah záloh potvrdíme při zřízení. Zálohy jsou šifrované a uložené mimo server, na kterém běží váš web.</p>
+
+        <h2 id="obnova">Jak požádat o obnovu</h2>
+        <ol>
+          <li>Přihlaste se do <a href="https://panel.servero.cz/app/podpora" data-panel-path="/app/podpora">klientského panelu</a> a v sekci <strong>Podpora</strong> založte požadavek <strong>Obnova ze zálohy</strong>.</li>
+          <li>Vyberte službu a okamžik, ke kterému chcete stav vrátit. Obnovíme nejbližší starší zálohu.</li>
+          <li>Zvolte, co obnovit: soubory, databázi, nebo obojí.</li>
+          <li>Do poznámky napište, co se stalo, případně které složky nebo tabulky.</li>
+        </ol>
+        <p>Do panelu se nedostanete? Napište na <a href="mailto:info@servero.cz">info@servero.cz</a> nebo volejte <a href="tel:+420773559645">+420 773 559 645</a>.</p>
+        <div class="callout callout--warn"><b>Obnova přepíše současný stav.</b>Co na webu vzniklo po čase zálohy (objednávky, komentáře, nahrané soubory), se ztratí. Potřebujete zachovat obojí? Napište to do poznámky: zálohu rozbalíme vedle živého webu a vybereme z ní jen to, co chybí.</div>
+
+        <h2 id="vlastni">Vlastní kopie navíc</h2>
+        <p>Nic nebrání mít i vlastní kopii. Soubory stáhnete přes <a href="sftp.html">SFTP</a>, databázi exportem, například pluginem u WordPressu. Hodí se třeba před velkou úpravou webu.</p>
+
+        <nav class="doc__next" aria-label="Další návod">
+          <a class="btn btn--ghost" href="wordpress.html">‹ WordPress u nás</a>
+<a class="btn" href="email.html"><i class="led led--on"></i>E-mail k doméně ›</a>
+        </nav>
+      </article>
+
+      <aside class="doc__side" aria-label="Další návody a kontakt">
+        <nav class="side-unit" aria-labelledby="side-guides">
+          <h2 id="side-guides">Návody</h2>
+          <ul>
+            <li><a href="domena-dns.html"><i class="led"></i>Jak nasměrovat doménu</a></li>
+            <li><a href="sftp.html"><i class="led"></i>Připojení přes SFTP</a></li>
+            <li><a href="prenos-webu.html"><i class="led"></i>Přenos webu k nám</a></li>
+            <li><a href="wordpress.html"><i class="led"></i>WordPress u nás</a></li>
+            <li><a href="zalohy.html" aria-current="page"><i class="led"></i>Zálohy a obnova</a></li>
+            <li><a href="email.html"><i class="led"></i>E-mail k doméně</a></li>
+            <li><a href="ssl.html"><i class="led"></i>SSL certifikát</a></li>
+            <li><a href="nasazeni-z-gitu.html"><i class="led"></i>Nasazení aplikace z Gitu</a></li>
+          </ul>
+        </nav>
+        <div class="side-unit">
+          <h2>Pomoc</h2>
+          <p>Nevíte si rady? Napište na <a href="mailto:info@servero.cz">info@servero.cz</a> nebo volejte <a href="tel:+420773559645">+420 773 559 645</a>.</p>
+          <p>Klienti založí požadavek v <a href="https://panel.servero.cz/app/podpora" data-panel-path="/app/podpora">klientském panelu</a>.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© <span class="year">2026</span> Servero.cz, Plzeň</span>
+    <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
+    <nav class="foot__links" aria-label="Odkazy v patičce">
+      <a href="./">Návody</a>
+      <a href="https://panel.servero.cz/stav" data-panel-path="/stav">Stav služeb</a>
+      <a href="../obchodni-podminky.html">Obchodní podmínky</a>
+      <a href="../ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="#top">Zpět nahoru</a>
+    </nav>
+  </footer>
+</div>
+<script src="../site.js?v=5"></script>
+</body>
+</html>

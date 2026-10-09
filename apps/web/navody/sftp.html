@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Připojení přes SFTP | Návody Servero</title>
+  <meta name="description" content="Jak se připojit k hostingu Servero přes SFTP ve FileZille nebo WinSCP a jak se přihlašovat SSH klíčem.">
+  <meta name="theme-color" content="#E7EAEE">
+  <link rel="canonical" href="https://servero.cz/navody/sftp.html">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Servero">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:url" content="https://servero.cz/navody/sftp.html">
+  <meta property="og:title" content="Připojení přes SFTP | Návody Servero">
+  <meta property="og:description" content="Jak se připojit k hostingu Servero přes SFTP ve FileZille nebo WinSCP a jak se přihlašovat SSH klíčem.">
+  <meta property="og:image" content="https://servero.cz/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=6">
+</head>
+<body>
+<div class="rack">
+  <div class="rail rail--l" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
+
+  <header class="top wrap">
+    <a class="logo" href="../index.html" aria-label="Servero, domů">servero<span>.cz</span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="../index.html#sluzby">Služby</a>
+      <a href="../index.html#cenik">Ceník</a>
+      <a href="../index.html#tym">Kdo jsme</a>
+      <a href="./" aria-current="page">Návody</a>
+      <a class="nav__login" href="https://panel.servero.cz" data-panel-path="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a class="btn btn--sm" href="../index.html#kontakt"><i class="led led--on"></i>Kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top" class="wrap page">
+    <div class="page-head">
+      <p class="crumbs"><a href="../index.html">servero.cz</a><span aria-hidden="true">/</span><a href="./">návody</a><span aria-hidden="true">/</span><span>02</span></p>
+      <h1>Připojení přes SFTP</h1>
+      <p>Soubory webu nahrajete přes SFTP, šifrovaný přenos souborů přes SSH. Funguje ve FileZille, WinSCP i v terminálu.</p>
+    </div>
+
+    <div class="doc">
+      <article class="prose">
+        <h2 id="udaje">Přihlašovací údaje</h2>
+        <div class="table"><table>
+          <thead><tr><th>Položka</th><th>Hodnota</th></tr></thead>
+          <tbody>
+          <tr><td>Protokol</td><td>SFTP (SSH File Transfer Protocol), ne FTP</td></tr>
+          <tr><td>Server</td><td><code>firma.cz</code> nebo <code>2.31.25.249</code></td></tr>
+          <tr><td>Port</td><td><code>22</code></td></tr>
+          <tr><td>Uživatel</td><td>pošleme po zřízení služby</td></tr>
+          <tr><td>Ověření</td><td>SSH klíč (doporučujeme) nebo heslo</td></tr>
+          </tbody>
+        </table></div>
+        <p>Web se zobrazuje ze složky <code>htdocs/firma.cz</code> ve vašem domovském adresáři. U některých frameworků (Laravel, Symfony) z její podsložky <code>public</code>.</p>
+
+        <h2 id="filezilla">FileZilla</h2>
+        <ol>
+          <li>Otevřete <strong>Soubor › Správce míst</strong> a klikněte na <strong>Nové místo</strong>.</li>
+          <li>Protokol: <strong>SFTP</strong>. Hostitel: <code>firma.cz</code>, port <code>22</code>.</li>
+          <li>Typ přihlášení: <strong>Normální</strong> pro heslo, nebo <strong>Soubor s klíčem</strong> a vyberte soukromý klíč.</li>
+          <li>Klikněte na <strong>Připojit</strong>. Při prvním připojení potvrďte otisk klíče serveru.</li>
+        </ol>
+
+        <h2 id="winscp">WinSCP</h2>
+        <ol>
+          <li>V okně <strong>Přihlásit</strong> zvolte <strong>Nové místo</strong>, přenosový protokol <strong>SFTP</strong>.</li>
+          <li>Název hostitele <code>firma.cz</code>, port <code>22</code>, uživatelské jméno.</li>
+          <li>Pro klíč: <strong>Pokročilé › SSH › Ověření › Soubor privátního klíče</strong>. Klíč z OpenSSH vám WinSCP nabídne převést do formátu .ppk.</li>
+          <li><strong>Uložit</strong> a <strong>Přihlásit</strong>.</li>
+        </ol>
+
+        <h2 id="klic">Přihlášení klíčem místo hesla</h2>
+        <p>Klíč je bezpečnější než heslo a nemusíte si ho pamatovat. Na macOS, Linuxu i ve Windows (PowerShell) ho vytvoříte stejně:</p>
+        <pre><code>ssh-keygen -t ed25519 -C "jana@notebook"</code></pre>
+        <p>Vzniknou dva soubory. <code>~/.ssh/id_ed25519</code> je soukromý klíč, ten nikomu neposílejte. <code>~/.ssh/id_ed25519.pub</code> je veřejný: jeho obsah vložte v <a href="https://panel.servero.cz/app/podpora" data-panel-path="/app/podpora">klientském panelu</a> do požadavku <strong>Přístup SFTP / SSH</strong>. Jakmile klíč přidáme, připojíte se i z terminálu:</p>
+        <pre><code>sftp uzivatel@firma.cz</code></pre>
+        <div class="callout"><b>Hesla e-mailem neposíláme.</b>Nové heslo vám předáme bezpečnou cestou a stejně tak prosíme vás: hesla nepište do e-mailů ani do požadavků.</div>
+
+        <h2 id="potize">Časté potíže</h2>
+        <ul>
+          <li><strong>Vypršel časový limit nebo spojení odmítnuto</strong>: zkontrolujte, že máte protokol SFTP a port 22, ne FTP a port 21.</li>
+          <li><strong>Permission denied</strong>: překlep v uživatelském jméně, nebo klíč, který server ještě nezná. Po několika chybných pokusech server IP adresu na chvíli zablokuje, chvíli počkejte.</li>
+          <li><strong>Soubory jsou nahrané, ale web se nemění</strong>: nahráváte do jiné složky, nebo web drží starou verzi v cache (u WordPressu ji vyprázdněte v cache pluginu).</li>
+        </ul>
+
+        <nav class="doc__next" aria-label="Další návod">
+          <a class="btn btn--ghost" href="domena-dns.html">‹ Jak nasměrovat doménu</a>
+<a class="btn" href="prenos-webu.html"><i class="led led--on"></i>Přenos webu k nám ›</a>
+        </nav>
+      </article>
+
+      <aside class="doc__side" aria-label="Další návody a kontakt">
+        <nav class="side-unit" aria-labelledby="side-guides">
+          <h2 id="side-guides">Návody</h2>
+          <ul>
+            <li><a href="domena-dns.html"><i class="led"></i>Jak nasměrovat doménu</a></li>
+            <li><a href="sftp.html" aria-current="page"><i class="led"></i>Připojení přes SFTP</a></li>
+            <li><a href="prenos-webu.html"><i class="led"></i>Přenos webu k nám</a></li>
+            <li><a href="wordpress.html"><i class="led"></i>WordPress u nás</a></li>
+            <li><a href="zalohy.html"><i class="led"></i>Zálohy a obnova</a></li>
+            <li><a href="email.html"><i class="led"></i>E-mail k doméně</a></li>
+            <li><a href="ssl.html"><i class="led"></i>SSL certifikát</a></li>
+            <li><a href="nasazeni-z-gitu.html"><i class="led"></i>Nasazení aplikace z Gitu</a></li>
+          </ul>
+        </nav>
+        <div class="side-unit">
+          <h2>Pomoc</h2>
+          <p>Nevíte si rady? Napište na <a href="mailto:info@servero.cz">info@servero.cz</a> nebo volejte <a href="tel:+420773559645">+420 773 559 645</a>.</p>
+          <p>Klienti založí požadavek v <a href="https://panel.servero.cz/app/podpora" data-panel-path="/app/podpora">klientském panelu</a>.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© <span class="year">2026</span> Servero.cz, Plzeň</span>
+    <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
+    <nav class="foot__links" aria-label="Odkazy v patičce">
+      <a href="./">Návody</a>
+      <a href="https://panel.servero.cz/stav" data-panel-path="/stav">Stav služeb</a>
+      <a href="../obchodni-podminky.html">Obchodní podmínky</a>
+      <a href="../ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="#top">Zpět nahoru</a>
+    </nav>
+  </footer>
+</div>
+<script src="../site.js?v=5"></script>
+</body>
+</html>
