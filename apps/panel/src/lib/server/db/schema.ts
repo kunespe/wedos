@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
 	bigint,
 	boolean,
@@ -21,6 +21,7 @@ import {
 	TICKET_CATEGORIES,
 	TICKET_STATUSES
 } from '../../constants.ts';
+import type { OrderDomain } from '../../domains.ts';
 
 const id = () => int('id').primaryKey().autoincrement();
 const createdAt = () => datetime('created_at', { mode: 'date' }).notNull().$defaultFn(() => new Date());
@@ -146,6 +147,10 @@ export const orders = mysqlTable(
 		note: text('note'),
 		// Price at the time of ordering, so later catalog changes do not rewrite history.
 		priceMonthly: int('price_monthly'),
+		// Domain basket: registrations and transfers, each with its price per year at the time of ordering (null = to confirm).
+		domains: json('domains').$type<OrderDomain[]>().notNull().default(sql`(json_array())`),
+		// Set when convertOrder ran; a domain-only order has no service to tell it by.
+		convertedAt: datetime('converted_at', { mode: 'date' }),
 		assigneeId: int('assignee_id').references(() => users.id, { onDelete: 'set null' }),
 		customerId: int('customer_id').references(() => customers.id, { onDelete: 'set null' }),
 		ip: varchar('ip', { length: 64 }).notNull().default(''),

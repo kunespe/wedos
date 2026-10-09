@@ -3,7 +3,7 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
-  const { drawRails, panel: PANEL_ORIGIN, cleanDomain, checkDomain } = window.servero; // from site.js
+  const { drawRails, panel: PANEL_ORIGIN, cleanDomain, checkDomain, catalog, domainPrice, basket } = window.servero; // from site.js
 
   /* ---------- Config ---------- */
   const ARES = 'https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/';
@@ -13,6 +13,11 @@
   const kc = n => new Intl.NumberFormat('cs-CZ').format(Math.round(n));
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const months = n => n === 1 ? 'měsíc' : n < 5 ? 'měsíce' : 'měsíců';
+  const years = n => n === 1 ? '1 rok' : `${n} roky`;
+  const domainsWord = n => n === 1 ? 'doména' : n > 1 && n < 5 ? 'domény' : 'domén';
+  // catalog plan "domeny": the basket alone, no hosting (offered only while the basket has something)
+  const DOMAIN_ONLY = 'domeny';
+  const X = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
 
   const form = $('#order');
   const el = name => form.elements[name];
@@ -24,7 +29,7 @@
   const q = new URLSearchParams(location.search);
   let planCode = q.get('plan') || '';
   let period = q.get('obdobi') === 'rok' ? 'year' : 'month';
-  let data, plans = {}, catName = {}, mc = 10, domainPrice = null;
+  let data, plans = {}, catName = {}, mc = 10;
   const modeParam = { registrace: 'register', vlastni: 'own' };
   const preDomain = cleanDomain(q.get('domena')).slice(0, 253);
   const preMode = modeParam[q.get('rezim')] || '';
@@ -46,10 +51,23 @@
   /* ---------- Plan picker + summary ---------- */
   function perMonth(p) { return period === 'year' ? p.monthly * mc / 12 : p.monthly; }
   function priceLabel(p) {
+    if (p.code === DOMAIN_ONLY) { const n = basket.items().length; return `${n} ${domainsWord(n)} z košíku`; }
     return p.monthly == null ? 'Individuálně' : `${p.from ? 'od ' : ''}${kc(perMonth(p))} Kč / měs.`;
   }
+  const domainOnly = () => planCode === DOMAIN_ONLY;
 
   function renderPick() {
+    // "Jen domény" sits in its own group after the hosting categories, only with a non-empty basket
+    const only = plans[DOMAIN_ONLY] && basket.items().length ? `
+      <div class="pick__group" role="group" aria-labelledby="cat-domains">
+        <p class="pick__cat" id="cat-domains">Bez hostingu</p>
+        <div class="pick__list">
+          <label class="pick__opt">
+            <input type="radio" name="plan" value="${DOMAIN_ONLY}"${domainOnly() ? ' checked' : ''}>
+            <i class="led"></i><span class="pick__name">Jen domény</span><span class="pick__price" data-price="${DOMAIN_ONLY}"></span>
+          </label>
+        </div>
+      </div>` : '';
     pick.innerHTML = data.categories.map(c => `
       <div class="pick__group" role="group" aria-labelledby="cat-${c.id}">
         <p class="pick__cat" id="cat-${c.id}">${esc(c.name)}</p>
@@ -59,8 +77,15 @@
             <i class="led"></i><span class="pick__name">${esc(p.name)}</span><span class="pick__price" data-price="${p.code}"></span>
           </label>`).join('')}
         </div>
-      </div>`).join('');
+      </div>`).join('') + only;
     updatePrices();
+  }
+  // domains only: no hosting domain and no billing period to choose
+  const domainSlot = el('domain').closest('.slot'), periodSeg = $('input[name="period"]', form).closest('.seg');
+  function syncDomainOnly() {
+    domainSlot.hidden = periodSeg.hidden = domainOnly();
+    if (domainOnly()) setError('domain', '');
+    drawRails();
   }
   function updatePrices() {
     $$('[data-price]', pick).forEach(s => { s.textContent = priceLabel(plans[s.dataset.price]); });
@@ -68,10 +93,21 @@
 
   const sName = $('.summary__name'), sMeta = $('.summary__meta'), sLcd = $('.summary .lcd__text');
   const sRows = $('.summary__rows'), sVat = $('.summary__vat');
+  const sBasket = $('.sbasket'), sBasketList = $('.sbasket ul'), sBasketNote = $('.sbasket .summary__note');
   function renderSummary() {
     const p = plans[planCode];
     const rows = [];
-    if (!p) {
+    const items = basket.items();
+    let known = 0, unknown = 0;
+    items.forEach(d => { const pr = domainPrice(data, d.name); if (pr) known += pr * d.years; else unknown++; });
+    if (p && domainOnly()) {
+      sName.textContent = 'Jen domény';
+      sMeta.textContent = `${items.length} ${domainsWord(items.length)}, bez hostingu`;
+      sLcd.textContent = `${kc(known)} Kč za domény`;
+      rows.push(['Domény bez DPH', `${kc(known)} Kč`]);
+      rows.push(['DPH 21 %', `${kc(known * VAT)} Kč`]);
+      rows.push(['Celkem s DPH', `${kc(known * (1 + VAT))} Kč`, true]);
+    } else if (!p) {
       sName.textContent = 'Vyberte službu';
       sMeta.textContent = '';
       sLcd.textContent = '-- Kč';
@@ -92,11 +128,35 @@
       }
     }
     const domain = values().domain;
-    if (domain && formChoice('domainMode') === 'register') {
-      rows.push([`Registrace ${domain}`, /\.cz$/.test(domain) && domainPrice ? `${kc(domainPrice)} Kč / rok` : 'cenu potvrdíme']);
+    if (domain && formChoice('domainMode') === 'register' && !items.some(d => d.name === domain)) {
+      const pr = domainPrice(data, domain);
+      rows.push([`Registrace ${domain}`, pr ? `${kc(pr)} Kč / rok` : 'cenu potvrdíme']);
     }
     sRows.innerHTML = rows.map(([k, v, total]) => `<div${total ? ' class="is-total"' : ''}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('');
+
+    // the basket: each domain with its price and a remove button
+    sBasket.hidden = !items.length;
+    sBasketList.innerHTML = items.map(d => {
+      const pr = domainPrice(data, d.name);
+      return `<li data-name="${esc(d.name)}"><span class="sbasket__name">${esc(d.name)}<small>${d.mode === 'transfer' ? 'převod' : 'registrace'}, ${years(d.years)}</small></span>` +
+        `<span class="sbasket__price">${pr ? `${kc(pr * d.years)} Kč` : 'potvrdíme'}</span>` +
+        `<button class="rm" type="button" aria-label="Odebrat ${esc(d.name)} z košíku" title="Odebrat">${X}</button></li>`;
+    }).join('') + (items.length && !domainOnly() ? `<li><span class="sbasket__name">Domény bez DPH</span><span class="sbasket__price">${kc(known)} Kč</span><span></span></li>` : '');
+    sBasketNote.textContent = unknown ? `Cenu ${unknown === 1 ? 'jedné domény' : `${unknown} domén`} potvrdíme e-mailem, než ji objednáme.` : '';
+    sBasketNote.hidden = !unknown;
   }
+  sBasketList.addEventListener('click', e => {
+    const rm = e.target.closest('.rm');
+    if (rm) basket.remove(rm.closest('li').dataset.name);
+  });
+  // removed here, in kosik.html or another tab: redraw; an empty basket cannot stay a domains-only order
+  basket.onChange(items => {
+    if (!data) return;
+    if (!items.length && domainOnly()) { planCode = ''; syncDomainOnly(); syncUrl(); }
+    renderPick();
+    renderSummary();
+    setError('domains', '');
+  });
 
   /* ---------- Values + validation ---------- */
   const formChoice = name => { const r = $(`input[name="${name}"]:checked`, form); return r ? r.value : ''; };
@@ -105,11 +165,13 @@
     const domain = v('domain').replace(/^https?:\/\//i, '').replace(/\/.*$/, '').toLowerCase();
     let ico = v('ico').replace(/\s/g, '');
     if (/^\d{1,7}$/.test(ico)) ico = ico.padStart(8, '0');
+    const only = domainOnly();
     return {
       plan: plans[planCode] ? planCode : '',
       period,
-      domain,
-      domainMode: domain ? formChoice('domainMode') : 'none',
+      domain: only ? '' : domain,
+      domainMode: domain && !only ? formChoice('domainMode') : 'none',
+      domains: basket.items().map(({ name, mode, years }) => ({ name, mode, years })),
       name: v('name'),
       email: v('email'),
       phone: v('phone'),
@@ -131,7 +193,7 @@
 
   // order = visual order, so the first error is the first one on the page
   const rules = {
-    plan: v => v ? '' : 'Vyberte službu.',
+    plan: v => !v ? 'Vyberte službu.' : v === DOMAIN_ONLY && !basket.items().length ? 'Košík domén je prázdný, vyberte službu.' : '',
     domain: v => !v || /^(?=.{3,253}$)([\p{L}\p{N}](?:[\p{L}\p{N}-]{0,61}[\p{L}\p{N}])?\.)+\p{L}{2,63}$/iu.test(v) ? '' : 'Zadejte doménu ve tvaru vasefirma.cz.',
     name: v => v.length >= 3 ? '' : 'Vyplňte jméno a příjmení.',
     email: v => !v ? 'Vyplňte e-mail, pošleme na něj přístupy.' : /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : 'Tohle nevypadá jako e-mail.',
@@ -177,7 +239,7 @@
   });
   form.addEventListener('change', e => {
     const t = e.target;
-    if (t.name === 'plan') { planCode = t.value; setError('plan', ''); renderSummary(); syncUrl(); }
+    if (t.name === 'plan') { planCode = t.value; setError('plan', ''); syncDomainOnly(); renderSummary(); syncUrl(); }
     if (t.name === 'period') { period = t.value; updatePrices(); renderSummary(); syncUrl(); }
     if (t.name === 'domainMode') { syncDomainMode(); renderSummary(); syncUrl(); }
   });
@@ -288,6 +350,7 @@
     $('.led', submitBtn).className = 'led ' + (on ? 'led--act' : 'led--on');
   }
   function success(id) {
+    basket.clear(); // ordered: the basket is now the order
     $('.order__grid').hidden = true;
     $('.page-head').hidden = true;
     const done = $('.done');
@@ -339,20 +402,18 @@
   });
 
   /* ---------- Load plans ---------- */
-  fetch('plans.json?v=4')
-    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  catalog() // site.js
     .then(d => {
       data = d;
       mc = d.yearlyMonthsCharged;
       d.plans.forEach(p => { plans[p.code] = p; });
       d.categories.forEach(c => { catName[c.id] = c.name; });
-      const dom = d.extras.find(x => x.code === 'domena-cz');
-      domainPrice = dom ? dom.price : null;
-      if (!plans[planCode]) planCode = '';
+      if (!plans[planCode] || (planCode === DOMAIN_ONLY && !basket.items().length)) planCode = '';
       $('.seg__free', form).textContent = `${12 - mc} ${months(12 - mc)} zdarma`;
       $(`input[name="period"][value="${period}"]`, form).checked = true;
       sVat.textContent = d.vatNote;
       renderPick();
+      syncDomainOnly();
       renderSummary();
       drawRails();
     })

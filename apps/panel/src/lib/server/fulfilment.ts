@@ -1,4 +1,5 @@
-import { and, eq, or } from 'drizzle-orm';
+import { and, eq, inArray, or } from 'drizzle-orm';
+import { NON_HOSTING_CATEGORIES } from '../orders';
 import { createInvite } from './auth/invites';
 import type { Db } from './db/client';
 import { customers, domains, orders, plans, services, users } from './db/schema';
@@ -10,6 +11,8 @@ export class FulfilmentError extends Error {}
  * Nothing is provisioned here: the team sets the server up by hand and then marks the service active.
  * Re-uses an existing customer matched by e-mail or IČO so repeat customers keep one account.
  * A panel order (customerId set by a logged-in client) attaches the service to that customer directly.
+ * Every domain in the basket becomes a domains row (names someone already holds with us are skipped);
+ * an order with domains only creates no service at all.
  */
 export async function convertOrder(db: Db, orderId: number, nodeId: number | null) {
 	return db.transaction(async (tx) => {
@@ -17,7 +20,7 @@ export async function convertOrder(db: Db, orderId: number, nodeId: number | nul
 		if (!order) throw new FulfilmentError('Objednávka neexistuje.');
 		// A panel order carries its customer from the start, so "converted" means a service already exists.
 		const [existing] = await tx.select({ id: services.id }).from(services).where(eq(services.orderId, order.id)).limit(1);
-		if (existing || (order.customerId && order.source !== 'panel')) throw new FulfilmentError('Objednávka už je převedená.');
+		if (existing || order.convertedAt || (order.customerId && order.source !== 'panel')) throw new FulfilmentError('Objednávka už je převedená.');
 		if (order.status === 'cancelled' || order.status === 'done') throw new FulfilmentError('Objednávka je uzavřená.');
 		const [plan] = await tx.select().from(plans).where(eq(plans.code, order.planCode));
 
@@ -46,7 +49,7 @@ export async function convertOrder(db: Db, orderId: number, nodeId: number | nul
 						email: order.email,
 						phone: order.phone
 					})
-					.$returningId();
+				.$returningId();
 				[customer] = await tx.select().from(customers).where(eq(customers.id, id));
 			}
 
@@ -58,41 +61,72 @@ export async function convertOrder(db: Db, orderId: number, nodeId: number | nul
 				const [{ id }] = await tx
 					.insert(users)
 					.values({ email: order.email, name: order.name, role: 'client', customerId: customer.id })
-					.$returningId();
+				.$returningId();
 				[user] = await tx.select().from(users).where(eq(users.id, id));
 			}
 		}
 
+		const domainOnly = !!plan && NON_HOSTING_CATEGORIES.includes(plan.category);
 		const kind = plan?.kind ?? 'web';
-		const [{ id: serviceId }] = await tx
-			.insert(services)
-			.values({
-				customerId: customer.id,
-				planCode: plan?.code ?? null,
-				kind,
-				label: plan ? `${plan.name}${order.domain ? ` · ${order.domain}` : ''}` : order.planCode,
-				domain: order.domain,
-				nodeId: kind === 'vps' || kind === 'management' ? null : nodeId,
-				status: 'pending',
-				period: order.period,
-				priceMonthly: order.priceMonthly,
-				cloudpanelSite: '',
-				orderId: order.id
-			})
-			.$returningId();
+		let serviceId: number | null = null;
+		if (!domainOnly) {
+			[{ id: serviceId }] = await tx
+				.insert(services)
+				.values({
+					customerId: customer.id,
+					planCode: plan?.code ?? null,
+					kind,
+					label: plan ? `${plan.name}${order.domain ? ` · ${order.domain}` : ''}` : order.planCode,
+					domain: order.domain,
+					nodeId: kind === 'vps' || kind === 'management' ? null : nodeId,
+					status: 'pending',
+					period: order.period,
+					priceMonthly: order.priceMonthly,
+					cloudpanelSite: '',
+					orderId: order.id
+				})
+				.$returningId();
+		}
 
 		if (order.domain && order.domainMode === 'register') {
 			const [existing] = await tx.select().from(domains).where(eq(domains.name, order.domain));
 			if (!existing) await tx.insert(domains).values({ customerId: customer.id, name: order.domain, managedByUs: true });
 		}
 
+		// The basket: one row per domain, registrar and expiry are filled in by hand once the registry confirms.
+		const basket = order.domains ?? [];
+		const taken = basket.length
+			? new Set(
+					(await tx.select({ name: domains.name }).from(domains).where(inArray(domains.name, basket.map((d) => d.name)))).map((d) => d.name)
+				)
+			: new Set<string>();
+		const createdDomains: string[] = [];
+		const skippedDomains: string[] = [];
+		for (const d of basket) {
+			if (taken.has(d.name)) {
+				// the hosting domain registered just above is not a conflict
+				if (!(d.name === order.domain && order.domainMode === 'register')) skippedDomains.push(d.name);
+				continue;
+			}
+			taken.add(d.name);
+			await tx.insert(domains).values({
+				customerId: customer.id,
+				name: d.name,
+				registrar: 'Subreg',
+				managedByUs: true,
+				expiresAt: null,
+				note: `${d.mode === 'transfer' ? 'Převod' : 'Registrace'} z objednávky #${order.id}`
+			});
+			createdDomains.push(d.name);
+		}
+
 		await tx
 			.update(orders)
-			.set({ customerId: customer.id, status: 'provisioning' })
+			.set({ customerId: customer.id, status: 'provisioning', convertedAt: new Date() })
 			.where(and(eq(orders.id, order.id)));
 
 		// A password-less user gets a fresh invite; an existing login (always the case for panel orders) keeps working as is.
 		const inviteToken = order.customerId || !user || user.passwordHash ? null : await createInvite(tx as unknown as Db, user.id, 'invite');
-		return { customerId: customer.id, serviceId, userId: user?.id ?? null, inviteToken, createdCustomer };
+		return { customerId: customer.id, serviceId, userId: user?.id ?? null, inviteToken, createdCustomer, createdDomains, skippedDomains };
 	});
 }

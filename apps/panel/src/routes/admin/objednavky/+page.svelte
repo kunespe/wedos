@@ -64,7 +64,7 @@
 <DataTable
 	{rows}
 	{columns}
-	search={(r) => `${r.id} ${r.name} ${r.company} ${r.email} ${r.domain} ${r.plan}`}
+	search={(r) => `${r.id} ${r.name} ${r.company} ${r.email} ${r.domain} ${r.domains.map((d) => d.name).join(' ')} ${r.plan}`}
 	empty="Žádné objednávky v tomto stavu."
 	initialSort={{ column: 6, dir: 'desc' }}
 >
@@ -76,7 +76,10 @@
 				<div class="text-xs text-muted">{o.email}</div>
 			</td>
 			<td>{o.plan ?? 'Neznámý'} <span class="text-xs text-muted">{o.period === 'year' ? 'ročně' : 'měsíčně'}</span></td>
-			<td class="mono text-xs">{o.domain || '·'}</td>
+			<td class="mono text-xs">
+				{o.domain || (o.domains.length ? '' : '·')}
+				{#if o.domains.length}<span class="block font-sans text-muted">{o.domain ? '+ ' : ''}košík: {o.domains.length} {o.domains.length === 1 ? 'doména' : o.domains.length < 5 ? 'domény' : 'domén'}</span>{/if}
+			</td>
 			<td class="mono text-right text-xs">{czk(o.priceMonthly)}</td>
 			<td class="text-xs">{o.assignee ?? '·'}</td>
 			<td class="text-xs text-muted" title={dateTime(o.createdAt)}>{ago(o.createdAt)}</td>

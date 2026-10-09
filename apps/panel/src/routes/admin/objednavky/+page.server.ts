@@ -13,6 +13,7 @@ export const load: PageServerLoad = async () => {
 			company: orders.company,
 			email: orders.email,
 			domain: orders.domain,
+			domains: orders.domains,
 			period: orders.period,
 			priceMonthly: orders.priceMonthly,
 			createdAt: orders.createdAt,

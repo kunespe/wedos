@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=8">
+  <link rel="stylesheet" href="styles.css?v=11">
   <noscript><style>.order__grid { display: none; }</style></noscript>
 </head>
 <body>
@@ -184,6 +184,13 @@
           </div>
           <p class="lcd" aria-live="polite"><span class="lcd__text">-- Kč</span><i class="lcd__cursor" aria-hidden="true"></i></p>
           <dl class="summary__rows"></dl>
+          <!-- domains from the basket (site.js), filled by objednat.js -->
+          <div class="sbasket" hidden>
+            <p class="sbasket__head"><span>domény z košíku</span><a href="kosik.html">upravit košík</a></p>
+            <ul aria-label="Domény z košíku"></ul>
+            <p class="summary__note" hidden></p>
+          </div>
+          <p class="field__err" id="err-domains" hidden></p>
           <p class="summary__vat"></p>
           <div class="field">
             <label class="check">
@@ -223,7 +230,7 @@
     </nav>
   </footer>
 </div>
-<script src="site.js?v=5"></script>
-<script src="objednat.js?v=8"></script>
+<script src="site.js?v=11"></script>
+<script src="objednat.js?v=11"></script>
 </body>
 </html>

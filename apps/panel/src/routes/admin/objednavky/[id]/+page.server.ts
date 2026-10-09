@@ -5,6 +5,7 @@ import { inviteUrl } from '#lib/server/auth/invites.ts';
 import { audit } from '#lib/server/audit.ts';
 import { db } from '#lib/server/db/index.ts';
 import { customers, nodes, orderNotes, orders, paymentRequests, plans, services, users } from '#lib/server/db/schema.ts';
+import { checkDomain, type DomainCheck } from '#lib/server/domain-check.ts';
 import { convertOrder, FulfilmentError } from '#lib/server/fulfilment.ts';
 import { requireAdmin } from '#lib/server/guards.ts';
 import { sendMail } from '#lib/server/mail.ts';
@@ -38,7 +39,11 @@ export const load: PageServerLoad = async ({ params }) => {
 		order.customerId ? db.select().from(customers).where(eq(customers.id, order.customerId)).then((r) => r[0]) : null
 	]);
 	const payments = linked.length ? await paymentRows(eq(paymentRequests.serviceId, linked[0].id)).limit(10) : [];
-	return { order, plan, notes, admins, nodes: nodeRows, linked, customer, payments };
+	// Live availability of the basket, streamed so a slow registry never holds the page (RDAP answers are cached 10 min).
+	const availability: Promise<Record<string, DomainCheck>> = Promise.all(order.domains.map((d) => checkDomain(d.name))).then((r) =>
+		Object.fromEntries(r.map((c, i) => [order.domains[i].name, c.body]))
+	);
+	return { order, plan, notes, admins, nodes: nodeRows, linked, customer, payments, availability };
 };
 
 export const actions: Actions = {
@@ -108,18 +113,28 @@ export const actions: Actions = {
 		const send = form.get('send') === 'on';
 		try {
 			const result = await convertOrder(db, order.id, nodeId);
-			await audit(event, 'order_convert', `#${order.id}`, `zákazník ${result.customerId}, služba ${result.serviceId}`);
+			const doms = result.createdDomains.length ? `, domény ${result.createdDomains.join(', ')}` : '';
+			await audit(event, 'order_convert', `#${order.id}`, `zákazník ${result.customerId}, služba ${result.serviceId ?? 'žádná'}${doms}`);
 			const link = result.inviteToken ? inviteUrl(ORIGIN, result.inviteToken) : null;
 			let mailed = false;
 			if (link && send) {
 				mailed = await sendMail(
 					order.email,
 					'SERVEROS: přístup do klientské zóny',
-					`Dobrý den,\n\nzakládáme vaši službu. V klientské zóně uvidíte její stav, faktury a podporu.\nHeslo si nastavíte tady (odkaz platí 7 dní):\n\n${link}\n\nTým SERVEROS`
+					`Dobrý den,\n\n${result.serviceId == null ? 'zařizujeme vaše domény. V klientské zóně uvidíte jejich stav' : 'zakládáme vaši službu. V klientské zóně uvidíte její stav'}, faktury a podporu.\nHeslo si nastavíte tady (odkaz platí 7 dní):\n\n${link}\n\nTým SERVEROS`
 				);
 			}
+			const skipped = result.skippedDomains.length ? ` Domény ${result.skippedDomains.join(', ')} už v evidenci jsou, přeskočeno.` : '';
+			const what =
+				result.serviceId == null
+					? result.createdCustomer
+						? 'Zákazník a domény založeny.'
+						: 'Domény přidány k existujícímu zákazníkovi.'
+					: result.createdCustomer
+						? 'Zákazník a služba založeni.'
+						: 'Služba přidána k existujícímu zákazníkovi.';
 			return {
-				message: result.createdCustomer ? 'Zákazník a služba založeni.' : 'Služba přidána k existujícímu zákazníkovi.',
+				message: what + skipped,
 				invite: link,
 				mailed,
 				serviceId: result.serviceId

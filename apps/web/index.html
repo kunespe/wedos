@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=8">
+  <link rel="stylesheet" href="styles.css?v=11">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -284,31 +284,57 @@
       </ul>
     </section>
 
-    <!-- PROCESS: patch panel -->
+    <!-- PROCESS: patch panel. Ports on a rack strip, the cable in its own band below, steps as cards -->
     <section class="sec wrap process" aria-labelledby="proc-h">
       <div class="sec__head">
         <h2 id="proc-h">Jak začneme</h2>
-        <p>Tři kroky, žádný dlouhý projekt.</p>
+        <p>Tři kroky, žádný dlouhý projekt. Převzetí obvykle do dvou týdnů.</p>
       </div>
       <div class="patch">
-        <svg class="patch__cable" viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M 166 40 C 166 200, 500 200, 500 40 C 500 200, 834 200, 834 40"/>
+        <div class="patch__panel" aria-hidden="true">
+          <span class="patch__screw"></span>
+          <span class="patch__label">PATCH 01</span>
+          <span class="port"><i></i></span>
+          <span class="port"><i></i></span>
+          <span class="port"><i></i></span>
+          <span class="patch__screw"></span>
+        </div>
+        <svg class="patch__cable" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M 166 0 C 166 120, 500 120, 500 0 C 500 120, 834 120, 834 0"/>
         </svg>
-        <ol class="ports">
-          <li>
-            <span class="port"><i></i></span>
+        <ol class="steps">
+          <li class="step">
+            <p class="step__when"><i class="led"></i>Krok 1 · den 1 až 5</p>
             <h3>Audit</h3>
-            <p>Projdeme vaše servery a řekneme, co hoří. Zdarma, do týdne.</p>
+            <p class="step__text">Projdeme servery, aplikace a zálohy. Sepíšeme, co hoří a co počká.</p>
+            <ul class="step__list">
+              <li>Bezpečnost a aktualizace</li>
+              <li>Zálohy včetně zkušební obnovy</li>
+              <li>Výkon a zbytečné náklady</li>
+            </ul>
+            <p class="step__chip">4 900 Kč, odečteme z první faktury</p>
           </li>
-          <li>
-            <span class="port"><i></i></span>
+          <li class="step">
+            <p class="step__when"><i class="led"></i>Krok 2 · druhý týden</p>
             <h3>Převzetí</h3>
-            <p>Přístupy, dokumentace, monitoring a zálohy. Bez výpadku.</p>
+            <p class="step__text">Převezmeme přístupy, zdokumentujeme infrastrukturu a zapneme dohled.</p>
+            <ul class="step__list">
+              <li>Přístupy a dokumentace na jednom místě</li>
+              <li>Monitoring a upozornění 24/7</li>
+              <li>Ověřené zálohy každou noc</li>
+            </ul>
+            <p class="step__chip">Bez výpadku</p>
           </li>
-          <li>
-            <span class="port"><i></i></span>
+          <li class="step">
+            <p class="step__when"><i class="led"></i>Krok 3 · každý měsíc</p>
             <h3>Provoz</h3>
-            <p>Měsíční paušál. Staráme se, vy děláte byznys.</p>
+            <p class="step__text">Měsíční paušál. Aktualizace, zálohy a dohled děláme my, vy děláte byznys.</p>
+            <ul class="step__list">
+              <li>Aktualizace a bezpečnostní záplaty</li>
+              <li>Reakce do 30 minut u tarifu 2U</li>
+              <li>Měsíční report, co se dělo</li>
+            </ul>
+            <p class="step__chip">od 2 990 Kč / měs.</p>
           </li>
         </ol>
       </div>
@@ -354,10 +380,12 @@
             <p class="lcd"><i class="led"></i><span class="dsearch__text">čekám na doménu, třeba firma.cz</span><i class="lcd__cursor" aria-hidden="true"></i></p>
             <div class="dsearch__act"></div>
           </div>
+          <!-- one row per TLD: the typed one, then .cz .eu .sk .com; "Do košíku" fills the basket (site.js) -->
+          <ul class="dres" aria-label="Výsledky hledání" hidden></ul>
         </div>
         <span class="ear"><i class="screw"></i><i class="screw"></i></span>
       </form>
-      <p class="dsearch__note">Ověřujeme .cz i většinu dalších koncovek. Registraci potvrdíme e-mailem, než doménu objednáme.</p>
+      <p class="dsearch__note">Stačí název i bez koncovky, ověříme rovnou .cz, .eu, .sk a .com. Registraci potvrdíme e-mailem, než doménu objednáme.</p>
     </section>
 
     <!-- FAQ: details/summary, no script -->
@@ -439,7 +467,7 @@
     </nav>
   </footer>
 </div>
-<script src="site.js?v=5"></script>
-<script src="main.js?v=5"></script>
+<script src="site.js?v=11"></script>
+<script src="main.js?v=11"></script>
 </body>
 </html>

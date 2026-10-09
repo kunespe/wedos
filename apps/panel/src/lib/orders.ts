@@ -1,8 +1,20 @@
 import { z } from 'zod';
 import type { OrderStatus } from './constants';
+import { DOMAIN_ONLY_PLAN, domainBasketSchema } from './domains';
 
 const DOMAIN = /^(?=.{3,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{1,62}$/;
 const trimmed = (max: number) => z.string().trim().max(max, `Maximálně ${max} znaků.`);
+
+type DomainFields = { plan: string; domain: string; domainMode: 'own' | 'register' | 'none'; domains: unknown[] };
+/** The hosting domain must look like one; an order with domains only needs at least one in the basket. */
+function refineDomains(v: DomainFields, ctx: z.RefinementCtx) {
+	if (v.plan === DOMAIN_ONLY_PLAN) {
+		if (!v.domains.length) ctx.addIssue({ code: 'custom', path: ['domains'], message: 'Košík domén je prázdný. Přidejte doménu, nebo vyberte hosting.' });
+		return;
+	}
+	if (v.domainMode !== 'none' && !DOMAIN.test(v.domain))
+		ctx.addIssue({ code: 'custom', path: ['domain'], message: 'Zadejte doménu ve tvaru firma.cz.' });
+}
 
 /** The body serveros.cz/objednat.html sends to POST /api/orders. */
 export const publicOrderSchema = z
@@ -30,12 +42,11 @@ export const publicOrderSchema = z
 		// Honeypot: humans never see this field.
 		website: z.string().max(500).default(''),
 		consent: z.literal(true, 'Bez souhlasu s podmínkami objednávku nepřijmeme.'),
-		turnstileToken: z.string().max(4096).optional()
+		turnstileToken: z.string().max(4096).optional(),
+		// Domain basket from the storefront: [{ name, mode: register | transfer, years: 1..3 }]
+		domains: domainBasketSchema
 	})
-	.superRefine((v, ctx) => {
-		if (v.domainMode !== 'none' && !DOMAIN.test(v.domain))
-			ctx.addIssue({ code: 'custom', path: ['domain'], message: 'Zadejte doménu ve tvaru firma.cz.' });
-	});
+	.superRefine(refineDomains);
 
 export type PublicOrder = z.infer<typeof publicOrderSchema>;
 
@@ -78,12 +89,18 @@ export const panelOrderSchema = z
 		domain: trimmed(253)
 			.transform((v) => v.toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, ''))
 			.default(''),
-		note: trimmed(2000).default('')
+		note: trimmed(2000).default(''),
+		// The basket travels as one JSON field of the form.
+		domains: z.preprocess((v) => {
+			if (typeof v !== 'string') return v;
+			try {
+				return JSON.parse(v || '[]');
+			} catch {
+				return v;
+			}
+		}, domainBasketSchema)
 	})
-	.superRefine((v, ctx) => {
-		if (v.domainMode !== 'none' && !DOMAIN.test(v.domain))
-			ctx.addIssue({ code: 'custom', path: ['domain'], message: 'Zadejte doménu ve tvaru firma.cz.' });
-	});
+	.superRefine(refineDomains);
 
 /** Catalog categories (plans.category) in the order the client zone shows them. */
 export const PLAN_CATEGORY_LABEL: Record<string, string> = {
@@ -92,3 +109,6 @@ export const PLAN_CATEGORY_LABEL: Record<string, string> = {
 	vps: 'Virtuální servery',
 	management: 'Správa serverů'
 };
+
+/** Catalog categories that are not hosting tariffs; the plan grids leave them out. */
+export const NON_HOSTING_CATEGORIES = ['domains'];

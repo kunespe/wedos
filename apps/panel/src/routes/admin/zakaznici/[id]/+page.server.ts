@@ -13,6 +13,7 @@ import { requireAdmin } from '#lib/server/guards.ts';
 import { sendMail } from '#lib/server/mail.ts';
 import { paymentRows } from '#lib/server/payment-ops.ts';
 import { createPaymentRequest, PaymentError } from '#lib/server/payments.ts';
+import { NON_HOSTING_CATEGORIES } from '#lib/orders.ts';
 import type { Actions, PageServerLoad } from './$types';
 
 async function getCustomer(id: number) {
@@ -43,7 +44,8 @@ export const load: PageServerLoad = async (event) => {
 		services: serviceRows,
 		domains: domainRows,
 		tickets: ticketRows,
-		plans,
+		// a domain is added in Domény, not as a service
+		plans: plans.filter((p) => !NON_HOSTING_CATEGORIES.includes(p.category)),
 		nodes: nodeRows,
 		payments: paymentList
 	};

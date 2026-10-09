@@ -15,6 +15,13 @@
       "when": 1791501783894,
       "tag": "0001_payments_requests_clientinfo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1791506722409,
+      "tag": "0002_order_domains",
+      "breakpoints": true
     }
   ]
 }

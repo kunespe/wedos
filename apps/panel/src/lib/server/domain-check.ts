@@ -1,4 +1,5 @@
-import { domainToASCII, domainToUnicode } from 'node:url';
+import { domainToUnicode } from 'node:url';
+import { DOMAIN_PRICES, domainPrice, normalizeDomainName, type Normalized } from '../domains.ts';
 
 /**
  * Domain availability over RDAP, for the public search on serveros.cz.
@@ -7,8 +8,8 @@ import { domainToASCII, domainToUnicode } from 'node:url';
  * anything else is "we do not know", never a guess.
  */
 
-// Same as extras "domena-cz" in catalog/plans.json (domain-check.test.ts keeps them equal).
-export const CZ_DOMAIN_PRICE = 249;
+// Same as "domains.cz" and extras "domena-cz" in catalog/plans.json (domain-check.test.ts keeps them equal).
+export const CZ_DOMAIN_PRICE = DOMAIN_PRICES.cz as number;
 
 const CZ_RDAP = 'https://rdap.nic.cz/';
 const BOOTSTRAP_URL = 'https://data.iana.org/rdap/dns.json';
@@ -23,28 +24,12 @@ export interface DomainCheck {
 	price: number | null;
 }
 
-export type Normalized = { ok: true; ascii: string; name: string; tld: string } | { ok: false; reason: string };
-
-const LABEL = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
-const TLD = /^(?:[a-z]{2,63}|xn--[a-z0-9-]{1,59})$/;
+export type { Normalized };
 
 /** Strict check of a second-level domain such as firma.cz or kavárna.com (IDN via punycode). */
 export function normalizeDomain(input: unknown): Normalized {
-	const bad = (reason: string): Normalized => ({ ok: false, reason });
-	if (typeof input !== 'string') return bad('Zadejte doménu, třeba firma.cz.');
-	const raw = input.trim().toLowerCase().replace(/\.$/, '');
-	if (!raw) return bad('Zadejte doménu, třeba firma.cz.');
-	if (raw.length > 253 || /[\s/:@?#\\]/.test(raw)) return bad('Zadejte jen samotnou doménu, třeba firma.cz.');
-	const ascii = domainToASCII(raw);
-	if (!ascii || ascii.length > 253) return bad('Tohle nevypadá jako doména. Zkuste třeba firma.cz.');
-	const labels = ascii.split('.');
-	if (labels.length !== 2) return bad('Zadejte doménu druhého řádu bez www, třeba firma.cz.');
-	const [label, tld] = labels;
-	if (!TLD.test(tld)) return bad('Neznámá koncovka domény.');
-	if (!LABEL.test(label) || (label.slice(2, 4) === '--' && !label.startsWith('xn--')))
-		return bad('Doména smí obsahovat písmena, číslice a pomlčky, ne na začátku ani na konci.');
-	if (tld === 'cz' && ascii !== raw) return bad('Domény .cz nesmí obsahovat diakritiku.');
-	return { ok: true, ascii, name: domainToUnicode(ascii) || ascii, tld };
+	const n = normalizeDomainName(input);
+	return n.ok ? { ...n, name: domainToUnicode(n.ascii) || n.ascii } : n;
 }
 
 /** RDAP HTTP status to availability. */
@@ -98,7 +83,7 @@ export function createDomainChecker(fetchImpl: Fetch, now: () => number = Date.n
 		const cached = results.get(n.ascii);
 		if (cached && now() - cached.at < RESULT_TTL) return { status: 200, body: cached.value };
 
-		const price = n.tld === 'cz' ? CZ_DOMAIN_PRICE : null;
+		const price = domainPrice(n.ascii);
 		const base = await serverFor(n.tld);
 		if (base === undefined)
 			return { status: 200, body: { name: n.name, available: null, reason: 'Registr domén teď neodpovídá. Dostupnost ověříme ručně.', price } };

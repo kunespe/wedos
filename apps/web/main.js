@@ -5,7 +5,7 @@
   const wait = ms => new Promise(r => setTimeout(r, reduced ? 0 : ms));
   const setLed = (el, state) => { el.className = 'led' + (state ? ' led--' + state : ''); };
 
-  const { drawRails, panel, cleanDomain, checkDomain } = window.servero; // from site.js
+  const { drawRails, panel, cleanDomain, checkQueued, catalog, domainPrice, basket } = window.servero; // from site.js
   const U = 44; // one rack unit, as in site.js
 
   const pos = $('.rail-pos'), posLabel = $('.rail-pos span');
@@ -225,14 +225,26 @@
 
   /* ---------- Patch cable + parallax (scroll-driven) ---------- */
   const cable = $('.patch__cable path');
-  const ports = $$('.ports li');
+  const ports = $$('.patch__panel .port');
+  const stepCards = $$('.steps .step');
   const patch = $('.patch');
   let cableLen = 0;
+  // Route the cable from the measured port centres (viewBox is 1000 wide), loops hang below the panel.
+  function routeCable() {
+    const box = patch.getBoundingClientRect();
+    if (!box.width || ports.length < 3) return;
+    const x = ports.map(el => { const b = el.getBoundingClientRect(); return ((b.left + b.width / 2 - box.left) / box.width) * 1000; });
+    cable.setAttribute('d', `M ${x[0]} 0 C ${x[0]} 120, ${x[1]} 120, ${x[1]} 0 C ${x[1]} 120, ${x[2]} 120, ${x[2]} 0`);
+    cableLen = cable.getTotalLength();
+    cable.style.strokeDasharray = cableLen;
+  }
   if (cable) {
+    routeCable();
+    addEventListener('resize', () => { routeCable(); onScroll(); });
     cableLen = cable.getTotalLength();
     cable.style.strokeDasharray = cableLen;
     cable.style.strokeDashoffset = reduced ? 0 : cableLen;
-    if (reduced) ports.forEach(p => p.classList.add('is-linked'));
+    if (reduced) [...ports, ...stepCards].forEach(el => el.classList.add('is-linked'));
   }
   const photo = $('.photo'), photoImg = $('.photo__img');
 
@@ -240,10 +252,15 @@
   function onScroll() {
     updatePos();
     if (!reduced) {
+      // The cable draws while the panel scrolls from the lower third to the middle of the screen;
+      // each port (and its step card) lights up when the cable reaches it.
       const r = patch.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, (innerHeight * .85 - r.top) / (innerHeight * .55)));
+      const p = Math.min(1, Math.max(0, (innerHeight * .8 - r.top) / (innerHeight * .4)));
       cable.style.strokeDashoffset = cableLen * (1 - p);
-      ports.forEach((li, i) => li.classList.toggle('is-linked', p >= [0.02, .5, .98][i]));
+      [0.02, .5, .97].forEach((at, i) => {
+        ports[i]?.classList.toggle('is-linked', p >= at);
+        stepCards[i]?.classList.toggle('is-linked', p >= at);
+      });
 
       const pr = photo.getBoundingClientRect();
       if (pr.bottom > 0 && pr.top < innerHeight) {
@@ -256,40 +273,122 @@
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
   onScroll();
 
-  /* ---------- Domain search: the answer on a small LCD ---------- */
+  /* ---------- Domain search: the typed TLD plus the popular ones, one 1U row each ----------
+     The LCD sums the answer up; rows put domains into the basket (site.js), which kosik.html
+     and objednat.html read. Lookups go through site.js's queue: cached, at most 6 at once. */
   const kc = n => new Intl.NumberFormat('cs-CZ').format(Math.round(n));
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const plural = (n, one, few, many) => n === 1 ? one : n > 1 && n < 5 ? few : many;
   const dsForm = $('.dsearch');
   if (dsForm) {
+    const POPULAR = ['cz', 'eu', 'sk', 'com'];
+    const LABEL = /^[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,61}[\p{L}\p{N}])?$/u;
     const dsInput = $('input', dsForm), dsBtn = $('button', dsForm);
     const dsOut = $('.dsearch__out'), dsText = $('.dsearch__text', dsOut), dsLed = $('.led', dsOut), dsAct = $('.dsearch__act');
-    const show = (state, text, link) => {
+    const dsList = $('.dres', dsForm);
+    let prices = null, rows = [], run = 0, debounce;
+    catalog().then(d => { prices = d; render(); }).catch(() => {}); // without it every price reads "cenu potvrdíme"
+
+    const show = (state, text) => {
       dsOut.dataset.state = state;
       dsLed.className = 'led' + ({ free: ' led--on', busy: ' led--act', taken: ' led--fault' }[state] || '');
       dsText.textContent = text;
-      dsAct.replaceChildren();
-      if (link) dsAct.append(link);
     };
-    const linkTo = (props, html) => Object.assign(document.createElement('a'), props, html ? { innerHTML: html } : {});
-    dsForm.addEventListener('submit', async e => {
-      e.preventDefault();
-      let name = cleanDomain(dsInput.value);
-      if (name && !name.includes('.')) name += '.cz'; // a bare "firma" means firma.cz here
-      if (!name) { show('err', 'napište doménu, třeba firma.cz'); dsInput.focus(); return; }
-      dsInput.value = name;
-      dsBtn.disabled = true;
-      show('busy', `ověřuji ${name} …`);
-      const r = await checkDomain(name);
-      dsBtn.disabled = false;
-      const order = rezim => `objednat.html?${new URLSearchParams({ plan: 'web-start', domena: r.name || name, rezim })}`;
-      if (r.available === true) {
-        show('free', `${r.name} je volná · ${r.price ? kc(r.price) + ' Kč/rok' : 'cenu potvrdíme'}`,
-          linkTo({ className: 'btn btn--light', href: order('registrace') }, '<i class="led led--on"></i>Registrovat s hostingem'));
-      } else if (r.available === false) {
-        show('taken', `${r.name} je obsazená`, linkTo({ className: 'dsearch__link', href: order('vlastni'), textContent: 'Máte ji? Převeďte ji k nám' }));
-      } else {
-        show('err', r.reason || 'dostupnost teď nejde ověřit');
+    // "https://www.Firma.de" -> firma.de, then firma.cz, .eu, .sk, .com; a bare "firma" -> the popular four
+    function namesFor(value) {
+      const clean = cleanDomain(value);
+      const dot = clean.indexOf('.');
+      const base = dot < 0 ? clean : clean.slice(0, dot);
+      if (!LABEL.test(base)) return { base, names: [] };
+      return { base, names: [...new Set([...(dot < 0 ? [] : [clean]), ...POPULAR.map(t => `${base}.${t}`)])] };
+    }
+    const stateOf = r => !r ? 'busy' : r.available === true ? 'free' : r.available === false ? 'taken' : r.invalid ? 'bad' : 'unknown';
+    const STATE = { busy: 'ověřuji…', free: 'volná', taken: 'obsazená', unknown: 'ověříme ručně', bad: 'neplatná' };
+    const LED = { busy: 'led--act', free: 'led--on', taken: 'led--fault', unknown: 'led--act', bad: 'led--fault' };
+
+    function rowHTML({ name, r }) {
+      const st = stateOf(r), inside = basket.get(name);
+      const dot = name.indexOf('.');
+      const price = domainPrice(prices, name);
+      let btn = '';
+      if (st !== 'busy' && st !== 'bad') {
+        const mode = st === 'taken' ? 'transfer' : 'register';
+        const on = !!inside && inside.mode === mode;
+        const label = mode === 'transfer' ? (on ? 'Převod v košíku' : 'Převést k nám') : (on ? 'V košíku' : 'Do košíku');
+        btn = `<button class="btn btn--sm dres__btn" type="button" data-name="${esc(name)}" data-mode="${mode}" aria-pressed="${on}"><i class="led${on ? ' led--on' : ''}"></i>${label}</button>`;
       }
+      return `<li class="dres__row" data-state="${st}">
+        <i class="led ${LED[st]}"></i>
+        <span class="dres__name">${esc(name.slice(0, dot))}<span>${esc(name.slice(dot))}</span></span>
+        <span class="dres__state"${r && r.reason ? ` title="${esc(r.reason)}"` : ''}>${STATE[st]}</span>
+        <span class="dres__price">${st === 'bad' ? '' : price ? `${kc(price)} Kč / rok` : 'cenu potvrdíme'}</span>
+        ${btn}
+      </li>`;
+    }
+    function render() {
+      const focused = document.activeElement && document.activeElement.closest('.dres__btn');
+      const keep = focused ? focused.dataset.name : '';
+      dsList.innerHTML = rows.map(rowHTML).join('');
+      dsList.hidden = !rows.length;
+      if (keep) { const b = $(`.dres__btn[data-name="${CSS.escape(keep)}"]`, dsList); if (b) b.focus(); }
+      const n = basket.items().length;
+      dsAct.replaceChildren();
+      if (n) dsAct.insertAdjacentHTML('beforeend', `<a class="btn btn--light" href="kosik.html"><i class="led led--on"></i>Košík (${n}), pokračovat</a>`);
+      drawRails();
+    }
+    function summary(base) {
+      const count = s => rows.filter(x => stateOf(x.r) === s).length;
+      if (count('busy')) return show('busy', `ověřuji ${base} v ${rows.length} ${plural(rows.length, 'koncovce', 'koncovkách', 'koncovkách')} …`);
+      const free = count('free'), taken = count('taken'), unknown = count('unknown') + count('bad');
+      const parts = [];
+      if (free) parts.push(`${free} ${plural(free, 'volná', 'volné', 'volných')}`);
+      if (taken) parts.push(`${taken} ${plural(taken, 'obsazená', 'obsazené', 'obsazených')}`);
+      if (unknown) parts.push(`${unknown} ověříme ručně`);
+      show(free ? 'free' : taken && !unknown ? 'taken' : 'err', `${base}: ${parts.join(', ')}`);
+    }
+
+    async function search(now) {
+      clearTimeout(debounce);
+      const { base, names } = namesFor(dsInput.value);
+      if (!names.length) {
+        if (now) { show('err', base ? 'jen písmena, číslice a pomlčky, třeba firma' : 'napište doménu, třeba firma.cz'); dsInput.focus(); }
+        return;
+      }
+      if (rows.map(x => x.name).join() === names.join() && rows.every(x => x.r)) return; // same search, answers on screen
+      const id = ++run;
+      rows = names.map(name => ({ name, r: null }));
+      render();
+      summary(base);
+      if (now) dsBtn.disabled = true;
+      await Promise.all(names.map(async (name, i) => {
+        const r = await checkQueued(name);
+        if (id !== run) return; // a newer search took over the rows
+        rows[i] = { name, r };
+        render();
+        summary(base);
+      }));
+      if (id === run) dsBtn.disabled = false;
+    }
+    dsForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const clean = cleanDomain(dsInput.value);
+      if (clean) dsInput.value = clean;
+      search(true);
     });
+    // live while typing, once the name settles; site.js caches answers so retyping costs nothing
+    dsInput.addEventListener('input', () => {
+      clearTimeout(debounce);
+      if (cleanDomain(dsInput.value).replace(/\..*$/, '').length >= 2) debounce = setTimeout(() => search(false), 700);
+    });
+    dsList.addEventListener('click', e => {
+      const b = e.target.closest('.dres__btn');
+      if (!b) return;
+      const { name, mode } = b.dataset, inside = basket.get(name);
+      if (inside && inside.mode === mode) basket.remove(name);
+      else if (!basket.put(name, mode)) show('err', `košík je plný, nejvýš ${basket.MAX} domén`);
+    });
+    basket.onChange(render);
+    render();
   }
 
   /* ---------- Pricing: tabs rendered from plans.json ----------
@@ -298,16 +397,13 @@
        cp catalog/plans.json apps/web/plans.json
      For local dev the copied file simply stays in apps/web next to index.html. */
   const pricing = $('.pricing');
-  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const months = n => n === 1 ? 'měsíc' : n < 5 ? 'měsíce' : 'měsíců';
   const extraUnit = { rok: '/ rok', hodina: '/ hod.' };
 
   async function initPricing() {
     let data;
     try {
-      const res = await fetch('plans.json?v=4');
-      if (!res.ok) throw new Error(res.status);
-      data = await res.json();
+      data = await catalog(); // site.js, shared with the domain search
     } catch {
       pricing.insertAdjacentHTML('afterend', '<p class="pricing__nojs">Ceník se teď nepodařilo načíst. Můžete rovnou <a href="objednat.html">objednat službu</a> nebo napsat na <a href="mailto:info@serveros.cz">info@serveros.cz</a>.</p>');
       return;

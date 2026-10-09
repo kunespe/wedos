@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
+import { DOMAIN_ONLY_PLAN, DOMAIN_PRICES } from '../domains';
 import { createDomainChecker, CZ_DOMAIN_PRICE, normalizeDomain, rdapAvailability, rdapServer } from './domain-check';
 
 const bootstrap = {
@@ -137,5 +138,14 @@ describe('catalog', () => {
 			extras: { code: string; price: number }[];
 		};
 		expect(catalog.extras.find((x) => x.code === 'domena-cz')?.price).toBe(CZ_DOMAIN_PRICE);
+	});
+
+	it('domain prices and the domain-only plan match catalog/plans.json', () => {
+		const catalog = JSON.parse(readFileSync(new URL('../../../../../catalog/plans.json', import.meta.url), 'utf8')) as {
+			domains: Record<string, number | null>;
+			plans: { code: string; category: string; kind: string; monthly: number | null }[];
+		};
+		expect(catalog.domains).toEqual(DOMAIN_PRICES);
+		expect(catalog.plans.find((p) => p.code === DOMAIN_ONLY_PLAN)).toMatchObject({ category: 'domains', kind: 'domain', monthly: null });
 	});
 });

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Košík domén | Serveros</title>
+  <meta name="description" content="Domény, které chcete registrovat nebo převést k nám. Ceny za rok bez DPH, objednávku dokončíte jedním formulářem.">
+  <meta name="theme-color" content="#E7EAEE">
+  <!-- the basket lives in this browser only, nothing to index -->
+  <meta name="robots" content="noindex">
+  <!-- Panel origin for local dev, see site.js: a localhost value only applies when this page runs on localhost too. -->
+  <meta name="servero-panel" content="http://localhost:5190">
+  <link rel="canonical" href="https://serveros.cz/kosik.html">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=11">
+  <noscript><style>.order__grid { display: none; }</style></noscript>
+</head>
+<body>
+<div class="rack">
+  <div class="rail rail--l" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
+
+  <header class="top wrap">
+    <a class="logo" href="index.html" aria-label="Serveros, domů">serveros<span>.cz</span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="index.html#sluzby">Služby</a>
+      <a href="index.html#cenik">Ceník</a>
+      <a href="index.html#tym">Kdo jsme</a>
+      <a href="navody/">Návody</a>
+      <a class="nav__login" href="https://panel.serveros.cz" data-panel-path="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a class="btn btn--sm" href="index.html#kontakt"><i class="led led--on"></i>Kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top" class="wrap">
+    <div class="page-head">
+      <p class="kicker"><i class="led led--on"></i>košík domén</p>
+      <h1>Košík</h1>
+      <p>Domény k registraci nebo převodu. Volnou zaregistrujeme, obsazenou vaši k nám převedeme. Ceny jsou za rok bez DPH.</p>
+    </div>
+
+    <noscript><p class="pricing__nojs">Košík potřebuje JavaScript. Domény nám klidně pošlete e-mailem na <a href="mailto:info@serveros.cz?subject=Dom%C3%A9ny">info@serveros.cz</a>.</p></noscript>
+
+    <!-- rendered by kosik.js from the basket in site.js -->
+    <div class="order__grid">
+      <div>
+        <ul class="bitems" aria-label="Domény v košíku"></ul>
+
+        <section class="upsell" aria-labelledby="upsell-h">
+          <h2 id="upsell-h">Přidat hosting</h2>
+          <div class="upsell__list"></div>
+        </section>
+      </div>
+
+      <aside class="summary" aria-labelledby="sum-h">
+        <span class="ear"><i class="screw"></i><i class="screw"></i></span>
+        <div class="summary__body">
+          <p class="summary__top"><span id="sum-h">souhrn košíku</span><span aria-hidden="true"><i class="led led--on"></i><i class="led led--act"></i></span></p>
+          <div>
+            <p class="summary__name">0 domén</p>
+            <p class="summary__meta">registrace a převody</p>
+          </div>
+          <p class="lcd" aria-live="polite"><span class="lcd__text">-- Kč</span><i class="lcd__cursor" aria-hidden="true"></i></p>
+          <dl class="summary__rows"></dl>
+          <p class="summary__note"></p>
+          <a class="btn btn--light basket__go" href="objednat.html?plan=domeny"><i class="led led--on"></i><span>Pokračovat k objednávce</span></a>
+        </div>
+        <span class="ear"><i class="screw"></i><i class="screw"></i></span>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© <span class="year">2026</span> Serveros.cz, Plzeň</span>
+    <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
+    <nav class="foot__links" aria-label="Odkazy v patičce">
+      <a href="navody/">Návody</a>
+      <a href="https://panel.serveros.cz/stav" data-panel-path="/stav">Stav služeb</a>
+      <a href="obchodni-podminky.html">Obchodní podmínky</a>
+      <a href="ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="#top">Zpět nahoru</a>
+    </nav>
+  </footer>
+</div>
+<script src="site.js?v=11"></script>
+<script src="kosik.js?v=11"></script>
+</body>
+</html>

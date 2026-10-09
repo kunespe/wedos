@@ -9,7 +9,8 @@ import { parseForm } from '#lib/server/forms.ts';
 import { requireClient } from '#lib/server/guards.ts';
 import { sendMail } from '#lib/server/mail.ts';
 import { czk, periodTotal } from '#lib/format.ts';
-import { panelOrderSchema } from '#lib/orders.ts';
+import { basketLines, basketTotal, priced } from '#lib/domains.ts';
+import { NON_HOSTING_CATEGORIES, panelOrderSchema } from '#lib/orders.ts';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
@@ -33,7 +34,7 @@ export const load: PageServerLoad = async (event) => {
 		plans: catalog.map((p) => ({ code: p.code, category: p.category, kind: p.kind, name: p.name, monthly: p.monthly, priceFrom: p.priceFrom, features: p.features })),
 		customer,
 		open,
-		preselected: catalog.some((p) => p.code === wanted) ? wanted : null
+		preselected: catalog.some((p) => p.code === wanted && !NON_HOSTING_CATEGORIES.includes(p.category)) ? wanted : null
 	};
 };
 
@@ -53,15 +54,23 @@ export const actions: Actions = {
 			.where(and(eq(orders.customerId, user.customerId), gte(orders.createdAt, new Date(Date.now() - 3_600_000))));
 		if (Number(n) >= 5) return fail(429, { errors: {}, error: 'Za poslední hodinu jste toho objednali hodně. Zkuste to prosím později nebo nám zavolejte.' });
 
+		// Domains only: no hosting, so no hosting domain either; the basket is the whole order.
+		const domainOnly = NON_HOSTING_CATEGORIES.includes(plan.category);
+		if (domainOnly && !data.domains.length)
+			return fail(400, { errors: { domains: 'Košík domén je prázdný.' }, error: 'Přidejte doménu do košíku, nebo vyberte hosting.' });
+		const domainMode = domainOnly ? 'none' : data.domainMode;
+		const basket = priced(data.domains);
+
 		const [customer] = await db.select().from(customers).where(eq(customers.id, user.customerId));
-		const domain = data.domainMode === 'none' ? '' : data.domain;
+		const domain = domainMode === 'none' ? '' : data.domain;
 		const [{ id }] = await db
 			.insert(orders)
 			.values({
 				planCode: plan.code,
 				period: data.period,
 				domain,
-				domainMode: data.domainMode,
+				domainMode,
+				domains: basket,
 				name: customer.name,
 				email: customer.email,
 				phone: customer.phone,
@@ -76,13 +85,20 @@ export const actions: Actions = {
 				ip: event.getClientAddress()
 			})
 			.$returningId();
-		await audit(event, 'order_create', `#${id}`, `z panelu: ${plan.code}`);
+		await audit(event, 'order_create', `#${id}`, `z panelu: ${plan.code}${basket.length ? `, domény ${basket.length}` : ''}`);
 
-		const price =
-			plan.monthly == null ? 'Individuálně' : `${czk(periodTotal(plan.monthly, data.period))} ${data.period === 'year' ? 'ročně' : 'měsíčně'} bez DPH`;
+		const { known, unknown } = basketTotal(basket);
+		const price = domainOnly
+			? `domény za ${czk(known)} bez DPH${unknown ? ', zbytek cen potvrdíme' : ''}`
+			: plan.monthly == null
+				? 'Individuálně'
+				: `${czk(periodTotal(plan.monthly, data.period))} ${data.period === 'year' ? 'ročně' : 'měsíčně'} bez DPH`;
 		const summary = [
-			`Tarif: ${plan.name} (${price})`,
-			domain ? `Doména: ${domain} (${data.domainMode === 'register' ? 'registrovat' : 'vlastní'})` : '',
+			domainOnly ? `Objednávka: ${plan.name}, bez hostingu` : `Tarif: ${plan.name} (${price})`,
+			domain ? `Doména: ${domain} (${domainMode === 'register' ? 'registrovat' : 'vlastní'})` : '',
+			basket.length
+				? `Domény (${basket.length}):\n${basketLines(basket)}\nZnámé ceny celkem ${czk(known)} bez DPH${unknown ? `, u ${unknown} ${unknown === 1 ? 'domény' : 'domén'} cenu potvrdíme e-mailem` : ''}`
+				: '',
 			`Zákazník: ${customer.company || customer.name} (#${customer.id}), objednal ${user.name} <${user.email}>`,
 			data.note ? `\nPoznámka:\n${data.note}` : ''
 		]
@@ -90,6 +106,6 @@ export const actions: Actions = {
 			.join('\n');
 		await sendMail(ORDER_NOTIFY_EMAIL, `Nová objednávka z panelu #${id}: ${plan.name}`, `${summary}\n\nDetail: ${ORIGIN}/admin/objednavky/${id}`);
 
-		return { ordered: { id, plan: plan.name, price, domain } };
+		return { ordered: { id, plan: plan.name, price, domain, domains: basket.map((d) => d.name) } };
 	}
 };

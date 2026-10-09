@@ -6,7 +6,8 @@ import { db } from '#lib/server/db/index.ts';
 import { orders } from '#lib/server/db/schema.ts';
 import { sendMail } from '#lib/server/mail.ts';
 import { czk, periodTotal } from '#lib/format.ts';
-import { fieldErrors, publicOrderSchema } from '#lib/orders.ts';
+import { basketLines, basketTotal, priced } from '#lib/domains.ts';
+import { fieldErrors, NON_HOSTING_CATEGORIES, publicOrderSchema } from '#lib/orders.ts';
 
 const cors = {
 	'Access-Control-Allow-Origin': storefrontOrigins[0],
@@ -72,14 +73,21 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
 	const plan = await findPlan(order.plan);
 	if (!plan || !plan.active) return json({ errors: { plan: 'Tento tarif už nenabízíme.' } }, { status: 400, headers: cors });
+	// Domains only: no hosting, so no hosting domain either; the basket is the whole order.
+	const domainOnly = NON_HOSTING_CATEGORIES.includes(plan.category);
+	if (domainOnly && !order.domains.length)
+		return json({ errors: { domains: 'Košík domén je prázdný. Přidejte doménu, nebo vyberte hosting.' } }, { status: 400, headers: cors });
+	const domainMode = domainOnly ? 'none' : order.domainMode;
+	const basket = priced(order.domains);
 
 	const [{ id }] = await db
 		.insert(orders)
 		.values({
 			planCode: plan.code,
 			period: order.period,
-			domain: order.domainMode === 'none' ? '' : order.domain,
-			domainMode: order.domainMode,
+			domain: domainMode === 'none' ? '' : order.domain,
+			domainMode,
+			domains: basket,
 			name: order.name,
 			email: order.email,
 			phone: order.phone,
@@ -97,9 +105,13 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		plan.monthly == null
 			? 'Individuálně'
 			: `${czk(periodTotal(plan.monthly, order.period))} ${order.period === 'year' ? 'ročně' : 'měsíčně'} bez DPH`;
+	const { known, unknown } = basketTotal(basket);
 	const summary = [
-		`Tarif: ${plan.name} (${price})`,
-		order.domain && order.domainMode !== 'none' ? `Doména: ${order.domain} (${order.domainMode === 'register' ? 'registrovat' : 'vlastní'})` : '',
+		domainOnly ? `Objednávka: ${plan.name}, bez hostingu` : `Tarif: ${plan.name} (${price})`,
+		order.domain && domainMode !== 'none' ? `Doména: ${order.domain} (${domainMode === 'register' ? 'registrovat' : 'vlastní'})` : '',
+		basket.length
+			? `Domény (${basket.length}):\n${basketLines(basket)}\nZnámé ceny celkem ${czk(known)} bez DPH${unknown ? `, u ${unknown} ${unknown === 1 ? 'domény' : 'domén'} cenu potvrdíme e-mailem` : ''}`
+			: '',
 		`Jméno: ${order.name}`,
 		order.company ? `Firma: ${order.company}${order.ico ? `, IČO ${order.ico}` : ''}` : '',
 		`E-mail: ${order.email}`,

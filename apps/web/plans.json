@@ -95,6 +95,14 @@
       "name": "4U Na míru",
       "monthly": null,
       "features": ["Celá infrastruktura", "Cloud i vlastní železo", "SLA podle dohody", "Vyhrazený technik"]
+    },
+    {
+      "code": "domeny",
+      "category": "domains",
+      "kind": "domain",
+      "name": "Registrace domén",
+      "monthly": null,
+      "features": ["Registrace a převod domén bez hostingu", "Cena za rok podle koncovky", "Registraci potvrdíme e-mailem"]
     }
   ],
   "extras": [
@@ -102,5 +110,6 @@
     { "code": "audit", "name": "Audit infrastruktury", "price": 4900, "unit": "jednorázově", "note": "Odečteme z první faktury, když u nás zůstanete." },
     { "code": "cicd", "name": "CI/CD pipeline", "price": 9900, "unit": "jednorázově", "from": true },
     { "code": "hodina", "name": "Práce technika", "price": 1290, "unit": "hodina" }
-  ]
+  ],
+  "domains": { "cz": 249, "eu": null, "sk": null, "com": null, "net": null, "org": null, "online": null, "store": null, "tech": null }
 }
