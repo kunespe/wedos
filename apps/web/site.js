@@ -150,7 +150,8 @@ window.servero = (() => {
     const paint = list => {
       const n = list.length;
       num.textContent = n;
-      cart.setAttribute('aria-label', n ? `Košík domén, položek: ${n}` : 'Košík domén, prázdný');
+      // the name starts with the visible text ("Košík" and the counter), WCAG 2.5.3 label in name
+      cart.setAttribute('aria-label', `Košík ${n}, ${n ? 'domény čekají na objednání' : 'prázdný'}`);
       led.className = 'led' + (n ? ' led--on' : '');
       if (last >= 0 && n !== last) { // activity blink, as a drive LED would
         clearTimeout(flash);

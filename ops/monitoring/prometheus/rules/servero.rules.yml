@@ -44,6 +44,38 @@ groups:
           summary: "Domena {{ $labels.domain }} expiruje za {{ $value | printf \"%.0f\" }} dni"
           description: "Registrace domeny {{ $labels.domain }} konci za mene nez 7 dni."
 
+  # Our own sites (job="blackbox-own", site="serveros"): serveros.cz, panel /zdravi and
+  # Grafana /api/health, probed through the public names. Kept apart from the customer
+  # probes so SiteDown and the public /stav aggregate stay about customers only.
+  - name: servero-own
+    rules:
+      - alert: OwnSiteDown
+        expr: probe_success{job="blackbox-own"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "SERVEROS {{ $labels.instance }} nedostupny"
+          description: "Probe {{ $labels.url }} ({{ $labels.component }}) selhava dele nez 2 minuty: chyba DNS, TLS, nginx, nebo aplikace neodpovida 200."
+
+      - alert: OwnSiteProbeMissing
+        expr: absent_over_time(probe_success{job="blackbox-own"}[10m])
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Chybi probe vlastnich webu SERVEROS"
+          description: "Za 10 minut neprisel zadny probe_success{job=\"blackbox-own\"}. Zkontrolujte prometheus.exporter.blackbox \"own\" v /etc/alloy/config.alloy."
+
+      - alert: OwnSiteCertExpiring
+        expr: (probe_ssl_earliest_cert_expiry{job="blackbox-own"} - time()) / 86400 < 14
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Certifikat {{ $labels.instance }} expiruje za {{ $value | printf \"%.1f\" }} dni"
+          description: "TLS certifikat {{ $labels.instance }} vyprsi za mene nez 14 dni. Zkontrolujte obnovu (ops/issue-certs.sh)."
+
   - name: servero-host
     rules:
       - alert: DiskAlmostFull

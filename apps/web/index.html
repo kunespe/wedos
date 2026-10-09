@@ -22,10 +22,11 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <!-- Panel origin for local dev (domain search, status bars). site.js honours a localhost value only
        when this page is itself served from localhost, so production always uses https://panel.serveros.cz. -->
+  <link rel="preconnect" href="https://panel.serveros.cz" crossorigin>
   <meta name="servero-panel" content="http://localhost:5190">
   <!-- Archivo and JetBrains Mono are self-hosted (@font-face in styles.css); preload the latin face the first paint needs -->
   <link rel="preload" href="/assets/fonts/archivo-v25-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=11s">
+  <link rel="stylesheet" href="styles.css?v=13">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -64,7 +65,7 @@
   <div class="rail-pos" aria-hidden="true"><i class="led led--on"></i><span>U01</span></div>
 
   <header class="top wrap">
-    <a class="logo" href="#top" aria-label="Serveros, domů">serveros<span>.cz</span></a>
+    <a class="logo" href="#top" aria-label="serveros.cz, domů">serveros<span>.cz</span></a>
     <nav class="nav" aria-label="Hlavní">
       <a href="#sluzby">Služby</a>
       <a href="#cenik">Ceník</a>
@@ -453,7 +454,7 @@
     </nav>
   </footer>
 </div>
-<script src="site.js?v=11"></script>
-<script src="main.js?v=11s"></script>
+<script src="site.js?v=13" defer></script>
+<script src="main.js?v=13" defer></script>
 </body>
 </html>

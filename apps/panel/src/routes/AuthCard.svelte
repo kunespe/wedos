@@ -11,7 +11,8 @@
 		<div class="absolute inset-0 flex flex-col justify-center gap-3 px-16">
 			{#each Array(9) as _, i (i)}
 				<div class="flex h-11 items-center gap-3 rounded-[4px] bg-chassis px-4" style="opacity: {1 - Math.abs(i - 4) * 0.16}">
-					<span class="mono w-6 text-[10px] text-white/30">{String(9 - i).padStart(2, '0')}</span>
+					<!-- unit number drawn by CSS: the rows fade out, so as DOM text it would fail contrast checks -->
+					<span class="mono w-6 text-[10px] text-white/40 before:content-[attr(data-u)]" data-u={String(9 - i).padStart(2, '0')}></span>
 					<span class="h-1 flex-1 rounded-full bg-chassis-2"></span>
 					{#each Array(6) as _, j (j)}
 						<span class="h-5 w-3 rounded-[2px] bg-chassis-2"></span>

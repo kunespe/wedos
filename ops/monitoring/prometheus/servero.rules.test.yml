@@ -69,3 +69,31 @@ tests:
             exp_annotations:
               summary: "Objednavka ceka na prevzeti 5h 0m 0s"
               description: "Nejstarsi objednavka ve stavu Nova ceka dele nez 4 hodiny. Prevezmete ji v panelu: https://panel.serveros.cz/admin/objednavky"
+
+  # Own sites: a failing probe of panel.serveros.cz fires OwnSiteDown (and only that one,
+  # SiteDown is for job="blackbox" customer probes).
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="blackbox-own",probe_module="http_own",site="serveros",component="panel",instance="panel.serveros.cz",url="https://panel.serveros.cz/zdravi"}'
+        values: "1 1 0 0 0 0"
+    alert_rule_test:
+      - eval_time: 3m
+        alertname: OwnSiteDown
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: SiteDown
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: OwnSiteDown
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+              job: blackbox-own
+              probe_module: http_own
+              site: serveros
+              component: panel
+              instance: panel.serveros.cz
+              url: https://panel.serveros.cz/zdravi
+            exp_annotations:
+              summary: "SERVEROS panel.serveros.cz nedostupny"
+              description: "Probe https://panel.serveros.cz/zdravi (panel) selhava dele nez 2 minuty: chyba DNS, TLS, nginx, nebo aplikace neodpovida 200."

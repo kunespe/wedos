@@ -73,7 +73,7 @@
 			<div class="mt-8 flex flex-col gap-2" aria-hidden="true">
 				{#each status.enabled ? status.components : [{ id: 'a', name: '', state: 'unknown' as const }, { id: 'b', name: '', state: 'unknown' as const }, { id: 'c', name: '', state: 'unknown' as const }] as c, i (c.id)}
 					<div class="flex h-10 items-center gap-3 rounded-[4px] bg-chassis px-3 sm:px-4">
-						<span class="mono w-6 text-[10px] text-white/30">{String(i + 1).padStart(2, '0')}</span>
+						<span class="mono w-6 text-[10px] text-white/60">{String(i + 1).padStart(2, '0')}</span>
 						<span class="min-w-0 flex-1 truncate text-xs text-white/60">{c.name}</span>
 						<span class="hidden gap-1.5 sm:flex">
 							{#each Array(6) as _, j (j)}<span class="h-5 w-3 rounded-[2px] bg-chassis-2"></span>{/each}

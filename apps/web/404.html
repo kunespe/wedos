@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stránka nenalezena | Serveros</title>
+  <meta name="description" content="Tahle stránka na serveros.cz neexistuje. Zpět na úvod, do návodů nebo na stav služeb.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#E7EAEE">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <!-- nginx serves this page for any unknown path (error_page 404), so every URL here is absolute -->
+  <link rel="preload" href="/assets/fonts/archivo-v25-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/styles.css?v=13">
+</head>
+<body>
+<div class="rack">
+  <div class="rail rail--l" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
+
+  <header class="top wrap">
+    <a class="logo" href="/" aria-label="serveros.cz, domů">serveros<span>.cz</span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="/#sluzby">Služby</a>
+      <a href="/#cenik">Ceník</a>
+      <a href="/#tym">Kdo jsme</a>
+      <a href="/navody/">Návody</a>
+      <a class="nav__login" href="https://panel.serveros.cz" data-panel-path="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a class="btn btn--sm" href="/#kontakt"><i class="led led--on"></i>Kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top" class="wrap page">
+    <div class="page-head">
+      <p class="lcd page__lcd"><span class="lcd__text">chyba 404: pozice je prázdná</span><i class="lcd__cursor" aria-hidden="true"></i></p>
+      <h1>Tahle jednotka v racku chybí.</h1>
+      <p>Stránka, kterou hledáte, tu není. Možná se přestěhovala, možná nikdy neexistovala. Zbytek racku běží dál.</p>
+    </div>
+
+    <!-- an empty rack slot with a blanking plate -->
+    <div class="blank" aria-hidden="true">
+      <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+      <span class="blank__plate"><b>404</b><span>volná pozice, žádný server</span><i class="led led--fault"></i></span>
+      <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
+    </div>
+
+    <div class="blank__cta">
+      <a class="btn" href="/"><i class="led led--on"></i>Zpět na úvod</a>
+      <a class="btn btn--ghost" href="/navody/">Návody</a>
+      <a class="btn btn--ghost" href="https://panel.serveros.cz/stav" data-panel-path="/stav">Stav služeb</a>
+    </div>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© <span class="year">2026</span> Serveros.cz, Plzeň</span>
+    <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
+    <nav class="foot__links" aria-label="Odkazy v patičce">
+      <a href="/navody/">Návody</a>
+      <a href="https://panel.serveros.cz/stav" data-panel-path="/stav">Stav služeb</a>
+      <a href="/obchodni-podminky.html">Obchodní podmínky</a>
+      <a href="/ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="#top">Zpět nahoru</a>
+    </nav>
+  </footer>
+</div>
+<script src="/site.js?v=13" defer></script>
+</body>
+</html>

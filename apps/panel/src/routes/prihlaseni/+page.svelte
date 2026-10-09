@@ -9,6 +9,10 @@
 	let busy = $state(false);
 </script>
 
+<svelte:head>
+	<meta name="description" content="Přihlášení do klientské zóny SERVEROS: služby, faktury, domény a podpora." />
+</svelte:head>
+
 <AuthCard title="Přihlášení" lead="Klientská zóna a správa služeb SERVEROS.">
 	<FormMessage {form} />
 	<form

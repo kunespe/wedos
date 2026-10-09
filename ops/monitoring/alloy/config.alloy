@@ -202,6 +202,72 @@ prometheus.scrape "blackbox" {
 	forward_to      = [prometheus.remote_write.local.receiver]
 }
 
+// ---------------------------------------------------------------- Blackbox probes of our own sites
+// serveros.cz, the panel and Grafana, probed from this host through the public names
+// (DNS, TLS, nginx, app). A separate exporter and job ("blackbox-own", site="serveros")
+// keeps them out of everything that reads job="blackbox": the public /stav "Weby
+// zákazníků" aggregate (apps/panel/src/lib/server/status.ts), SiteDown and the sites
+// dashboard. A redirect counts as down (follow_redirects false): /zdravi and /api/health
+// answer 200 directly, a 30x there means the vhost or the app is misrouted.
+
+prometheus.exporter.blackbox "own" {
+	config = "{ modules: { http_own: { prober: http, timeout: 8s, http: { preferred_ip_protocol: ip4, follow_redirects: false, valid_status_codes: [200], fail_if_not_ssl: true } } } }"
+
+	target {
+		name    = "serveros.cz"
+		address = "https://serveros.cz/"
+		module  = "http_own"
+		labels  = {site = "serveros", component = "web"}
+	}
+
+	target {
+		name    = "panel.serveros.cz"
+		address = "https://panel.serveros.cz/zdravi"
+		module  = "http_own"
+		labels  = {site = "serveros", component = "panel"}
+	}
+
+	target {
+		name    = "monitor.serveros.cz"
+		address = "https://monitor.serveros.cz/api/health"
+		module  = "http_own"
+		labels  = {site = "serveros", component = "monitor"}
+	}
+}
+
+discovery.relabel "blackbox_own" {
+	targets = prometheus.exporter.blackbox.own.targets
+
+	rule {
+		target_label = "job"
+		replacement  = "blackbox-own"
+	}
+
+	rule {
+		source_labels = ["__param_target"]
+		target_label  = "url"
+	}
+
+	rule {
+		source_labels = ["__param_target"]
+		regex         = "https?://([^/]+).*"
+		target_label  = "instance"
+		replacement   = "$1"
+	}
+
+	rule {
+		source_labels = ["__param_module"]
+		target_label  = "probe_module"
+	}
+}
+
+prometheus.scrape "blackbox_own" {
+	targets         = discovery.relabel.blackbox_own.output
+	scrape_interval = "60s"
+	scrape_timeout  = "10s"
+	forward_to      = [prometheus.remote_write.local.receiver]
+}
+
 // ---------------------------------------------------------------- Panel + monitoring stack self-metrics
 
 prometheus.scrape "panel" {

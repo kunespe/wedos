@@ -22,10 +22,9 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=11">
+  <!-- Archivo and JetBrains Mono are self-hosted (@font-face in styles.css); preload the latin face the first paint needs -->
+  <link rel="preload" href="/assets/fonts/archivo-v25-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css?v=13">
   <noscript><style>.order__grid { display: none; }</style></noscript>
 </head>
 <body>
@@ -34,7 +33,7 @@
   <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
 
   <header class="top wrap">
-    <a class="logo" href="index.html" aria-label="Serveros, domů">serveros<span>.cz</span></a>
+    <a class="logo" href="index.html" aria-label="serveros.cz, domů">serveros<span>.cz</span></a>
     <nav class="nav" aria-label="Hlavní">
       <a href="index.html#sluzby">Služby</a>
       <a href="index.html#cenik">Ceník</a>
@@ -230,7 +229,7 @@
     </nav>
   </footer>
 </div>
-<script src="site.js?v=11"></script>
-<script src="objednat.js?v=11"></script>
+<script src="site.js?v=13" defer></script>
+<script src="objednat.js?v=13" defer></script>
 </body>
 </html>

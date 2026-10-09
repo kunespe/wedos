@@ -12,6 +12,16 @@ test('a client cannot reach the admin or another customer’s data', async ({ pa
 	expect((await page.goto('/admin'))!.status()).toBe(403);
 	expect((await page.goto('/app/sluzby/999999'))!.status()).toBe(404);
 	expect((await page.goto('/app/podpora/999999'))!.status()).toBe(404);
+	// branded error page with the code and a way back
+	await expect(page.getByRole('heading', { name: 'Stránka nenalezena' })).toBeVisible();
+	await expect(page.getByText('chyba 404')).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Zpět do panelu' })).toHaveAttribute('href', '/');
+});
+
+test('an unknown address shows the branded 404 page', async ({ page }) => {
+	expect((await page.goto('/tohle-neexistuje'))!.status()).toBe(404);
+	await expect(page.getByRole('heading', { name: 'Stránka nenalezena' })).toBeVisible();
+	await expect(page.getByText('SERVEROS', { exact: true })).toBeVisible();
 });
 
 test('wrong password is refused without revealing the account', async ({ page }) => {
