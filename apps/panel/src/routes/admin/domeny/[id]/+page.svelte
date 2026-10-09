@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { keepResult } from '#lib/forms.ts';
+	import BrandIcon from '#lib/components/BrandIcon.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import ConfirmAction from '#lib/components/ConfirmAction.svelte';
 	import Field from '#lib/components/Field.svelte';
@@ -8,6 +9,7 @@
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Panel from '#lib/components/Panel.svelte';
 	import Pill from '#lib/components/Pill.svelte';
+	import { companyBrand } from '#lib/brands.ts';
 	import { date, daysUntil } from '#lib/format.ts';
 	import type { PageProps } from './$types';
 
@@ -47,6 +49,10 @@
 <PageHeader title={d.name} crumbs={[{ href: '/admin/domeny', label: 'Domény' }, { href: `/admin/zakaznici/${data.customer.id}`, label: data.customer.company || data.customer.name }]}>
 	{#snippet meta()}
 		{#if days == null}<Pill>Bez data expirace</Pill>{:else if days < 0}<Pill tone="bad">Propadlá {-days} dní</Pill>{:else if days <= 30}<Pill tone="warn">Vyprší za {days} dní</Pill>{:else}<Pill tone="ok">Platí do {date(d.expiresAt)}</Pill>{/if}
+		{#if d.registrar}
+			{@const registrar = companyBrand(d.registrar)}
+			<span class="inline-flex items-center gap-1.5">{#if registrar}<BrandIcon name={registrar} />{/if}{d.registrar}</span>
+		{/if}
 	{/snippet}
 	{#snippet actions()}
 		<Button href="https://www.nic.cz/whois/domain/{d.name}/" target="_blank" rel="noreferrer">WHOIS</Button>
@@ -69,7 +75,7 @@
 			</Panel>
 		</form>
 
-		<Panel title="WEDOS" flush>
+		<Panel title="WEDOS" brand="wedos" flush>
 			{#snippet actions()}
 				{#if !w.configured}<Pill>Nenastaveno</Pill>{:else if w.live}<Pill tone="bad">Ostrý režim</Pill>{:else}<Pill tone="warn">Testovací režim</Pill>{/if}
 			{/snippet}

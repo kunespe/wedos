@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { keepResult } from '#lib/forms.ts';
+	import BrandIcon from '#lib/components/BrandIcon.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import Field from '#lib/components/Field.svelte';
 	import FormMessage from '#lib/components/FormMessage.svelte';
 	import Led from '#lib/components/Led.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Panel from '#lib/components/Panel.svelte';
+	import ServiceKind from '#lib/components/ServiceKind.svelte';
 	import { SERVICE_STATUSES } from '#lib/constants.ts';
-	import { czk, date, dateTime, daysUntil, KIND_LABEL, periodTotal, SERVICE_STATUS_LABEL } from '#lib/format.ts';
+	import { czk, date, dateTime, daysUntil, periodTotal, SERVICE_STATUS_LABEL } from '#lib/format.ts';
 	import PaymentList from '../../platby/PaymentList.svelte';
 	import ServiceStatus from '../ServiceStatus.svelte';
 	import ClientInfoPanel from './ClientInfoPanel.svelte';
@@ -26,7 +28,7 @@
 <PageHeader title={s.label} crumbs={[{ href: '/admin/sluzby', label: 'Služby' }, { href: `/admin/zakaznici/${data.customer.id}`, label: data.customer.company || data.customer.name }]}>
 	{#snippet meta()}
 		<ServiceStatus status={s.status} />
-		<span>{KIND_LABEL[s.kind]}</span>
+		<ServiceKind kind={s.kind} size={16} />
 		{#if data.order}<a class="underline" href="/admin/objednavky/{data.order.id}">z objednávky #{data.order.id}</a>{/if}
 		<span class="text-xs">upraveno {dateTime(s.updatedAt)}</span>
 	{/snippet}
@@ -140,7 +142,7 @@
 				<dd class="mono {days != null && days < 0 ? 'text-bad' : days != null && days <= 14 ? 'text-warn' : ''}">
 					{date(s.expiresAt)}{days != null ? ` (${days < 0 ? `${-days} dní po` : `za ${days} dní`})` : ''}
 				</dd>
-				<dt class="text-muted">Fakturor</dt>
+				<dt class="flex items-center gap-1.5 text-muted"><BrandIcon name="fakturor" size={14} />Fakturor</dt>
 				<dd class="mono">{s.fakturorSubscriptionId ? `#${s.fakturorSubscriptionId}` : 'nepropojeno'}</dd>
 			</dl>
 			<p class="mt-3 text-xs text-muted">Pozastavení po splatnosti nikdy neproběhne samo. Vždy ho spouští člověk tady nebo v sekci Weby.</p>
@@ -161,7 +163,7 @@
 		</Panel>
 
 		{#if s.cloudpanelSite}
-			<Panel title="Provoz webu">
+			<Panel title="Provoz webu" brand="cloudpanel">
 				{#if !data.brokerEnabled}
 					<p class="text-sm text-muted">Serverové operace nejsou v tomto prostředí zapnuté.</p>
 				{:else if s.status === 'suspended'}

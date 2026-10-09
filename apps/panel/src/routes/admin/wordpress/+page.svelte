@@ -2,6 +2,7 @@
 	import { enhance, type SubmitFunction } from '$app/forms';
 	import { keepResult } from '#lib/forms.ts';
 	import { Play, TriangleAlert } from '@lucide/svelte';
+	import BrandIcon from '#lib/components/BrandIcon.svelte';
 	import BrokerDown from '#lib/components/BrokerDown.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import Empty from '#lib/components/Empty.svelte';
@@ -26,7 +27,7 @@
 </script>
 
 <PageHeader title="WordPress">
-	{#snippet meta()}Zálohy a aktualizace instalací na uzlu vytvorit-web, každý den kolem 03:30.{/snippet}
+	{#snippet meta()}<span><BrandIcon name="wordpress" class="mr-1" />Zálohy a aktualizace instalací na uzlu vytvorit-web, každý den kolem 03:30.</span>{/snippet}
 </PageHeader>
 
 <FormMessage {form} />
@@ -86,7 +87,7 @@
 			{/if}
 		</Panel>
 
-		<Panel title="Instalace" flush>
+		<Panel title="Instalace" brand="wordpress" flush>
 			{#if wp.installs.length}
 				<div class="overflow-x-auto">
 					<table class="w-full text-sm">

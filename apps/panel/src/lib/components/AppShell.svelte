@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { page } from '$app/state';
 	import { LogOut, Menu, Search, X } from '@lucide/svelte';
+	import BrandIcon from './BrandIcon.svelte';
 	import CommandPalette from './CommandPalette.svelte';
 	import Led from './Led.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
@@ -72,7 +73,7 @@
 								? 'bg-white/10 text-white'
 								: 'text-white/65 hover:bg-white/5 hover:text-white'}"
 						>
-							<Icon size={16} strokeWidth={1.75} />
+							{#if item.brand}<BrandIcon name={item.brand} mono />{:else}<Icon size={16} strokeWidth={1.75} />{/if}
 							<span class="flex-1 truncate">{item.label}</span>
 							{#if item.soon}
 								<span class="mono rounded-[4px] border border-white/15 px-1.5 py-px text-[10px] text-white/50">brzy</span>

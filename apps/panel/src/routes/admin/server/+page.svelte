@@ -2,7 +2,8 @@
 	import { enhance } from '$app/forms';
 	import { keepResult } from '#lib/forms.ts';
 	import { refreshAll } from '$app/navigation';
-	import { ExternalLink, RefreshCw } from '@lucide/svelte';
+	import { RefreshCw } from '@lucide/svelte';
+	import BrandIcon from '#lib/components/BrandIcon.svelte';
 	import BrokerDown from '#lib/components/BrokerDown.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import Empty from '#lib/components/Empty.svelte';
@@ -11,6 +12,7 @@
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Panel from '#lib/components/Panel.svelte';
 	import Pill from '#lib/components/Pill.svelte';
+	import { companyBrand, techBrand, unitBrand } from '#lib/brands.ts';
 	import { ago, bytes, dateTime } from '#lib/format.ts';
 	import { BROKER_EVENT_LABEL, duration, meterTone, pct, UNIT_LABEL, unitTone } from '#lib/ops.ts';
 	import type { PageProps } from './$types';
@@ -31,7 +33,9 @@
 <PageHeader title="Uzel vytvorit-web">
 	{#snippet meta()}
 		<span class="mono">2.31.25.249</span>
-		<span>Hetzner · CloudPanel</span>
+		<span class="inline-flex items-center gap-1.5"><BrandIcon name="hetzner" />Hetzner</span>
+		<span class="inline-flex items-center gap-1.5"><BrandIcon name="ubuntu" />Ubuntu</span>
+		<span class="inline-flex items-center gap-1.5"><BrandIcon name="cloudpanel" />CloudPanel</span>
 		{#if n}<span title={dateTime(n.timestamp)}>data {ago(n.timestamp)}</span>{/if}
 	{/snippet}
 	{#snippet actions()}
@@ -53,7 +57,7 @@
 				}}
 			>
 				<Button type="submit" size="sm" variant="primary" disabled={opening}>
-					<ExternalLink size={14} />
+					<BrandIcon name="cloudpanel" size={14} mono />
 					{opening ? 'Otevírám' : 'Otevřít CloudPanel'}
 				</Button>
 			</form>
@@ -113,8 +117,10 @@
 			<ul class="grid grid-cols-1 gap-x-4 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
 				{#each n.services as s (s.name)}
 					{@const tone = unitTone(s.state)}
+					{@const brand = unitBrand(s.name)}
 					<li class="flex min-w-0 items-center gap-2 py-1 text-sm">
 						<Led state={tone} pulse={tone === 'act'} label={UNIT_LABEL[s.state] ?? s.state} />
+						{#if brand}<BrandIcon name={brand} size={14} />{:else}<span class="size-3.5 shrink-0" aria-hidden="true"></span>{/if}
 						<span class="mono min-w-0 flex-1 truncate text-xs" title={s.name}>{s.name}</span>
 						{#if s.state !== 'active'}
 							<span class="text-xs font-semibold {tone === 'bad' ? 'text-bad' : 'text-accent'}">{UNIT_LABEL[s.state] ?? s.state}</span>
@@ -131,8 +137,11 @@
 			<table class="w-full text-sm">
 				<tbody>
 					{#each n.runtimes as r (r.name)}
+						{@const brand = techBrand(r.name)}
 						<tr class="border-b border-line last:border-b-0">
-							<td class="px-4 py-2.5 font-semibold">{r.name}</td>
+							<td class="px-4 py-2.5 font-semibold">
+								<span class="inline-flex items-center gap-2">{#if brand}<BrandIcon name={brand} />{/if}{r.name}</span>
+							</td>
 							<td class="mono px-4 py-2.5 text-xs">{r.version}</td>
 							<td class="px-4 py-2.5 text-right">
 								<Pill tone={r.installed ? 'ok' : 'warn'}>{r.installed ? 'Nainstalováno' : 'Vyžaduje kontrolu'}</Pill>
@@ -198,9 +207,10 @@
 							<tbody>
 								{#each n.updates.components as c (c.name)}
 									{@const fresh = c.status ? c.status === 'Aktuální' : c.current === c.latest}
+									{@const brand = techBrand(c.name)}
 									<tr class="border-t border-line">
 										<td class="px-3 py-2">
-											<div class="font-semibold">{c.name}</div>
+											<div class="flex items-center gap-2 font-semibold">{#if brand}<BrandIcon name={brand} />{/if}{c.name}</div>
 											{#if c.note}<div class="text-xs text-muted">{c.note}</div>{/if}
 										</td>
 										<td class="mono px-3 py-2 text-xs whitespace-nowrap">{c.current ?? '?'}</td>
@@ -215,7 +225,8 @@
 					</div>
 				</div>
 				<div class="min-w-0">
-					<h3 class="mb-2 text-xs font-bold text-muted">
+					<h3 class="mb-2 flex items-center gap-1.5 text-xs font-bold text-muted">
+						<BrandIcon name="ubuntu" size={14} />
 						Systémové balíčky:
 						{#if n.updates.packages == null}aktuálnost nebyla ověřena{:else}{n.updates.packages.length} k aktualizaci{/if}
 					</h3>
@@ -267,7 +278,7 @@
 	</Panel>
 
 	<div class="mt-5 grid gap-5 [&>*]:min-w-0 xl:grid-cols-2">
-		<Panel title="Poslední údržba WordPressu" flush>
+		<Panel title="Poslední údržba WordPressu" brand="wordpress" flush>
 			{#snippet actions()}<a class="text-xs font-semibold text-accent hover:underline" href="/admin/wordpress">WordPress</a>{/snippet}
 			{#if n.logs}
 				<pre class="mono max-h-80 overflow-auto p-4 text-[11px] leading-relaxed whitespace-pre text-ink">{n.logs}</pre>
@@ -312,10 +323,13 @@
 				</thead>
 				<tbody>
 					{#each data.nodes as node (node.id)}
+						{@const provider = companyBrand(node.provider)}
 						<tr class="border-t border-line">
 							<td class="px-4 py-2.5 font-semibold whitespace-nowrap">{node.name}</td>
 							<td class="mono px-4 py-2.5 text-xs">{node.host}</td>
-							<td class="px-4 py-2.5">{node.provider}</td>
+							<td class="px-4 py-2.5">
+								<span class="inline-flex items-center gap-2 whitespace-nowrap">{#if provider}<BrandIcon name={provider} />{/if}{node.provider}</span>
+							</td>
 							<td class="px-4 py-2.5">{node.location || '·'}</td>
 							<td class="px-4 py-2.5 whitespace-nowrap">
 								<Pill tone={node.local ? 'ok' : 'off'}>{node.local ? 'Přes broker' : 'Jen evidence'}</Pill>

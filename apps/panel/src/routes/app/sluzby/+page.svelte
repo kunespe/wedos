@@ -4,9 +4,10 @@
 	import Led from '#lib/components/Led.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Pill from '#lib/components/Pill.svelte';
+	import ServiceKind from '#lib/components/ServiceKind.svelte';
 	import type { Column } from '#lib/components/table.ts';
 	import { SERVICE_STATUSES } from '#lib/constants.ts';
-	import { czk, date, KIND_LABEL, periodTotal, SERVICE_STATUS_LABEL } from '#lib/format.ts';
+	import { czk, date, periodTotal, SERVICE_STATUS_LABEL } from '#lib/format.ts';
 	import { expiryHint, expiryTone, SERVICE_TONE, TEXT_TONE } from '../tones.ts';
 	import type { PageProps } from './$types';
 
@@ -34,7 +35,7 @@
 		<tr class="cursor-pointer" onclick={() => goto(`/app/sluzby/${s.id}`)}>
 			<td class="min-w-48">
 				<a href="/app/sluzby/{s.id}" class="font-semibold hover:underline">{s.label}</a>
-				<div class="text-xs text-muted">{KIND_LABEL[s.kind]}{s.plan ? ` · ${s.plan}` : ''}</div>
+				<div class="text-xs text-muted"><ServiceKind kind={s.kind} size={12} />{s.plan ? ` · ${s.plan}` : ''}</div>
 			</td>
 			<td class="mono text-xs">{s.domain || '·'}</td>
 			<td>

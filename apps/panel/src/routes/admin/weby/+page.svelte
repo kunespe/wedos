@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { keepResult } from '#lib/forms.ts';
 	import { TriangleAlert } from '@lucide/svelte';
+	import BrandIcon from '#lib/components/BrandIcon.svelte';
 	import BrokerDown from '#lib/components/BrokerDown.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import DataTable from '#lib/components/DataTable.svelte';
@@ -12,6 +13,7 @@
 	import Pill from '#lib/components/Pill.svelte';
 	import SecretValue from '#lib/components/SecretValue.svelte';
 	import type { Column } from '#lib/components/table.ts';
+	import { siteKindBrand } from '#lib/brands.ts';
 	import { date, daysUntil, SERVICE_STATUS_LABEL } from '#lib/format.ts';
 	import { SITE_KIND_LABEL, SITE_KINDS } from '#lib/ops.ts';
 	import type { PageProps } from './$types';
@@ -96,12 +98,15 @@
 	>
 		{#snippet row(s)}
 			{@const days = daysUntil(s.expiresAt)}
+			{@const kindBrand = siteKindBrand(s.kind)}
 			<tr>
 				<td class="py-1.5">
 					<a class="font-semibold hover:underline" href="https://{s.domain}" target="_blank" rel="noreferrer">{s.domain}</a>
 					<div class="mono text-[11px] text-muted">{s.user}</div>
 				</td>
-				<td class="whitespace-nowrap">{SITE_KIND_LABEL[s.kind] ?? s.kind}</td>
+				<td class="whitespace-nowrap">
+					<span class="inline-flex items-center gap-2">{#if kindBrand}<BrandIcon name={kindBrand} />{/if}{SITE_KIND_LABEL[s.kind] ?? s.kind}</span>
+				</td>
 				<td class="text-sm">{s.client || 'Nepřiřazený'}</td>
 				<td class="whitespace-nowrap">
 					{#if s.expiresAt}

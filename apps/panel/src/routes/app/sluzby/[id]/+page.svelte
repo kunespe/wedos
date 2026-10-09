@@ -5,6 +5,7 @@
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Panel from '#lib/components/Panel.svelte';
 	import Pill from '#lib/components/Pill.svelte';
+	import ServiceKind from '#lib/components/ServiceKind.svelte';
 	import { ago, czk, date, KIND_LABEL, periodTotal, SERVICE_STATUS_LABEL, TICKET_STATUS_LABEL } from '#lib/format.ts';
 	import Health from '../../Health.svelte';
 	import Connection from './Connection.svelte';
@@ -20,7 +21,7 @@
 <PageHeader title={s.label} crumbs={[{ href: '/app/sluzby', label: 'Služby' }]}>
 	{#snippet meta()}
 		<Pill tone={SERVICE_TONE[s.status]}>{SERVICE_STATUS_LABEL[s.status]}</Pill>
-		<span>{KIND_LABEL[s.kind]}</span>
+		<ServiceKind kind={s.kind} size={16} />
 		{#if s.domain}<span class="mono text-xs">{s.domain}</span>{/if}
 	{/snippet}
 	{#snippet actions()}
@@ -103,7 +104,7 @@
 				<dt class="text-muted">Stav</dt>
 				<dd>{SERVICE_STATUS_LABEL[s.status]}</dd>
 				<dt class="text-muted">Typ</dt>
-				<dd>{KIND_LABEL[s.kind]}</dd>
+				<dd><ServiceKind kind={s.kind} /></dd>
 				<dt class="text-muted">Doména</dt>
 				<dd class="mono min-w-0 text-xs break-all">{s.domain || '·'}</dd>
 				<dt class="text-muted">Platí do</dt>

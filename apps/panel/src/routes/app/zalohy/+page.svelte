@@ -1,4 +1,5 @@
 <script lang="ts">
+	import BrandIcon from '#lib/components/BrandIcon.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import Led from '#lib/components/Led.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
@@ -16,7 +17,7 @@
 			<div class="text-sm">
 				<p class="font-semibold">Zálohy do cloudu spouštíme brzy</p>
 				<p class="mt-1 text-muted">
-					Každou noc zálohujeme weby i databáze mimo náš server, do šifrovaného úložiště v AWS. Tady pak uvidíte seznam záloh
+					Každou noc zálohujeme weby i databáze mimo náš server, do šifrovaného úložiště v <BrandIcon name="amazons3" size={14} /> AWS. Tady pak uvidíte seznam záloh
 					a jedním požadavkem si vyžádáte obnovu k vybranému dni.
 				</p>
 				<p class="mt-3 text-muted">Potřebujete obnovu nebo kopii dat teď? Napište nám, vyřešíme to ručně.</p>

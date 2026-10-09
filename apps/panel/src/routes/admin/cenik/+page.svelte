@@ -2,8 +2,9 @@
 	import DataTable from '#lib/components/DataTable.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Pill from '#lib/components/Pill.svelte';
+	import ServiceKind from '#lib/components/ServiceKind.svelte';
 	import type { Column } from '#lib/components/table.ts';
-	import { czk, KIND_LABEL } from '#lib/format.ts';
+	import { czk } from '#lib/format.ts';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -34,7 +35,7 @@
 		<tr>
 			<td class="mono text-xs whitespace-nowrap">{p.code}</td>
 			<td class="text-sm whitespace-nowrap">{p.category}</td>
-			<td class="text-sm whitespace-nowrap">{KIND_LABEL[p.kind] ?? p.kind}</td>
+			<td class="text-sm whitespace-nowrap"><ServiceKind kind={p.kind} /></td>
 			<td class="font-semibold whitespace-nowrap">{p.name}</td>
 			<td class="mono text-right text-xs whitespace-nowrap">{p.priceFrom && p.monthly != null ? 'od ' : ''}{czk(p.monthly)}</td>
 			<td>{#if p.active}<Pill tone="ok">Nabízí se</Pill>{:else}<Pill tone="off">Skrytý</Pill>{/if}</td>

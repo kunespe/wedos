@@ -45,7 +45,7 @@
 			items: [
 				{ href: '/admin/server', label: 'Uzel a služby', icon: Server },
 				{ href: '/admin/weby', label: 'Weby a aplikace', icon: HardDrive },
-				{ href: '/admin/wordpress', label: 'WordPress', icon: ShieldCheck },
+				{ href: '/admin/wordpress', label: 'WordPress', icon: ShieldCheck, brand: 'wordpress' },
 				{ href: '/admin/zalohy', label: 'Zálohy', icon: Archive, soon: true }
 			]
 		},

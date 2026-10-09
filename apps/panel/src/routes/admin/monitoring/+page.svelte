@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { keepResult } from '#lib/forms.ts';
-	import { ExternalLink, RefreshCw } from '@lucide/svelte';
+	import { RefreshCw } from '@lucide/svelte';
+	import BrandIcon from '#lib/components/BrandIcon.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import DataTable from '#lib/components/DataTable.svelte';
 	import Empty from '#lib/components/Empty.svelte';
@@ -10,9 +11,9 @@
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Panel from '#lib/components/Panel.svelte';
 	import Pill from '#lib/components/Pill.svelte';
+	import ServiceKind from '#lib/components/ServiceKind.svelte';
 	import Stat from '#lib/components/Stat.svelte';
 	import type { Column } from '#lib/components/table.ts';
-	import { KIND_LABEL } from '#lib/format.ts';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -33,10 +34,14 @@
 </script>
 
 <PageHeader title="Monitoring">
-	{#snippet meta()}Blackbox sondy na aktivní služby zákazníků (Alloy, Prometheus).{/snippet}
+	{#snippet meta()}
+		<span>
+			Blackbox sondy na aktivní služby zákazníků (<BrandIcon name="grafana" size={14} /> Alloy, <BrandIcon name="prometheus" size={14} /> Prometheus).
+		</span>
+	{/snippet}
 	{#snippet actions()}
 		{#if data.grafana}
-			<Button size="sm" href={data.grafana} target="_blank" rel="noreferrer"><ExternalLink size={14} /> Otevřít Grafanu</Button>
+			<Button size="sm" href={data.grafana} target="_blank" rel="noreferrer"><BrandIcon name="grafana" size={14} /> Otevřít Grafanu</Button>
 		{/if}
 		<form
 			method="POST"
@@ -66,8 +71,8 @@
 	<div class="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
 		<Stat label="Monitorovaných služeb" value={data.services.length} />
 		<Stat label="Nedostupné" value={down} />
-		<Stat label="SSL do 14 dní" value={sslSoon} />
-		<Stat label="Zdroj" value="Prometheus" hint="sonda každou minutu" />
+		<Stat label="SSL do 14 dní" value={sslSoon} brand="letsencrypt" />
+		<Stat label="Zdroj" value="Prometheus" hint="sonda každou minutu" brand="prometheus" />
 	</div>
 {/if}
 
@@ -83,7 +88,7 @@
 		<tr>
 			<td>
 				<a class="font-semibold hover:underline" href="/admin/sluzby/{s.id}">{s.domain}</a>
-				<div class="text-xs text-muted">{s.label} · {KIND_LABEL[s.kind] ?? s.kind}</div>
+				<div class="text-xs text-muted">{s.label} · <ServiceKind kind={s.kind} size={12} /></div>
 			</td>
 			<td class="text-sm"><a class="hover:underline" href="/admin/zakaznici/{s.customerId}">{s.company || s.customer}</a></td>
 			<td class="whitespace-nowrap">

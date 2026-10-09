@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { CircleCheck, TriangleAlert } from '@lucide/svelte';
+	import BrandIcon from '#lib/components/BrandIcon.svelte';
 	import BrokerDown from '#lib/components/BrokerDown.svelte';
 	import DataTable from '#lib/components/DataTable.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
@@ -26,7 +27,13 @@
 </script>
 
 <PageHeader title="Zálohy">
-	{#snippet meta()}<Pill tone="act">Brzy</Pill> Noční zálohy serveru do AWS (S3) připravujeme. Níže jsou zálohy WordPressů před aktualizacemi.{/snippet}
+	{#snippet meta()}
+		<Pill tone="act">Brzy</Pill>
+		<span>
+			Noční zálohy serveru do <BrandIcon name="amazons3" /> AWS (S3) šifrované <BrandIcon name="restic" /> Resticem připravujeme. Níže jsou zálohy WordPressů před
+			aktualizacemi.
+		</span>
+	{/snippet}
 </PageHeader>
 
 {#if !data.backups}
@@ -38,7 +45,7 @@
 	>
 		{#if data.s3Ready}
 			<CircleCheck size={18} class="mt-0.5 shrink-0 text-ok" />
-			<p><span class="font-bold text-ok">S3 je připojené a ověřené.</span> Zálohy jsou šifrované (Restic) a před aktualizací se ověřují zpětným stažením.</p>
+			<p><span class="font-bold text-ok">S3 je připojené a ověřené.</span> Zálohy jsou šifrované (<BrandIcon name="restic" size={14} /> Restic) a před aktualizací se ověřují zpětným stažením.</p>
 		{:else}
 			<TriangleAlert size={18} class="mt-0.5 shrink-0 text-warn" />
 			<p>
@@ -52,7 +59,7 @@
 		<Stat label="Záloh" value={data.backups.length} />
 		<Stat label="Vyžaduje kontrolu" value={failed} hint="aktualizace po záloze nedoběhla" />
 		<Stat label="Místo na disku" value={bytes(total)} hint="součet velikostí v seznamu" />
-		<Stat label="Externí úložiště" value={data.s3Ready ? 'S3' : 'Žádné'} />
+		<Stat label="Externí úložiště" value={data.s3Ready ? 'S3' : 'Žádné'} brand={data.s3Ready ? 'amazons3' : undefined} />
 	</div>
 
 	<DataTable

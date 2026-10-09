@@ -6,7 +6,8 @@
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Panel from '#lib/components/Panel.svelte';
 	import Pill from '#lib/components/Pill.svelte';
-	import { ago, czk, date, daysUntil, KIND_LABEL, SERVICE_STATUS_LABEL, TICKET_STATUS_LABEL } from '#lib/format.ts';
+	import ServiceKind from '#lib/components/ServiceKind.svelte';
+	import { ago, czk, date, daysUntil, SERVICE_STATUS_LABEL, TICKET_STATUS_LABEL } from '#lib/format.ts';
 	import Contact from './Contact.svelte';
 	import Health from './Health.svelte';
 	import { expiryHint, expiryTone, SERVICE_TONE, TEXT_TONE, TICKET_TONE } from './tones.ts';
@@ -75,7 +76,7 @@
 									<div class="min-w-0">
 										<div class="truncate font-bold">{s.label}</div>
 										<div class="mt-0.5 truncate text-xs text-muted">
-											{KIND_LABEL[s.kind]}{s.plan ? ` · ${s.plan}` : ''}{s.domain ? ' · ' : ''}<span class="mono">{s.domain}</span>
+											<ServiceKind kind={s.kind} size={12} />{s.plan ? ` · ${s.plan}` : ''}{s.domain ? ' · ' : ''}<span class="mono">{s.domain}</span>
 										</div>
 									</div>
 									<Pill tone={SERVICE_TONE[s.status]}>{SERVICE_STATUS_LABEL[s.status]}</Pill>

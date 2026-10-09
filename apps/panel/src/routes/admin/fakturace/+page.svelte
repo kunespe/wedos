@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { keepResult } from '#lib/forms.ts';
 	import { RefreshCw, ShieldAlert } from '@lucide/svelte';
+	import BrandIcon from '#lib/components/BrandIcon.svelte';
 	import BrokerDown from '#lib/components/BrokerDown.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import Empty from '#lib/components/Empty.svelte';
@@ -30,7 +31,7 @@
 </script>
 
 <PageHeader title="Fakturace">
-	{#snippet meta()}Fakturor řeší doklady, platby a prodloužení. Panel z něj čte platnost předplatných.{/snippet}
+	{#snippet meta()}<span><BrandIcon name="fakturor" class="mr-1" />Fakturor řeší doklady, platby a prodloužení. Panel z něj čte platnost předplatných.</span>{/snippet}
 	{#snippet actions()}
 		{#if b}
 			<form
@@ -138,7 +139,7 @@
 		{/if}
 	</Panel>
 
-	<Panel title="Předplatná ve Fakturoru" class="mt-5" flush>
+	<Panel title="Předplatná ve Fakturoru" brand="fakturor" class="mt-5" flush>
 		{#snippet actions()}
 			{#if unlinked}<Pill tone="warn">{unlinked} nepropojených</Pill>{/if}
 		{/snippet}

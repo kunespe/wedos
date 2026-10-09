@@ -180,3 +180,52 @@
 		transition-duration: 0.01ms !important;
 	}
 }
+
+/* Official brand marks (BrandIcon.svelte). Brand colour by default, text colour when mono. */
+@layer components {
+	.brand-icon {
+		display: inline-flex;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		vertical-align: -0.15em;
+		color: var(--brand);
+		box-sizing: border-box;
+	}
+	.brand-icon > svg,
+	.brand-icon > img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+		fill: currentColor;
+	}
+	.brand-icon[data-mono] {
+		color: inherit;
+	}
+	.brand-icon[data-mono] > svg * {
+		fill: currentColor;
+	}
+	.brand-icon[data-mono] > img {
+		filter: grayscale(1);
+		opacity: 0.85;
+	}
+	:root[data-theme='dark'] .brand-icon[data-dark='ink'] {
+		color: var(--ink);
+	}
+	:root[data-theme='dark'] .brand-icon[data-dark='chip'] {
+		padding: 1px;
+		border-radius: 3px;
+		background: #fff;
+	}
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme='light']) .brand-icon[data-dark='ink'] {
+			color: var(--ink);
+		}
+		:root:not([data-theme='light']) .brand-icon[data-dark='chip'] {
+			padding: 1px;
+			border-radius: 3px;
+			background: #fff;
+		}
+	}
+}

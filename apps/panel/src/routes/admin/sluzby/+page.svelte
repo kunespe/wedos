@@ -4,6 +4,7 @@
 	import DataTable from '#lib/components/DataTable.svelte';
 	import Led from '#lib/components/Led.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
+	import ServiceKind from '#lib/components/ServiceKind.svelte';
 	import type { Column } from '#lib/components/table.ts';
 	import { SERVICE_KINDS, SERVICE_STATUSES } from '#lib/constants.ts';
 	import { czk, date, daysUntil, KIND_LABEL, SERVICE_STATUS_LABEL } from '#lib/format.ts';
@@ -60,7 +61,7 @@
 				{#if s.domain}<div class="mono text-xs text-muted">{s.domain}</div>{/if}
 			</td>
 			<td class="text-xs"><a class="hover:underline" href="/admin/zakaznici/{s.customerId}" onclick={(e) => e.stopPropagation()}>{s.company || s.customer}</a></td>
-			<td class="text-xs">{KIND_LABEL[s.kind]}</td>
+			<td class="text-xs whitespace-nowrap"><ServiceKind kind={s.kind} /></td>
 			<td class="text-xs text-muted">{s.node ?? '·'}</td>
 			<td class="mono text-right text-xs">{czk(s.priceMonthly)}</td>
 			<td class="mono text-xs {d != null && d < 0 ? 'text-bad' : d != null && d <= 14 ? 'text-warn' : 'text-muted'}">

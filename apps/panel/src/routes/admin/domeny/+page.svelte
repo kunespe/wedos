@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { keepResult } from '#lib/forms.ts';
+	import BrandIcon from '#lib/components/BrandIcon.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import FormMessage from '#lib/components/FormMessage.svelte';
 	import Panel from '#lib/components/Panel.svelte';
@@ -10,6 +11,7 @@
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Pill from '#lib/components/Pill.svelte';
 	import type { Column } from '#lib/components/table.ts';
+	import { companyBrand } from '#lib/brands.ts';
 	import { date, daysUntil } from '#lib/format.ts';
 	import type { PageProps } from './$types';
 
@@ -31,7 +33,8 @@
 
 <PageHeader title="Domény">
 	{#snippet meta()}
-		Registrace a prodloužení děláme ručně přes WEDOS (tlačítka v detailu domény). {#if soon}<Pill tone="warn">{soon} do 30 dní</Pill>{/if}
+		<span><BrandIcon name="wedos" class="mr-1" />Registrace a prodloužení děláme ručně přes WEDOS (tlačítka v detailu domény).</span>
+		{#if soon}<Pill tone="warn">{soon} do 30 dní</Pill>{/if}
 		{#if !w.configured}<Pill>WEDOS nenastaven</Pill>{:else if w.live}<Pill tone="bad">WEDOS ostrý režim</Pill>{:else}<Pill tone="warn">WEDOS testovací režim</Pill>{/if}
 	{/snippet}
 	{#snippet actions()}
@@ -55,7 +58,7 @@
 {/if}
 
 {#if cmp}
-	<Panel title="Porovnání s WEDOS" class="mb-5">
+	<Panel title="Porovnání s WEDOS" brand="wedos" class="mb-5">
 		<p class="mb-3 text-sm text-muted">U WEDOS {cmp.total} domén, z toho {cmp.matched} v panelu. Nic se nezměnilo, jen přehled.</p>
 		<div class="grid gap-5 md:grid-cols-2">
 			<div class="min-w-0">
@@ -83,11 +86,14 @@
 <DataTable rows={data.domains} {columns} search={(r) => `${r.name} ${r.customer} ${r.company}`} empty="Žádné domény v evidenci." initialSort={{ column: 5, dir: 'asc' }}>
 	{#snippet row(d)}
 		{@const days = daysUntil(d.expiresAt)}
+		{@const registrar = companyBrand(d.registrar)}
 		<tr class="cursor-pointer" onclick={() => goto(`/admin/domeny/${d.id}`)}>
 			<td><Led state={days == null ? 'off' : days < 0 ? 'bad' : days <= 30 ? 'warn' : 'ok'} /></td>
 			<td class="mono font-medium"><a class="hover:underline" href="/admin/domeny/{d.id}">{d.name}</a></td>
 			<td class="text-xs"><a class="hover:underline" href="/admin/zakaznici/{d.customerId}" onclick={(e) => e.stopPropagation()}>{d.company || d.customer}</a></td>
-			<td class="text-xs">{d.registrar}</td>
+			<td class="text-xs">
+				<span class="inline-flex items-center gap-1.5">{#if registrar}<BrandIcon name={registrar} size={14} />{/if}{d.registrar}</span>
+			</td>
 			<td class="text-xs">{d.managedByUs ? 'my' : 'zákazník'}</td>
 			<td class="mono text-xs {days != null && days < 0 ? 'text-bad' : days != null && days <= 30 ? 'text-warn' : 'text-muted'}">
 				{date(d.expiresAt)}{days != null && days <= 60 ? ` · ${days < 0 ? 'propadlá' : `${days} d`}` : ''}

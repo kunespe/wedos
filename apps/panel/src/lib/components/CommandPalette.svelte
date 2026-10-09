@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Command, Dialog } from 'bits-ui';
 	import { goto } from '$app/navigation';
+	import BrandIcon from './BrandIcon.svelte';
 	import type { NavGroup } from './nav';
 
 	type Hit = { href: string; label: string; hint: string };
@@ -88,7 +89,7 @@
 											onSelect={() => go(item.href)}
 											class="flex cursor-pointer items-center gap-2.5 rounded-[5px] px-2.5 py-2 text-sm data-selected:bg-surface-2"
 										>
-											<Icon size={16} strokeWidth={1.75} class="text-muted" />
+											{#if item.brand}<BrandIcon name={item.brand} mono class="text-muted" />{:else}<Icon size={16} strokeWidth={1.75} class="text-muted" />{/if}
 											{item.label}
 										</Command.Item>
 									{/each}

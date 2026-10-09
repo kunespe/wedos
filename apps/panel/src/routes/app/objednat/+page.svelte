@@ -7,7 +7,8 @@
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import Panel from '#lib/components/Panel.svelte';
 	import Pill from '#lib/components/Pill.svelte';
-	import { ago, czk, dateTime, KIND_LABEL, periodTotal, YEARLY_MONTHS } from '#lib/format.ts';
+	import ServiceKind from '#lib/components/ServiceKind.svelte';
+	import { ago, czk, dateTime, periodTotal, YEARLY_MONTHS } from '#lib/format.ts';
 	import { keepResult } from '#lib/forms.ts';
 	import { BASKET_MODE_LABEL, basketTotal, domainPrice, MAX_BASKET, priced, yearsLabel, type BasketItem, type BasketMode } from '#lib/domains.ts';
 	import { NON_HOSTING_CATEGORIES, ORDER_STATUS_LABEL, PLAN_CATEGORY_LABEL } from '#lib/orders.ts';
@@ -156,7 +157,7 @@
 										<span class="flex items-start justify-between gap-2">
 											<span class="min-w-0">
 												<span class="block font-bold">{p.name}</span>
-												<span class="block text-xs text-muted">{KIND_LABEL[p.kind] ?? p.kind}</span>
+												<span class="block text-xs text-muted"><ServiceKind kind={p.kind} size={12} /></span>
 											</span>
 											<input type="radio" name="plan" value={p.code} bind:group={plan} class="mt-1 size-4 shrink-0 accent-[var(--accent)]" {...err('plan')} />
 										</span>
