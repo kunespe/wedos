@@ -9,7 +9,7 @@ SERVEROS přebírá hosting „Vytvořit web“ a nabízí webhosting, spravovan
 | `apps/web` | serveros.cz | Prezentace, ceník a objednávkový formulář (statické HTML/CSS/JS) |
 | `apps/panel` | panel.serveros.cz | Klientská zóna a administrace (SvelteKit 3, MySQL); viz [README](apps/panel/README.md) |
 | `catalog/plans.json` | | Jediný zdroj ceníku pro web i panel (CI hlídá, že se shodují) |
-| `dashboard/` | | Root broker (`broker.py`), Fakturor adaptér a původní Flask dashboard, dokud ho panel nenahradí |
+| `dashboard/` | | Root broker (`broker.py`), Fakturor adaptér a kontrola aktualizací; webové rozhraní nahradil panel (Flask dashboard vypnut 9. 10. 2026) |
 | `operations/` | | Údržba WordPressů a zálohy přes Restic |
 | `ops/` | monitor.serveros.cz | Grafana, Prometheus, Loki, Alloy, Alertmanager, nginx, systemd a `deploy.sh`; viz [ops/README](ops/README.md) |
 | `docs/` | | [Business case](docs/business-case.md), [runbook objednávky](docs/runbook-objednavka.md), šablony obchodních podmínek, GDPR a SLA |
@@ -34,6 +34,8 @@ Nasazení: `ops/deploy.sh` (bez parametrů jen zkušební běh, `--apply` nasad�
 ---
 
 ## Původní dashboard (Vytvořit web)
+
+> Webové rozhraní (Flask) je od 9. 10. 2026 vypnuté a z repozitáře odstraněné; jeho funkce převzal panel na panel.serveros.cz. Níže popsané části brokeru, Fakturoru, WordPress údržby a záloh dál platí.
 
 Jedno místo pro správu našich webů, klientských hostingů a provozu serveru.
 Dashboard doplňuje **CloudPanel** o klienty, automatizaci WordPressu, zálohy
@@ -121,12 +123,10 @@ krok správce. Automatický rollback zatím není implementovaný.
 
 | Soubor / adresář | Úloha |
 | --- | --- |
-| [`dashboard/app.py`](dashboard/app.py) | Přihlášení, relace, CSRF a webové routy |
 | [`dashboard/broker.py`](dashboard/broker.py) | CloudPanel operace, provozní snapshot, stav a audit |
 | [`dashboard/fakturor.py`](dashboard/fakturor.py) | Čtení API, stránkování, ověření odpovědi a vyhodnocení expirace |
 | [`dashboard/billing-check.py`](dashboard/billing-check.py) | Spuštění synchronizace přes broker ze systemd |
 | [`dashboard/update-check.py`](dashboard/update-check.py) | Kontrola verzí bez instalace balíčků |
-| [`dashboard/templates/`](dashboard/templates/) | HTML šablony dashboardu a přihlášení |
 | [`dashboard/static/`](dashboard/static/) | CSS a JavaScript |
 | [`operations/wp-maintenance.py`](operations/wp-maintenance.py) | Objevování instalací, zálohy a aktualizace WordPressů |
 | [`operations/s3-tool.py`](operations/s3-tool.py) | Inicializace, ověření a obnova Restic/S3 |
@@ -141,10 +141,8 @@ CloudPanel, Nginx, WP-CLI a Restic. Testy nepotřebují přístup k produkci.
 ```sh
 git clone https://github.com/kunespe/wedos.git
 cd wedos
-python3 -m venv .venv
-.venv/bin/python -m pip install -r dashboard/requirements.txt
-.venv/bin/python -m unittest discover -s dashboard -p 'test_*.py' -v
-.venv/bin/python -m unittest discover -s operations -p 'test_*.py' -v
+python3 -m unittest discover -s dashboard -p 'test_*.py' -v
+python3 -m unittest discover -s operations -p 'test_*.py' -v
 ```
 
 Testy používají dočasnou konfiguraci a mocky. Ověřují přihlášení a ochranu

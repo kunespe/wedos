@@ -86,7 +86,7 @@ function snapshot() {
 			{ name: `${w.domain}-${1791400000 + i}`, storage: 'Lokální', snapshot: '', path: w.path, time: now() - 30 * 3600 - i * 60, success: true, size: (0.38 + i * 0.3) * GB }
 		]),
 		services: {
-			...Object.fromEntries(['mysql', 'nginx', 'clp-nginx', 'clp-php-fpm', 'varnish', 'redis-server', 'php8.4-fpm', 'memcached', 'ssh', 'fail2ban', 'cron', 'clp-agent', 'vw-dashboard', 'vw-dashboard-broker', 'vytvorit-web-wordpress.timer', 'vw-update-check.timer', 'vw-billing-check.timer'].map((n) => [n, 'active'])),
+			...Object.fromEntries(['mysql', 'nginx', 'clp-nginx', 'clp-php-fpm', 'varnish', 'redis-server', 'php8.4-fpm', 'memcached', 'ssh', 'fail2ban', 'cron', 'clp-agent', 'vw-dashboard-broker', 'servero-panel', 'grafana-server', 'prometheus', 'loki', 'alloy', 'alertmanager', 'vytvorit-web-wordpress.timer', 'vw-update-check.timer', 'vw-billing-check.timer'].map((n) => [n, 'active'])),
 			'php8.2-fpm': 'inactive',
 			'php8.3-fpm': 'inactive',
 			'php8.5-fpm': 'activating'

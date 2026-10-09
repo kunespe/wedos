@@ -7,7 +7,7 @@ DB='/home/clp/htdocs/app/data/db.sq3'
 STATE=Path('/var/lib/vw-dashboard/state.json')
 AUDIT=Path('/var/lib/vw-dashboard/audit.jsonl')
 DOMAIN=re.compile(r'(?=.{3,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{1,62}')
-SERVICES=['mysql','nginx','clp-nginx','clp-php-fpm','varnish','redis-server','php8.2-fpm','php8.3-fpm','php8.4-fpm','php8.5-fpm','memcached','ssh','fail2ban','cron','clp-agent','vw-dashboard','vw-dashboard-broker','vytvorit-web-wordpress.timer','vw-update-check.timer','vw-billing-check.timer']
+SERVICES=['mysql','nginx','clp-nginx','clp-php-fpm','varnish','redis-server','php8.2-fpm','php8.3-fpm','php8.4-fpm','php8.5-fpm','memcached','ssh','fail2ban','cron','clp-agent','vw-dashboard-broker','servero-panel','grafana-server','prometheus','loki','alloy','alertmanager','vytvorit-web-wordpress.timer','vw-update-check.timer','vw-billing-check.timer']
 
 def command(args, timeout=30):
     r=subprocess.run(args,capture_output=True,text=True,timeout=timeout)
