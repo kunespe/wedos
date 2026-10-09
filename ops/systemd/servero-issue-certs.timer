@@ -2,8 +2,9 @@
 Description=Hourly check whether SERVEROS certificates can be issued
 
 [Timer]
-OnBootSec=5min
-OnUnitActiveSec=1h
+# Calendar-based so it always has a next run (relative OnUnitActiveSec stalls after manual runs).
+OnCalendar=hourly
+RandomizedDelaySec=5min
 Persistent=true
 
 [Install]
