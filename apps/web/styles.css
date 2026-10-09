@@ -568,7 +568,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 .crew__item strong { display: block; font-size: 21px; font-weight: 750; font-variation-settings: "wdth" 110; }
 .crew__item span { display: block; margin-top: 4px; font-size: 16px; color: #4a525b; }
-.crew__item a { align-self: start; font-size: 14px; font-weight: 600; color: var(--cable); text-decoration: none; }
+.crew__item a { align-self: start; font-size: 14px; font-weight: 600; color: #1d55d6; text-decoration: none; }
 .crew__item a:hover { text-decoration: underline; }
 @media (max-width: 760px) {
   .crew__list { grid-template-columns: minmax(0, 1fr); }
@@ -792,7 +792,7 @@ textarea.input { min-height: 120px; resize: vertical; }
 .dsearch__out { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
 .dsearch__out .lcd { flex: 1 1 320px; align-self: stretch; min-width: 0; gap: 10px; font-size: clamp(14px, 1.3vw, 17px); white-space: normal; }
 .dsearch__out .lcd .led { flex: none; }
-.dsearch__out[data-state="idle"] .lcd { color: #8a6a2c; text-shadow: none; }
+.dsearch__out[data-state="idle"] .lcd { color: #c49a52; text-shadow: none; }
 .dsearch__out[data-state="taken"] .lcd { color: #ffb0b2; text-shadow: 0 0 6px rgba(229,72,77,.5); }
 .dsearch__out[data-state="free"] .lcd { color: #8ff0bf; text-shadow: 0 0 6px rgba(54,224,143,.55); }
 .dsearch__act:empty { display: none; }
