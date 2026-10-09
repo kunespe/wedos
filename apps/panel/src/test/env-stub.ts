@@ -9,6 +9,7 @@ export const PROBES_FILE = e.PROBES_FILE ?? '';
 export const GRAFANA_URL = e.GRAFANA_URL ?? '';
 export const SMTP_URL = '';
 export const MAIL_FROM = '';
+export const MAIL_REPLY_TO = '';
 export const ORDER_NOTIFY_EMAIL = '';
 export const TURNSTILE_SECRET = '';
 export const CLOUDPANEL_URL = e.CLOUDPANEL_URL ?? '';

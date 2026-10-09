@@ -153,7 +153,7 @@ if want ops; then
     else
         note "servero.cz keeps its current vhosts until serveros.cz has a Let's Encrypt certificate"
     fi
-    cp "$OPS/systemd/servero-panel.service" "$OPS"/systemd/servero-issue-certs.{service,timer} "$STAGE/systemd/"
+    cp "$OPS/systemd/servero-panel.service" "$OPS"/systemd/servero-issue-certs.{service,timer} "$OPS"/systemd/servero-digest.{service,timer} "$STAGE/systemd/"
 
     REMOTE_TMP="$(remote mktemp -d /tmp/servero-deploy.XXXXXX)"
     rs -a "$STAGE/" "$HOST:$REMOTE_TMP/stage/"
@@ -371,6 +371,8 @@ while read -r obsolete; do [ -n "$obsolete" ] && retire "$obsolete"; done < "$ST
 put "$STAGE/systemd/servero-panel.service" /etc/systemd/system/servero-panel.service 0644
 put "$STAGE/systemd/servero-issue-certs.service" /etc/systemd/system/servero-issue-certs.service 0644
 put "$STAGE/systemd/servero-issue-certs.timer" /etc/systemd/system/servero-issue-certs.timer 0644
+put "$STAGE/systemd/servero-digest.service" /etc/systemd/system/servero-digest.service 0644
+put "$STAGE/systemd/servero-digest.timer" /etc/systemd/system/servero-digest.timer 0644
 if ! nginx -t -q; then
     rollback
     nginx -t -q && echo "    rollback OK, nginx config is back to the previous state" >&2
@@ -409,6 +411,8 @@ fi
 if want ops && ! dry; then
     # Hourly: issues Let's Encrypt certificates as soon as DNS points here (ops/issue-certs.sh).
     remote "command -v certbot >/dev/null && systemctl enable --now --quiet servero-issue-certs.timer || true"
+    # 07:00 Europe/Prague: morning digest for the team inbox (apps/panel/scripts/digest.ts).
+    remote "systemctl enable --now --quiet servero-digest.timer"
 fi
 
 if health; then

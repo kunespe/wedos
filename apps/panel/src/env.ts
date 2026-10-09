@@ -23,7 +23,8 @@ export const variables = defineEnvVars({
 		description: 'Base URL of the CloudPanel admin used for one-click autologin. Empty hides the CloudPanel button.'
 	},
 	SMTP_URL: { schema: optional, description: 'nodemailer SMTP URL. Empty logs e-mails to stdout instead.' },
-	MAIL_FROM: { schema: optional, description: 'Sender address for panel e-mails.' },
+	MAIL_FROM: { schema: optional, description: 'Sender address for panel e-mails (the SMTP login mailbox).' },
+	MAIL_REPLY_TO: { schema: optional, description: 'Reply-To on panel e-mails, so answers reach a person.' },
 	ORDER_NOTIFY_EMAIL: { schema: optional, description: 'Team inbox notified about new orders.' },
 	TURNSTILE_SECRET: { schema: optional, description: 'Cloudflare Turnstile secret. Empty skips the captcha check.' },
 	SUPPLIER_NAME: { schema: optional, description: 'Legal name of the supplier printed on payment requests.' },

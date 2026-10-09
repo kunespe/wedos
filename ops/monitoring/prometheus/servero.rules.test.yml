@@ -53,3 +53,19 @@ tests:
             exp_annotations:
               summary: "Jednotka nginx.service je ve stavu failed"
               description: "systemd hlasi nginx.service jako failed. journalctl -u nginx.service -n 100"
+
+  - interval: 1m
+    input_series:
+      - series: 'servero_order_oldest_new_age_seconds{job="servero-panel"}'
+        values: '0x10 18000x20'
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: OrderWaiting
+        exp_alerts: []
+      - eval_time: 20m
+        alertname: OrderWaiting
+        exp_alerts:
+          - exp_labels: { severity: warning, team: business, job: servero-panel }
+            exp_annotations:
+              summary: "Objednavka ceka na prevzeti 5h 0m 0s"
+              description: "Nejstarsi objednavka ve stavu Nova ceka dele nez 4 hodiny. Prevezmete ji v panelu: https://panel.serveros.cz/admin/objednavky"

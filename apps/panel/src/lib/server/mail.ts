@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { MAIL_FROM, SMTP_URL } from '$app/env/private';
+import { MAIL_FROM, MAIL_REPLY_TO, SMTP_URL } from '$app/env/private';
 
 const transport = SMTP_URL ? nodemailer.createTransport(SMTP_URL) : null;
 
@@ -11,7 +11,13 @@ export async function sendMail(to: string, subject: string, text: string): Promi
 		return false;
 	}
 	try {
-		await transport.sendMail({ from: MAIL_FROM || 'SERVEROS <info@serveros.cz>', to, subject, text });
+		await transport.sendMail({
+			from: MAIL_FROM || 'SERVEROS <info@serveros.cz>',
+			replyTo: MAIL_REPLY_TO || undefined,
+			to,
+			subject,
+			text
+		});
 		return true;
 	} catch (e) {
 		console.error('[mail] sending failed', e);

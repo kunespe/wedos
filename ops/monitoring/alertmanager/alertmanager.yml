@@ -1,16 +1,13 @@
 # Alertmanager for SERVEROS (127.0.0.1:9093).
-# PLACEHOLDERS: replace the SMTP values and the Telegram chat_id. Secrets live
-# in files readable only by the alertmanager user (created by
-# install-monitoring.sh with empty content):
-#   /etc/alertmanager/secrets/smtp_password
-#   /etc/alertmanager/secrets/telegram_bot_token
-# Outbound port 25 is blocked on new Hetzner Cloud projects, so use a relay
-# with submission port 587 (for example the mailbox provider of serveros.cz).
+# Every alert goes to the team inbox info@serveros.cz, sent from the info@serveros.cz
+# mailbox on Váš-hosting (mcg07). Hetzner blocks outbound 25/465 here; submission 587 works.
+# The mailbox password lives in /etc/alertmanager/secrets/smtp_password (no trailing newline),
+# written by ops/set-mail-password.sh together with the panel and Grafana.
 global:
   resolve_timeout: 5m
-  smtp_smarthost: "smtp.example.invalid:587"
-  smtp_from: "monitoring@serveros.cz"
-  smtp_auth_username: "monitoring@serveros.cz"
+  smtp_smarthost: "mcg07.vas-server.cz:587"
+  smtp_from: "SERVEROS monitoring <info@serveros.cz>"
+  smtp_auth_username: "info@serveros.cz"
   smtp_auth_password_file: /etc/alertmanager/secrets/smtp_password
   smtp_require_tls: true
 
@@ -23,8 +20,14 @@ route:
   routes:
     - matchers:
         - severity="critical"
-      receiver: email-and-telegram
+      receiver: email-critical
       repeat_interval: 1h
+    # Business warnings (orders, tickets, payments) at most every 12 h; the morning digest covers the rest.
+    - matchers:
+        - team="business"
+      receiver: email
+      group_by: ["alertname"]
+      repeat_interval: 12h
 
 inhibit_rules:
   # Do not spam SSL warnings for a site that is down anyway.
@@ -42,12 +45,25 @@ inhibit_rules:
 receivers:
   - name: email
     email_configs:
-      - to: "admin@serveros.cz"
+      - to: "info@serveros.cz"
         send_resolved: true
+        headers:
+          Subject: '[SERVEROS] {{ if eq .Status "firing" }}Upozornění{{ else }}Vyřešeno{{ end }}: {{ .CommonLabels.alertname }} {{ with .CommonLabels.domain }}{{ . }}{{ end }}{{ with .CommonLabels.name }}{{ . }}{{ end }}'
+          Reply-To: "info@serveros.cz"
 
+  - name: email-critical
+    email_configs:
+      - to: "info@serveros.cz"
+        send_resolved: true
+        headers:
+          Subject: '[SERVEROS] {{ if eq .Status "firing" }}KRITICKÉ{{ else }}Vyřešeno{{ end }}: {{ .CommonLabels.alertname }} {{ with .CommonLabels.domain }}{{ . }}{{ end }}{{ with .CommonLabels.name }}{{ . }}{{ end }}'
+          Reply-To: "info@serveros.cz"
+
+  # Not routed yet: switch the critical route to this receiver once a Telegram bot exists
+  # (token in /etc/alertmanager/secrets/telegram_bot_token, chat_id below).
   - name: email-and-telegram
     email_configs:
-      - to: "admin@serveros.cz"
+      - to: "info@serveros.cz"
         send_resolved: true
     telegram_configs:
       - bot_token_file: /etc/alertmanager/secrets/telegram_bot_token

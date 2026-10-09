@@ -1,0 +1,15 @@
+[Unit]
+Description=SERVEROS morning digest to the team inbox
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=servero-panel
+Group=servero-panel
+WorkingDirectory=/opt/servero-panel
+ExecStart=/usr/local/bin/node --env-file=/etc/servero-panel/env scripts/digest.ts
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true

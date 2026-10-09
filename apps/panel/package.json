@@ -17,7 +17,8 @@
 		"db:seed": "node --env-file-if-exists=.env.local scripts/seed.ts",
 		"admin:create": "node --env-file-if-exists=.env.local scripts/create-admin.ts",
 		"import:legacy": "node --env-file-if-exists=.env.local scripts/import-legacy.ts",
-		"db:fixtures": "node --env-file-if-exists=.env.local scripts/dev-fixtures.ts"
+		"db:fixtures": "node --env-file-if-exists=.env.local scripts/dev-fixtures.ts",
+		"digest": "node --env-file-if-exists=.env.local scripts/digest.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.64.0",

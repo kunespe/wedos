@@ -33,6 +33,18 @@ export const GET: RequestHandler = async ({ request }) => {
 		.from(paymentRequests)
 		.where(sql`${paymentRequests.status} = 'unpaid'`);
 
+	// Waiting times behind the SLA alerts: the oldest order nobody has picked up, the oldest ticket
+	// waiting for our answer, and active services whose paid period has run out (not on manual hold).
+	const [[oldestOrder], [oldestTicket], [expired]] = await Promise.all([
+		db.select({ at: sql<string | null>`min(${orders.createdAt})` }).from(orders).where(sql`${orders.status} = 'new'`),
+		db.select({ at: sql<string | null>`min(${tickets.updatedAt})` }).from(tickets).where(sql`${tickets.status} = 'open'`),
+		db
+			.select({ n: sql<number>`count(*)` })
+			.from(services)
+			.where(sql`${services.status} = 'active' and ${services.manualHold} = false and ${services.expiresAt} < ${todayPrague()}`)
+	]);
+	const ageSeconds = (at: string | Date | null | undefined) => (at ? Math.max(0, Math.floor((Date.now() - new Date(at).getTime()) / 1000)) : 0);
+
 	const esc = (v: string) => v.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 	const lines = [
 		'# HELP servero_orders_total Orders by status.',
@@ -53,6 +65,15 @@ export const GET: RequestHandler = async ({ request }) => {
 		'# HELP servero_payments_overdue_total Unpaid payment requests past their due date.',
 		'# TYPE servero_payments_overdue_total gauge',
 		`servero_payments_overdue_total ${Number(payments?.overdue ?? 0)}`,
+		'# HELP servero_order_oldest_new_age_seconds Age of the oldest order still in status new (0 when none).',
+		'# TYPE servero_order_oldest_new_age_seconds gauge',
+		`servero_order_oldest_new_age_seconds ${ageSeconds(oldestOrder?.at)}`,
+		'# HELP servero_ticket_oldest_open_age_seconds Time the longest-waiting open ticket has waited for our reply (0 when none).',
+		'# TYPE servero_ticket_oldest_open_age_seconds gauge',
+		`servero_ticket_oldest_open_age_seconds ${ageSeconds(oldestTicket?.at)}`,
+		'# HELP servero_services_expired_total Active services past their paid period and not on manual hold.',
+		'# TYPE servero_services_expired_total gauge',
+		`servero_services_expired_total ${Number(expired?.n ?? 0)}`,
 		'# HELP servero_domain_expiry_timestamp_seconds Domain expiry as a Unix timestamp.',
 		'# TYPE servero_domain_expiry_timestamp_seconds gauge',
 		...domainRows.map(

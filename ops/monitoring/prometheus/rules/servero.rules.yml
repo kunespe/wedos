@@ -147,3 +147,46 @@ groups:
         annotations:
           summary: "Panel /internal/metrics neodpovida"
           description: "Alloy nemuze nacist http://127.0.0.1:3000/internal/metrics. Expirace domen a obchodni metriky se nesleduji."
+
+  # Business warnings for the team inbox (info@serveros.cz). Zřizování je ruční, tak hlídáme, aby nic neleželo.
+  - name: servero-business
+    rules:
+      - alert: OrderWaiting
+        expr: servero_order_oldest_new_age_seconds > 4 * 3600
+        for: 5m
+        labels:
+          severity: warning
+          team: business
+        annotations:
+          summary: "Objednavka ceka na prevzeti {{ $value | humanizeDuration }}"
+          description: "Nejstarsi objednavka ve stavu Nova ceka dele nez 4 hodiny. Prevezmete ji v panelu: https://panel.serveros.cz/admin/objednavky"
+
+      - alert: TicketWaiting
+        expr: servero_ticket_oldest_open_age_seconds > 4 * 3600
+        for: 5m
+        labels:
+          severity: warning
+          team: business
+        annotations:
+          summary: "Zakaznik ceka na odpoved {{ $value | humanizeDuration }}"
+          description: "Nejstarsi otevreny tiket ceka na nasi odpoved dele nez 4 hodiny: https://panel.serveros.cz/admin/tikety"
+
+      - alert: PaymentsOverdue
+        expr: servero_payments_overdue_total > 0
+        for: 1h
+        labels:
+          severity: warning
+          team: business
+        annotations:
+          summary: "{{ $value }} vyzev k platbe po splatnosti"
+          description: "Zkontrolujte vypis z uctu a pripomente nezaplacene vyzvy: https://panel.serveros.cz/admin/platby?stav=overdue"
+
+      - alert: ServicesExpired
+        expr: servero_services_expired_total > 0
+        for: 1h
+        labels:
+          severity: warning
+          team: business
+        annotations:
+          summary: "{{ $value }} aktivnich sluzeb po konci predplatneho"
+          description: "Sluzby bezi po datu Zaplaceno do. Vystavte vyzvy k obnove nebo rozhodnete o pozastaveni (nikdy automaticky): https://panel.serveros.cz/admin/platby/obnovy"

@@ -1,0 +1,9 @@
+[Unit]
+Description=SERVEROS morning digest at 07:00 Prague time
+
+[Timer]
+OnCalendar=*-*-* 07:00:00 Europe/Prague
+Persistent=true
+
+[Install]
+WantedBy=timers.target
