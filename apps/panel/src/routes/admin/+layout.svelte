@@ -11,6 +11,7 @@
 		History,
 		LayoutDashboard,
 		LifeBuoy,
+		Mail,
 		Layers,
 		Server,
 		ShieldCheck,
@@ -46,6 +47,7 @@
 				{ href: '/admin/server', label: 'Uzel a služby', icon: Server },
 				{ href: '/admin/weby', label: 'Weby a aplikace', icon: HardDrive },
 				{ href: '/admin/wordpress', label: 'WordPress', icon: ShieldCheck, brand: 'wordpress' },
+				{ href: '/admin/posta', label: 'Pošta', icon: Mail },
 				{ href: '/admin/zalohy', label: 'Zálohy', icon: Archive, soon: true }
 			]
 		},

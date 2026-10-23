@@ -23,6 +23,10 @@ export const variables = defineEnvVars({
 		description: 'Base URL of the CloudPanel admin used for one-click autologin. Empty hides the CloudPanel button.'
 	},
 	SMTP_URL: { schema: optional, description: 'nodemailer SMTP URL. Empty logs e-mails to stdout instead.' },
+	MAILCOW_API_URL: { schema: optional, description: 'Mailcow API origin. HTTPS, or HTTP over a local SSH tunnel on 127.0.0.1.' },
+	MAILCOW_API_KEY: { schema: optional, description: 'Mailcow read-write API key, used only by the server.' },
+	MAILCOW_WEB_URL: { schema: optional, description: 'Public HTTPS URL of Mailcow and SOGo webmail.' },
+	MAILCOW_OUTBOUND_READY: { schema: optional, description: '1 only after outgoing SMTP, DNS and public TLS have been verified.' },
 	MAIL_FROM: { schema: optional, description: 'Sender address for panel e-mails (the SMTP login mailbox).' },
 	MAIL_REPLY_TO: { schema: optional, description: 'Reply-To on panel e-mails, so answers reach a person.' },
 	ORDER_NOTIFY_EMAIL: { schema: optional, description: 'Team inbox notified about new orders.' },

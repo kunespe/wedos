@@ -1,0 +1,12 @@
+[Unit]
+Description=Encrypted Mailcow backup to AWS S3
+After=mailcow.service network-online.target
+Requires=mailcow.service
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/mailcow-backup-to-s3
+TimeoutStartSec=2h
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+UMask=0077

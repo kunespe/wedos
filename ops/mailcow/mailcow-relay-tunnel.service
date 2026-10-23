@@ -1,0 +1,17 @@
+[Unit]
+Description=Mailcow outbound gateway through original mail VPS
+Requires=mailcow.service
+After=mailcow.service network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+[Service]
+ExecStart=/usr/bin/ssh -4 -N -T -i /etc/mailcow-relay/id_ed25519 -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/etc/mailcow-relay/known_hosts -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -L 172.22.1.1:2525:127.0.0.1:25 mailcow-relay@mcg07.vas-server.cz
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+MemoryMax=40M
+[Install]
+WantedBy=multi-user.target

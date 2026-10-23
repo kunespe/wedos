@@ -1,5 +1,8 @@
 # SERVEROS ops: monitoring a nasazení
 
+Samostatný poštovní uzel Mailcow, propojení se SERVEROS, dočasná odchozí brána
+a připravené S3 zálohy: [mailcow/README.md](mailcow/README.md).
+
 Provozní vrstva pro server `vytvorit-web` (Hetzner Cloud, 2.31.25.249, Ubuntu 26.04):
 monitoring (Grafana, Prometheus, Loki, Alertmanager, Alloy), nginx vhosty pro
 `serveros.cz`, `panel.serveros.cz`, `monitor.serveros.cz`, systemd jednotky a skripty

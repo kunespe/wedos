@@ -1,0 +1,8 @@
+[Unit]
+Description=Daily Mailcow backup (enable after S3 verification)
+[Timer]
+OnCalendar=*-*-* 04:20:00 Europe/Prague
+RandomizedDelaySec=15m
+Persistent=true
+[Install]
+WantedBy=timers.target
