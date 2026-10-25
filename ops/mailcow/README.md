@@ -69,6 +69,25 @@ hesla ani API odpovědi s interními údaji se do auditu nedostanou.
 Neprovádí změny DNS, přenos zpráv ani automatické vypínání podle fakturace.
 Klientské účty přes tuto admin sekci nic neovládají.
 
+### Webmail po přidání domény vrací 403 / Permission denied
+
+SOGo sestavuje seznam přihlašovacích domén při startu. Pokud se první doména
+přidá přes přímé API bez `restart_sogo=1`, může dál běžet s prázdným seznamem
+a odmítat aktivní schránky. Panel tento příznak při založení domény posílá;
+je nutný i v jiných integračních skriptech. Oprava existujícího stavu:
+
+```sh
+cd /opt/mailcow-dockerized
+docker compose restart sogo-mailcow
+```
+
+Přihlašovat se přes `https://mail.serveros.cz/` celou adresou schránky.
+Aktuální Mailcow předává ověření do SOGo; náhodné heslo v interním
+`_sogo_static_view.c_password` je záměrné, nesynchronizovat ho ručně s heslem
+schránky. Dne 25. 10. 2026 bylo po načtení domény ověřeno přihlášení přes
+Mailcow až do složky Doručená pošta v prohlížeči. Použitá dočasná schránka
+byla po testu odstraněna; heslo existující schránky se při opravě neměnilo.
+
 ## Postup migrace každé domény
 
 1. Inventura schránek, aliasů, velikostí a aktuálního SPF/DKIM/DMARC.
