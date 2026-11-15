@@ -58,10 +58,10 @@
 			<dl class="grid gap-x-4 gap-y-2 text-sm sm:grid-cols-[8rem_1fr]">
 				<dt class="font-semibold">MX pro @</dt><dd class="mono break-all">10 mail.serveros.cz.</dd>
 				<dt class="font-semibold">TXT DKIM</dt><dd><div class="mono mb-1">{dns.selector}._domainkey</div><code class="block break-all select-all">{dns.dkim || 'DKIM klíč není dostupný. Zkontrolujte poštovní doménu.'}</code></dd>
-				<dt class="font-semibold">SPF</dt><dd>Do stávajícího jediného SPF záznamu přidejte <code class="select-all">ip4:37.235.108.134</code> pro současnou odchozí bránu. Zachovejte ostatní povolené odesílatele.</dd>
+				<dt class="font-semibold">SPF</dt><dd>Do stávajícího jediného SPF záznamu přidejte <code class="select-all">ip4:78.46.194.161 ip6:2a01:4f8:c014:ad85::1</code>, tedy adresy tohoto poštovního serveru. Zachovejte ostatní povolené odesílatele.</dd>
 				<dt class="font-semibold">DMARC</dt><dd>Pokud zatím chybí: TXT <code>_dmarc</code> s hodnotou <code class="select-all">v=DMARC1; p=none</code>. Existující politiku zachovejte.</dd>
 			</dl>
-			<p class="mt-4 text-xs text-muted">MX přepněte až po migraci starých zpráv a závěrečném ověření. Ve starém VPS musí být po migraci také směrování této domény na nový server, aby odchozí brána nedoručovala do původních schránek.</p>
+			<p class="mt-4 text-xs text-muted">MX přepněte až po migraci starých zpráv a závěrečném ověření. Pokud doména měla schránky na původním VPS, vypněte jí tam místní doručování, jinak si ten server poštu pro ni dál nechává.</p>
 		</Panel>
 	{/if}
 

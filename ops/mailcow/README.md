@@ -22,36 +22,30 @@ pak `docker compose restart sogo-mailcow`. Ověřit paměť při reálné zátě
 Při změně konfigurace upravit také provozní informaci v panelu Pošta.
 Schránky ani platforma se nemigrují.
 
-## Odesílání přes původní VPS
+## Odesílání
 
-Odchozí port 25 v Hetzneru je blokovaný. Dočasně:
+Od 16. 11. 2026 doručuje Mailcow ven přímo. Hetzner na žádost odblokoval odchozí porty
+25 a 465 pro celý účet (Console, Limits, Request change, Unblock ports). Do té doby šla
+veškerá odchozí pošta SSH tunelem přes původní VPS mcg07; tunel
+(`mailcow-relay-tunnel.service`), jeho klíč, účet `mailcow-relay` na mcg07 i výjimka ve
+firewallu tam jsou zrušené. Původní `extra.cf` s `relayhost` je v
+`/root/mailcow-setup/postfix-extra.with-relay-*.cf`.
 
-```
-Mailcow Postfix → 172.22.1.1:2525 → SSH → mcg07.vas-server.cz / 127.0.0.1:25 → internet
-```
+`data/conf/postfix/extra.cf` nyní obsahuje jen `myhostname` a
+`smtp_address_preference = ipv4`: SPF záznamy zákazníků jmenují IPv4 adresu serveru a ne
+všechny i IPv6. PTR obou adres (`78.46.194.161`, `2a01:4f8:c014:ad85::1`) je
+`mail.serveros.cz`.
 
-`data/conf/postfix/extra.cf` obsahuje `relayhost = [172.22.1.1]:2525`.
-`mailcow-relay-tunnel.service` drží spojení a obnoví ho při výpadku.
-Klíč je na novém uzlu v `/etc/mailcow-relay/id_ed25519`, známý host je připnutý
-v `known_hosts`. SSH účet `mailcow-relay` na původním VPS nemá shell, heslo,
-PTY ani obecný forwarding: smí jen na `127.0.0.1:25`, z IP nového uzlu.
-Původní firewall má jedinou výjimku pro SSH z `78.46.194.161/32`, také
-v `/etc/iptables.up.rules`. Ostatní pravidla se nemění.
+SPF domén, které se stěhovaly v době tunelu, obsahuje i `ip4:37.235.108.134`. Neškodí,
+ale už není potřeba; zubzi.cz a mavacom.cz ho už nemají.
 
-**Původní VPS je zatím nezbytnou součástí odesílání; nevypínat ho.**
-Při výpadku brány Postfix drží zprávy ve frontě. Kontrola:
+Kontrola fronty:
 
 ```sh
-systemctl status mailcow-relay-tunnel
 cd /opt/mailcow-dockerized
 docker compose exec -T postfix-mailcow postqueue -p
 docker compose logs --tail=50 postfix-mailcow
 ```
-
-Po odblokování portu 25: ověřit A/AAAA a PTR obou adres, SPF každé domény,
-reálné doručení ven, pak odstranit řádek `relayhost` z `extra.cf` a restartovat
-Postfix. Až po vyprázdnění fronty zrušit SSH bránu a její účet/klíč/výjimku
-na původním VPS. Upravit SPF instrukci v panelu (nyní obsahuje IP původní brány).
 
 ## Propojení panelu
 
@@ -93,7 +87,7 @@ byla po testu odstraněna; heslo existující schránky se při opravě neměnil
 1. Inventura schránek, aliasů, velikostí a aktuálního SPF/DKIM/DMARC.
 2. Založit doménu a schránky v panelu, nastavit jednotlivá hesla/kvóty.
 3. Přidat zobrazený DKIM; do jediného existujícího SPF doplnit
-   `ip4:37.235.108.134`, zachovat ostatní odesílatele. Neměnit zavedený DKIM
+   `ip4:78.46.194.161 ip6:2a01:4f8:c014:ad85::1`, zachovat ostatní odesílatele. Neměnit zavedený DKIM
    selektor bez posouzení starých odesílatelů; lze zvolit jiný selektor v Mailcow.
 4. Přenést staré zprávy přes IMAP a ověřit příjem, odeslání i přihlášení.
 5. Před MX přepnutím upravit ve starém VPS poštovní transport této domény na

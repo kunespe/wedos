@@ -30,7 +30,7 @@ cd /opt/mailcow-dockerized
 ./helper-scripts/backup_and_restore.sh backup all
 restic backup --tag mailcow --host mail.serveros.cz \
     "$base/staging" /opt/mailcow-dockerized /etc/mailcow-relay \
-    /etc/systemd/system/mailcow.service /etc/systemd/system/mailcow-relay-tunnel.service \
+    /etc/systemd/system/mailcow.service \
     --exclude /opt/mailcow-dockerized/.git
 restic check
 rm -rf -- "$base/staging"
