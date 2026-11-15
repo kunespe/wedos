@@ -148,3 +148,14 @@ vnější adresu; při tomto testu se neposílala zpráva třetí osobě.
 Úplné doručení ven a DNS autentizaci ověřit při první konkrétní migraci domény.
 
 Dokumentace: https://docs.mailcow.email/ a https://docs.mailcow.email/backup_restore/b_n_r-backup/.
+
+## Hlídání webového serveru zvenku
+
+`web-watch.sh` (na serveru `/usr/local/sbin/serveros-web-watch`, cron
+`/etc/cron.d/serveros-web-watch`, každých 5 minut) se z poštovního serveru ptá aplikací
+na webovém serveru, zda odpovídají: `app.zubzi.cz/up`, `mavacom.cz/up`, Grafana a panel.
+Všechno ostatní hlídání běží na webovém serveru samotném, takže jeho úplný výpadek by
+nikdo neohlásil. Po třech neúspěšných kontrolách za sebou (15 minut) pošle jeden e-mail
+přes zdejší Mailcow na `info@vytvorit-web.cz` a `podpora@zubzi.cz`, druhý po obnovení.
+Stav je ve `/var/lib/serveros-web-watch`, log ve `/var/log/serveros-web-watch.log`.
+Zkouška doručení: `serveros-web-watch --test-mail`.

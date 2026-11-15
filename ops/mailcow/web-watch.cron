@@ -1,0 +1,7 @@
+# The watch from outside (ops/mailcow/web-watch.sh): every five minutes the mail server
+# asks the web server's applications whether they are up, and mails when one stops.
+# Installed as /etc/cron.d/serveros-web-watch on the mail server.
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+MAILTO=""
+*/5 * * * * root /usr/local/sbin/serveros-web-watch >> /var/log/serveros-web-watch.log 2>&1
