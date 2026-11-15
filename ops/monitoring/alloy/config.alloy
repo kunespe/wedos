@@ -39,7 +39,7 @@ prometheus.exporter.unix "node" {
 	}
 
 	systemd {
-		unit_include = "(nginx|mysql|clp-agent|clp-nginx|clp-php-fpm|varnish|redis-server|php[0-9.]+-fpm|vw-dashboard|vw-dashboard-broker|servero-panel|grafana-server|prometheus|loki|alloy|alertmanager|vytvorit-web-wordpress|servero-backup-metrics|fail2ban|postfix)\\.service"
+		unit_include = "(nginx|mysql|clp-agent|clp-nginx|clp-php-fpm|varnish|redis-server|php[0-9.]+-fpm|vw-dashboard|vw-dashboard-broker|servero-panel|grafana-server|prometheus|loki|alloy|alertmanager|vytvorit-web-wordpress|servero-backup-metrics|fail2ban|postfix|postgresql@17-main|docker)\\.service"
 	}
 
 	// servero_backups.prom from servero-backup-metrics.timer
@@ -263,6 +263,72 @@ discovery.relabel "blackbox_own" {
 
 prometheus.scrape "blackbox_own" {
 	targets         = discovery.relabel.blackbox_own.output
+	scrape_interval = "60s"
+	scrape_timeout  = "10s"
+	forward_to      = [prometheus.remote_write.local.receiver]
+}
+
+// ---------------------------------------------------------------- Blackbox probes of the applications run here
+// MAVACOM and ZUBZI are Laravel applications on this server, not sites the panel sells, so
+// they are probed here and not through probes.json. Each is asked for its health route
+// (/up), which answers 200 even while the application sits behind its coming-soon PIN, so
+// the probe says "the application boots", not "the public can read it". A separate job
+// ("blackbox-apps", label app) keeps them out of SiteDown, the public /stav aggregate and
+// the sites dashboard, like blackbox-own above; the "Aplikace" dashboard reads this job.
+
+prometheus.exporter.blackbox "apps" {
+	config = "{ modules: { http_app: { prober: http, timeout: 8s, http: { preferred_ip_protocol: ip4, follow_redirects: false, valid_status_codes: [200], fail_if_not_ssl: true } } } }"
+
+	target {
+		name    = "mavacom.cz"
+		address = "https://mavacom.cz/up"
+		module  = "http_app"
+		labels  = {app = "mavacom", component = "web"}
+	}
+
+	target {
+		name    = "app.zubzi.cz"
+		address = "https://app.zubzi.cz/up"
+		module  = "http_app"
+		labels  = {app = "zubzi", component = "app"}
+	}
+
+	target {
+		name    = "zubzi.cz"
+		address = "https://zubzi.cz/robots.txt"
+		module  = "http_app"
+		labels  = {app = "zubzi", component = "site"}
+	}
+}
+
+discovery.relabel "blackbox_apps" {
+	targets = prometheus.exporter.blackbox.apps.targets
+
+	rule {
+		target_label = "job"
+		replacement  = "blackbox-apps"
+	}
+
+	rule {
+		source_labels = ["__param_target"]
+		target_label  = "url"
+	}
+
+	rule {
+		source_labels = ["__param_target"]
+		regex         = "https?://([^/]+).*"
+		target_label  = "instance"
+		replacement   = "$1"
+	}
+
+	rule {
+		source_labels = ["__param_module"]
+		target_label  = "probe_module"
+	}
+}
+
+prometheus.scrape "blackbox_apps" {
+	targets         = discovery.relabel.blackbox_apps.output
 	scrape_interval = "60s"
 	scrape_timeout  = "10s"
 	forward_to      = [prometheus.remote_write.local.receiver]

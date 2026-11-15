@@ -4,6 +4,8 @@
 #   job="redis"          prometheus.exporter.redis
 #   job="blackbox"       prometheus.exporter.blackbox, labels domain/service_id/customer_id/probe_module
 #   job="servero-panel"  http://127.0.0.1:3000/internal/metrics
+#   job="blackbox-apps"  the applications run here (MAVACOM, ZUBZI), label app; zubzi_* come
+#                        from ZUBZI's own textfile metrics (its infra/serveros/metrics.sh)
 # Severity: critical goes to e-mail + Telegram, warning to e-mail only.
 groups:
   - name: servero-sites
@@ -75,6 +77,139 @@ groups:
         annotations:
           summary: "Certifikat {{ $labels.instance }} expiruje za {{ $value | printf \"%.1f\" }} dni"
           description: "TLS certifikat {{ $labels.instance }} vyprsi za mene nez 14 dni. Zkontrolujte obnovu (ops/issue-certs.sh)."
+
+  # The applications WEBZI runs on this server (job="blackbox-apps", label app). Probed on
+  # their health route, which answers 200 behind a coming-soon PIN too.
+  - name: servero-apps
+    rules:
+      - alert: AppDown
+        expr: probe_success{job="blackbox-apps"} == 0
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Aplikace {{ $labels.app }} ({{ $labels.instance }}) neodpovida"
+          description: "Probe {{ $labels.url }} selhava dele nez 3 minuty: DNS, TLS, nginx, PHP-FPM, nebo aplikace nenabehne."
+
+      - alert: AppProbeMissing
+        expr: absent_over_time(probe_success{job="blackbox-apps"}[10m])
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Chybi probe aplikaci (blackbox-apps)"
+          description: "Alloy neposila zadne vysledky probe pro MAVACOM a ZUBZI. Zkontrolujte blok prometheus.exporter.blackbox \"apps\" v /etc/alloy/config.alloy."
+
+      - alert: AppCertExpiring
+        expr: (probe_ssl_earliest_cert_expiry{job="blackbox-apps"} - time()) / 86400 < 14
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Certifikat {{ $labels.instance }} expiruje za {{ $value | printf \"%.1f\" }} dni"
+          description: "TLS certifikat aplikace {{ $labels.app }} vyprsi za mene nez 14 dni. Obnovu dela CloudPanel (clpctl lets-encrypt:install:certificate)."
+
+  # ZUBZI (dental laboratories, real patient data). Its numbers come from its own textfile
+  # metrics: /home/zubzi/htdocs/zubzi.cz/state/textfile, linked into the node exporter's
+  # directory. Every rule is silent until ZUBZI is deployed here (zubzi_release_info exists),
+  # and from then on a metric that goes missing is itself the alarm.
+  - name: servero-zubzi
+    rules:
+      - alert: ZubziMetricsStale
+        expr: (time() - zubzi_app_metrics_updated_timestamp_seconds) > 600
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "ZUBZI neposila metriky"
+          description: "infra/serveros/metrics.sh nebezel dele nez 10 minut. Zkontrolujte crontab uzivatele zubzi a /home/zubzi/logs/zubzi/metrics.log."
+
+      - alert: ZubziDatabaseDown
+        expr: zubzi_database_up == 0
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ZUBZI se nepripoji k PostgreSQL"
+          description: "Role aplikace se nepripoji k databazi. systemctl status postgresql@17-main."
+
+      - alert: ZubziPdfServiceDown
+        expr: zubzi_pdf_service_up == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ZUBZI: sluzba PDF (Gotenberg) neodpovida"
+          description: "Bez ni nejdou faktury, stitky ani prohlaseni. docker compose -p zubzi ps; docker compose -p zubzi logs gotenberg."
+
+      - alert: ZubziSchedulerStale
+        expr: |
+          (time() - zubzi_scheduler_last_run_timestamp_seconds) > 900
+            or (absent(zubzi_scheduler_last_run_timestamp_seconds) and on() count(zubzi_release_info) > 0)
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ZUBZI: planovac nebezi"
+          description: "artisan schedule:run nedobehl dele nez 15 minut: nejdou upominky, synchronizace banky ani automaticka fakturace. /home/zubzi/logs/zubzi/schedule.log."
+
+      - alert: ZubziQueueStuck
+        expr: zubzi_queue_oldest_job_age_seconds > 900
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ZUBZI: fronta stoji ({{ $value | printf \"%.0f\" }} s)"
+          description: "Nejstarsi uloha ceka dele nez 15 minut, tedy e-maily neodchazeji. /home/zubzi/logs/zubzi/queue.log."
+
+      - alert: ZubziQueueBacklog
+        expr: zubzi_queue_jobs > 50
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "ZUBZI: ve fronte je {{ $value | printf \"%.0f\" }} uloh"
+          description: "Fronta se nestiha vyprazdnovat dele nez 15 minut."
+
+      - alert: ZubziFailedJobs
+        expr: zubzi_failed_jobs > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "ZUBZI: {{ $value | printf \"%.0f\" }} selhanych uloh"
+          description: "php artisan queue:failed v /home/zubzi/htdocs/zubzi.cz/current/api ukaze, co selhalo (casto e-mail)."
+
+      - alert: ZubziBackupStale
+        expr: |
+          (time() - zubzi_backup_last_success_timestamp_seconds) > 26 * 3600
+            or (absent(zubzi_backup_last_success_timestamp_seconds) and on() count(zubzi_release_info) > 0)
+        for: 30m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ZUBZI: nocni zaloha se nepovedla"
+          description: "Posledni uspesna zaloha je starsi nez 26 hodin, nebo zadna neni. /home/zubzi/logs/zubzi/backup.log; rucne: /home/zubzi/htdocs/zubzi.cz/ops/infra/serveros/backup.sh --tier manual."
+
+      - alert: ZubziBackupPullStale
+        expr: |
+          (time() - zubzi_backup_last_pull_timestamp_seconds) > 14 * 86400
+            or (absent(zubzi_backup_last_pull_timestamp_seconds) and on() count(zubzi_release_info) > 0)
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "ZUBZI: zalohy nebyly stazeny mimo server dele nez 14 dni"
+          description: "Na serveru je jedina kopie. Na pocitaci provozovatele: make backup-pull (docs/DEPLOY-SERVEROS.md)."
+
+      - alert: ZubziAutoDeployFailing
+        expr: zubzi_autodeploy_ok == 0
+        for: 20m
+        labels:
+          severity: warning
+        annotations:
+          summary: "ZUBZI: nasazeni selhalo"
+          description: "Commit z vetve ci-green se nepodarilo nasadit; bezi dal predchozi vydani. /home/zubzi/logs/zubzi/deploy.log."
 
   - name: servero-host
     rules:
