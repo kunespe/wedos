@@ -31,7 +31,7 @@
         </fieldset>
         <label class="sr-only" for="${id}-years">Na kolik let ${esc(d.name)}</label>
         <select class="select" id="${id}-years" data-years>${[1, 2, 3].map(n => `<option value="${n}"${n === d.years ? ' selected' : ''}>${years(n)}</option>`).join('')}</select>
-        <p class="bitem__price">${price ? `${kc(price * d.years)} Kč<small>bez DPH</small>` : 'cenu potvrdíme'}</p>
+        <p class="bitem__price">${price ? `${kc(price * d.years)} Kč` : 'cenu potvrdíme'}</p>
         <button class="rm" type="button" aria-label="Odebrat ${esc(d.name)}" title="Odebrat">${X}</button>
       </div>
       <span class="ear ear--light"><i class="screw"></i><i class="screw"></i></span>
@@ -62,12 +62,12 @@
       return [`${d.name}, ${MODE[d.mode]}, ${years(d.years)}`, p ? `${kc(p * d.years)} Kč` : 'potvrdíme'];
     });
     if (items.length) {
-      rows.push(['Mezisoučet bez DPH', `${kc(known)} Kč`, true]);
+      rows.push(['Mezisoučet', `${kc(known)} Kč`, true]);
       if (known) rows.push(['S DPH 21 %', `${kc(known * (1 + VAT))} Kč`]);
     }
     sName.textContent = `${items.length} ${domains(items.length)}`;
     sMeta.textContent = items.length ? `${items.filter(d => d.mode === 'register').length}× registrace, ${items.filter(d => d.mode === 'transfer').length}× převod` : 'registrace a převody';
-    sLcd.textContent = items.length ? `${kc(known)} Kč bez DPH` : '-- Kč';
+    sLcd.textContent = items.length ? `${kc(known)} Kč` : '-- Kč';
     sRows.innerHTML = rows.map(([k, v, total]) => `<div${total ? ' class="is-total"' : ''}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('');
     sNote.textContent = unknown
       ? `Cenu ${unknown === 1 ? 'jedné domény' : `${unknown} domén`} potvrdíme e-mailem, než ji objednáme. Mezisoučet obsahuje jen známé ceny.`
@@ -100,7 +100,7 @@
     $('.upsell').hidden = !pick.length;
     upsell.innerHTML = pick.map(p => `<article class="upsell__card">
       <h3>${esc(p.name)}</h3>
-      <p class="upsell__price">${p.from ? 'od ' : ''}${kc(p.monthly)} Kč <small>/ měs. bez DPH</small></p>
+      <p class="upsell__price">${p.from ? 'od ' : ''}${kc(p.monthly)} Kč <small>/ měs.</small></p>
       <p>${p.features.slice(0, 3).map(esc).join(' · ')}</p>
       <a class="btn btn--ghost btn--sm" href="objednat.html?plan=${encodeURIComponent(p.code)}">Objednat s doménami</a>
     </article>`).join('');

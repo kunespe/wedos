@@ -104,7 +104,7 @@
       sName.textContent = 'Jen domény';
       sMeta.textContent = `${items.length} ${domainsWord(items.length)}, bez hostingu`;
       sLcd.textContent = `${kc(known)} Kč za domény`;
-      rows.push(['Domény bez DPH', `${kc(known)} Kč`]);
+      rows.push(['Domény', `${kc(known)} Kč`]);
       rows.push(['DPH 21 %', `${kc(known * VAT)} Kč`]);
       rows.push(['Celkem s DPH', `${kc(known * (1 + VAT))} Kč`, true]);
     } else if (!p) {
@@ -122,7 +122,7 @@
         const base = period === 'year' ? p.monthly * mc : p.monthly;
         const free = 12 - mc;
         sMeta.textContent = `${catName[p.category]}, ${period === 'year' ? `ročně (${free} ${months(free)} zdarma)` : 'měsíčně'}`;
-        rows.push([period === 'year' ? 'Za rok bez DPH' : 'Za měsíc bez DPH', `${od}${kc(base)} Kč`]);
+        rows.push([period === 'year' ? 'Za rok' : 'Za měsíc', `${od}${kc(base)} Kč`]);
         rows.push(['DPH 21 %', `${od}${kc(base * VAT)} Kč`]);
         rows.push(['Celkem s DPH', `${od}${kc(base * (1 + VAT))} Kč`, true]);
       }
@@ -141,7 +141,7 @@
       return `<li data-name="${esc(d.name)}"><span class="sbasket__name">${esc(d.name)}<small>${d.mode === 'transfer' ? 'převod' : 'registrace'}, ${years(d.years)}</small></span>` +
         `<span class="sbasket__price">${pr ? `${kc(pr * d.years)} Kč` : 'potvrdíme'}</span>` +
         `<button class="rm" type="button" aria-label="Odebrat ${esc(d.name)} z košíku" title="Odebrat">${X}</button></li>`;
-    }).join('') + (items.length && !domainOnly() ? `<li><span class="sbasket__name">Domény bez DPH</span><span class="sbasket__price">${kc(known)} Kč</span><span></span></li>` : '');
+    }).join('') + (items.length && !domainOnly() ? `<li><span class="sbasket__name">Domény</span><span class="sbasket__price">${kc(known)} Kč</span><span></span></li>` : '');
     sBasketNote.textContent = unknown ? `Cenu ${unknown === 1 ? 'jedné domény' : `${unknown} domén`} potvrdíme e-mailem, než ji objednáme.` : '';
     sBasketNote.hidden = !unknown;
   }

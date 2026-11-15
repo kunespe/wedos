@@ -286,6 +286,15 @@ prometheus.exporter.blackbox "apps" {
 		labels  = {app = "mavacom", component = "web"}
 	}
 
+	// TISKOS answers /stav with 503 when an order has waited over half an hour for its
+	// mails, so a broken mailbox or mail server shows up here and not from a customer.
+	target {
+		name    = "tiskos.cz"
+		address = "https://tiskos.cz/stav"
+		module  = "http_app"
+		labels  = {app = "tiskos", component = "web"}
+	}
+
 	target {
 		name    = "app.zubzi.cz"
 		address = "https://app.zubzi.cz/up"

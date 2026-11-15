@@ -1,6 +1,6 @@
 {
   "currency": "CZK",
-  "vatNote": "Ceny jsou bez DPH.",
+  "vatNote": "Nejsme plátci DPH, ceny jsou konečné.",
   "yearlyMonthsCharged": 10,
   "categories": [
     { "id": "hosting", "name": "Webhosting" },
