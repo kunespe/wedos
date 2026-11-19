@@ -36,7 +36,7 @@ if (!customer) {
 	[customer] = await db.select().from(customers).where(eq(customers.id, id));
 	await db.insert(services).values([
 		{ customerId: id, planCode: 'wp-provoz', kind: 'wp', label: 'WP Provoz · centrumarete.cz', domain: 'centrumarete.cz', nodeId: 1, status: 'active', period: 'year', priceMonthly: 349, cloudpanelSite: 'centrumarete.cz', fakturorSubscriptionId: 101, expiresAt: '2027-03-31' },
-		{ customerId: id, planCode: 'web-start', kind: 'web', label: 'Web Start · arete-akce.cz', domain: 'arete-akce.cz', nodeId: 1, status: 'pending', period: 'year', priceMonthly: 79 }
+		{ customerId: id, planCode: 'web-start', kind: 'web', label: 'Web Start · arete-akce.cz', domain: 'arete-akce.cz', nodeId: 1, status: 'pending', period: 'year', priceMonthly: 99 }
 	]);
 	await db.insert(domains).values({ customerId: id, name: 'centrumarete.cz', registrar: 'Subreg', managedByUs: true, expiresAt: '2026-10-28' });
 	const [{ id: ticketId }] = await db.insert(tickets).values({ customerId: id, subject: 'Nefunguje kontaktní formulář', status: 'open' }).$returningId();

@@ -10,7 +10,7 @@ import { requireClient } from '#lib/server/guards.ts';
 import { sendMail } from '#lib/server/mail.ts';
 import { czk, periodTotal } from '#lib/format.ts';
 import { basketLines, basketTotal, priced } from '#lib/domains.ts';
-import { NON_HOSTING_CATEGORIES, panelOrderSchema } from '#lib/orders.ts';
+import { NON_HOSTING_CATEGORIES, panelOrderSchema, withdrawalLine } from '#lib/orders.ts';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
@@ -79,6 +79,8 @@ export const actions: Actions = {
 				dic: customer.dic,
 				address: customer.address,
 				note: data.note || null,
+				// A business (IČO on the account) has no withdrawal period to wait out.
+				immediateStart: !customer.ico && data.immediateStart,
 				priceMonthly: plan.monthly,
 				customerId: customer.id,
 				source: 'panel',
@@ -89,17 +91,18 @@ export const actions: Actions = {
 
 		const { known, unknown } = basketTotal(basket);
 		const price = domainOnly
-			? `domény za ${czk(known)} bez DPH${unknown ? ', zbytek cen potvrdíme' : ''}`
+			? `domény za ${czk(known)}${unknown ? ', zbytek cen potvrdíme' : ''}`
 			: plan.monthly == null
 				? 'Individuálně'
-				: `${czk(periodTotal(plan.monthly, data.period))} ${data.period === 'year' ? 'ročně' : 'měsíčně'} bez DPH`;
+				: `${czk(periodTotal(plan.monthly, data.period))} ${data.period === 'year' ? 'ročně' : 'měsíčně'}`;
 		const summary = [
 			domainOnly ? `Objednávka: ${plan.name}, bez hostingu` : `Tarif: ${plan.name} (${price})`,
 			domain ? `Doména: ${domain} (${domainMode === 'register' ? 'registrovat' : 'vlastní'})` : '',
 			basket.length
-				? `Domény (${basket.length}):\n${basketLines(basket)}\nZnámé ceny celkem ${czk(known)} bez DPH${unknown ? `, u ${unknown} ${unknown === 1 ? 'domény' : 'domén'} cenu potvrdíme e-mailem` : ''}`
+				? `Domény (${basket.length}):\n${basketLines(basket)}\nZnámé ceny celkem ${czk(known)}${unknown ? `, u ${unknown} ${unknown === 1 ? 'domény' : 'domén'} cenu potvrdíme e-mailem` : ''}`
 				: '',
 			`Zákazník: ${customer.company || customer.name} (#${customer.id}), objednal ${user.name} <${user.email}>`,
+			withdrawalLine({ ico: customer.ico, immediateStart: !customer.ico && data.immediateStart }),
 			data.note ? `\nPoznámka:\n${data.note}` : ''
 		]
 			.filter(Boolean)

@@ -4,7 +4,6 @@
 
   const { drawRails, catalog, domainPrice, basket } = window.servero; // from site.js
 
-  const VAT = .21;
   const kc = n => new Intl.NumberFormat('cs-CZ').format(Math.round(n));
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const years = n => n === 1 ? '1 rok' : `${n} roky`;
@@ -54,7 +53,7 @@
     </li>`;
     if (fItem && fSel) { const el = $(`.bitem[data-name="${CSS.escape(fItem.dataset.name)}"] ${fSel}`, list); if (el) el.focus(); }
 
-    // summary: known prices excl. VAT, the rest is confirmed by e-mail
+    // summary: known prices are final (not a VAT payer), the rest is confirmed by e-mail
     let known = 0, unknown = 0;
     const rows = items.map(d => {
       const p = domainPrice(data, d.name);
@@ -62,15 +61,14 @@
       return [`${d.name}, ${MODE[d.mode]}, ${years(d.years)}`, p ? `${kc(p * d.years)} Kč` : 'potvrdíme'];
     });
     if (items.length) {
-      rows.push(['Mezisoučet', `${kc(known)} Kč`, true]);
-      if (known) rows.push(['S DPH 21 %', `${kc(known * (1 + VAT))} Kč`]);
+      rows.push(['Celkem', `${kc(known)} Kč`, true]);
     }
     sName.textContent = `${items.length} ${domains(items.length)}`;
     sMeta.textContent = items.length ? `${items.filter(d => d.mode === 'register').length}× registrace, ${items.filter(d => d.mode === 'transfer').length}× převod` : 'registrace a převody';
     sLcd.textContent = items.length ? `${kc(known)} Kč` : '-- Kč';
     sRows.innerHTML = rows.map(([k, v, total]) => `<div${total ? ' class="is-total"' : ''}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('');
     sNote.textContent = unknown
-      ? `Cenu ${unknown === 1 ? 'jedné domény' : `${unknown} domén`} potvrdíme e-mailem, než ji objednáme. Mezisoučet obsahuje jen známé ceny.`
+      ? `Cenu ${unknown === 1 ? 'jedné domény' : `${unknown} domén`} potvrdíme e-mailem, než ji objednáme. Celkem obsahuje jen známé ceny.`
       : items.length ? 'Registraci potvrdíme e-mailem, než doménu objednáme.' : '';
     go.hidden = !items.length;
     drawRails();

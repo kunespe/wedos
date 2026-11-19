@@ -44,7 +44,7 @@
 	const columns: Column<Row>[] = [
 		{ label: 'Služba', sort: (r) => r.label },
 		{ label: 'Období', sort: (r) => r.period },
-		{ label: 'Částka bez DPH', sort: (r) => (r.priceMonthly == null ? null : periodTotal(r.priceMonthly, r.period)), align: 'right' },
+		{ label: 'Částka', sort: (r) => (r.priceMonthly == null ? null : periodTotal(r.priceMonthly, r.period)), align: 'right' },
 		{ label: 'Další platba', sort: (r) => r.expiresAt },
 		{ label: 'Stav' }
 	];
@@ -126,7 +126,7 @@
 				</tr>
 			{/snippet}
 		</DataTable>
-		<p class="mt-2 text-xs text-muted">Ceny jsou bez DPH. Při roční platbě platíte {YEARLY_MONTHS} měsíců místo 12.</p>
+		<p class="mt-2 text-xs text-muted">Nejsme plátci DPH, ceny jsou konečné. Při roční platbě platíte {YEARLY_MONTHS} měsíců místo 12.</p>
 	</section>
 
 	<Panel title="Fakturační údaje" class="min-w-0 self-start">

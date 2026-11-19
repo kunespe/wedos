@@ -12,7 +12,7 @@ SERVEROS přebírá hosting „Vytvořit web“ a nabízí webhosting, spravovan
 | `dashboard/` | | Root broker (`broker.py`), Fakturor adaptér a kontrola aktualizací; webové rozhraní nahradil panel (Flask dashboard vypnut 9. 10. 2026) |
 | `operations/` | | Údržba WordPressů a zálohy přes Restic |
 | `ops/` | monitor.serveros.cz | Grafana, Prometheus, Loki, Alloy, Alertmanager, nginx, systemd a `deploy.sh`; viz [ops/README](ops/README.md) |
-| `docs/` | | [Business case](docs/business-case.md), [runbook objednávky](docs/runbook-objednavka.md), šablony obchodních podmínek, GDPR a SLA |
+| `docs/` | | [Business case](docs/business-case.md), [runbook objednávky](docs/runbook-objednavka.md), [právní dokumenty](docs/legal/README.md) (platné znění je na webu v `apps/web/`) |
 
 ```mermaid
 flowchart LR

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://serveros.cz/</loc><lastmod>2026-10-09</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://serveros.cz/objednat.html</loc><lastmod>2026-10-09</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://serveros.cz/</loc><lastmod>2026-11-19</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://serveros.cz/objednat.html</loc><lastmod>2026-11-19</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://serveros.cz/navody/</loc><lastmod>2026-10-09</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://serveros.cz/navody/domena-dns.html</loc><lastmod>2026-10-09</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://serveros.cz/navody/sftp.html</loc><lastmod>2026-10-09</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -11,6 +11,9 @@
   <url><loc>https://serveros.cz/navody/email.html</loc><lastmod>2026-10-09</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://serveros.cz/navody/ssl.html</loc><lastmod>2026-10-09</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://serveros.cz/navody/nasazeni-z-gitu.html</loc><lastmod>2026-10-09</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://serveros.cz/obchodni-podminky.html</loc><lastmod>2026-10-09</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://serveros.cz/ochrana-osobnich-udaju.html</loc><lastmod>2026-10-09</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://serveros.cz/obchodni-podminky.html</loc><lastmod>2026-11-19</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://serveros.cz/ochrana-osobnich-udaju.html</loc><lastmod>2026-11-19</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://serveros.cz/sla.html</loc><lastmod>2026-11-19</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://serveros.cz/zpracovatelska-smlouva.html</loc><lastmod>2026-11-19</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://serveros.cz/odstoupeni-od-smlouvy.html</loc><lastmod>2026-11-19</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>

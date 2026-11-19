@@ -7,7 +7,7 @@ import { orders } from '#lib/server/db/schema.ts';
 import { sendMail } from '#lib/server/mail.ts';
 import { czk, periodTotal } from '#lib/format.ts';
 import { basketLines, basketTotal, priced } from '#lib/domains.ts';
-import { fieldErrors, NON_HOSTING_CATEGORIES, publicOrderSchema } from '#lib/orders.ts';
+import { fieldErrors, NON_HOSTING_CATEGORIES, publicOrderSchema, withdrawalLine } from '#lib/orders.ts';
 
 const cors = {
 	'Access-Control-Allow-Origin': storefrontOrigins[0],
@@ -96,6 +96,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 			dic: order.dic,
 			address: order.address,
 			note: order.note || null,
+			immediateStart: order.immediateStart,
 			priceMonthly: plan.monthly,
 			ip
 		})
@@ -104,18 +105,19 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	const price =
 		plan.monthly == null
 			? 'Individuálně'
-			: `${czk(periodTotal(plan.monthly, order.period))} ${order.period === 'year' ? 'ročně' : 'měsíčně'} bez DPH`;
+			: `${czk(periodTotal(plan.monthly, order.period))} ${order.period === 'year' ? 'ročně' : 'měsíčně'}`;
 	const { known, unknown } = basketTotal(basket);
 	const summary = [
 		domainOnly ? `Objednávka: ${plan.name}, bez hostingu` : `Tarif: ${plan.name} (${price})`,
 		order.domain && domainMode !== 'none' ? `Doména: ${order.domain} (${domainMode === 'register' ? 'registrovat' : 'vlastní'})` : '',
 		basket.length
-			? `Domény (${basket.length}):\n${basketLines(basket)}\nZnámé ceny celkem ${czk(known)} bez DPH${unknown ? `, u ${unknown} ${unknown === 1 ? 'domény' : 'domén'} cenu potvrdíme e-mailem` : ''}`
+			? `Domény (${basket.length}):\n${basketLines(basket)}\nZnámé ceny celkem ${czk(known)}${unknown ? `, u ${unknown} ${unknown === 1 ? 'domény' : 'domén'} cenu potvrdíme e-mailem` : ''}`
 			: '',
 		`Jméno: ${order.name}`,
 		order.company ? `Firma: ${order.company}${order.ico ? `, IČO ${order.ico}` : ''}` : '',
 		`E-mail: ${order.email}`,
 		order.phone ? `Telefon: ${order.phone}` : '',
+		withdrawalLine(order),
 		order.note ? `\nPoznámka:\n${order.note}` : ''
 	]
 		.filter(Boolean)
@@ -127,7 +129,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		sendMail(
 			order.email,
 			`SERVEROS: objednávka č. ${id} je u nás`,
-			`Dobrý den,\n\nděkujeme za objednávku. Ozveme se do pár hodin (v pracovní době) s přístupy a dalšími kroky.\n\n${summary}\n\nTým SERVEROS\ninfo@serveros.cz, +420 773 559 645`
+			`Dobrý den,\n\nděkujeme za objednávku. Ozveme se do pár hodin (v pracovní době) s přístupy a dalšími kroky.\n\n${summary}\n\nObjednávka se řídí obchodními podmínkami: https://serveros.cz/obchodni-podminky.html\nOchrana osobních údajů: https://serveros.cz/ochrana-osobnich-udaju.html\nSpotřebitel může od smlouvy odstoupit do 14 dnů: https://serveros.cz/odstoupeni-od-smlouvy.html\n\nTým SERVEROS\nVojtěch Kotrč, IČO 17541859, Barákova 561/79, 326 00 Plzeň\ninfo@serveros.cz, +420 773 559 645`
 		)
 	]);
 

@@ -1028,6 +1028,43 @@ textarea.input { min-height: 120px; resize: vertical; }
 .callout--warn { border-color: rgba(255,180,59,.7); background: rgba(255,180,59,.14); }
 .callout b:first-child { display: block; margin-bottom: 4px; }
 
+/* ---------- Legal documents (obchodni-podminky, ochrana-osobnich-udaju, sla, zpracovatelska-smlouva, odstoupeni-od-smlouvy) ---------- */
+.page-head .legal-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; max-width: none; font: 500 13px/1.4 var(--mono); color: var(--steel-dk); }
+.page-head .crumbs { max-width: none; }
+.legal-meta b { font-weight: 650; color: var(--ink); }
+.prose ol.clause { list-style: none; padding-left: 0; }
+.prose ol.clause > li { display: grid; grid-template-columns: 3.2em minmax(0, 1fr); gap: 0 .4em; }
+.prose ol.clause > li > .n { font: 600 .82em/2 var(--mono); color: var(--steel-dk); }
+.prose ol.clause > li > :not(.n) { grid-column: 2; }
+.prose ol.clause > li > ul { margin-top: .35em; }
+.prose .table { font-size: 15px; }
+.prose dl.identity { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 18px; font-size: 16px; }
+.prose dl.identity dt { color: var(--steel-dk); }
+.prose dl.identity dd { color: var(--ink); }
+.sheet { padding: clamp(18px, 3vw, 32px); border: 1px solid rgba(18,22,27,.25); border-radius: 6px; background: #fbfcfd; }
+.sheet > * + * { margin-top: 1em; }
+.sheet h3 { margin-top: 0; }
+.sheet .fill { display: block; min-height: 1.9em; border-bottom: 1px dotted rgba(18,22,27,.45); }
+.sheet .fill + .fill { margin-top: .2em; }
+.sheet .row { display: grid; grid-template-columns: minmax(9em, max-content) minmax(0, 1fr); gap: 4px 14px; align-items: end; }
+.print-btn { margin-top: 18px; }
+.check--small { font-size: 13px; line-height: 1.45; }
+.check__tag { display: block; margin-bottom: 2px; font: 600 11px/1.4 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--steel); }
+@media (max-width: 560px) {
+  .prose ol.clause > li { grid-template-columns: minmax(0, 1fr); }
+  .prose ol.clause > li > :not(.n) { grid-column: 1; }
+  .prose dl.identity, .sheet .row { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .prose dl.identity dd { margin-bottom: 8px; }
+}
+@media print {
+  .rail, .rail-pos, .top, .doc__side, .foot__links, .print-btn, .page-head .crumbs { display: none !important; }
+  body, .rack { background: #fff !important; }
+  .doc { display: block; }
+  .prose { max-width: none; font-size: 11pt; line-height: 1.5; color: #000; }
+  .prose a { color: #000; }
+  .sheet { border-color: #000; }
+}
+
 .doc__side { position: sticky; top: 24px; display: grid; gap: 4px; padding: 4px 0; background: #0d0f12; border-radius: 6px; }
 .side-unit { padding: 20px 22px; border-radius: 5px; background: linear-gradient(180deg, #2c3137, #1f2328); color: var(--paper); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
 .side-unit h2 { margin-bottom: 12px; font: 600 12px/1 var(--mono); letter-spacing: .06em; color: var(--steel); text-transform: uppercase; }

@@ -147,6 +147,9 @@ export const orders = mysqlTable(
 		dic: varchar('dic', { length: 20 }).notNull().default(''),
 		address: varchar('address', { length: 255 }).notNull().default(''),
 		note: text('note'),
+		// A consumer's express request to set the service up before the 14-day withdrawal period ends
+		// (section 1823 of the Civil Code). Without it a consumer's service waits out the period or an e-mailed request.
+		immediateStart: boolean('immediate_start').notNull().default(false),
 		// Price at the time of ordering, so later catalog changes do not rewrite history.
 		priceMonthly: int('price_monthly'),
 		// Domain basket: registrations and transfers, each with its price per year at the time of ordering (null = to confirm).

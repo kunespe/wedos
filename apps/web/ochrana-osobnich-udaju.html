@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ochrana osobních údajů | Serveros</title>
-  <meta name="description" content="Jak Serveros zachází s osobními údaji.">
+  <meta name="description" content="Jak SERVEROS zpracovává osobní údaje zákazníků a návštěvníků webu, komu je předává, jak dlouho je uchovává a jaká máte práva.">
   <meta name="theme-color" content="#E7EAEE">
   <link rel="canonical" href="https://serveros.cz/ochrana-osobnich-udaju.html">
   <meta property="og:type" content="website">
@@ -12,7 +12,7 @@
   <meta property="og:locale" content="cs_CZ">
   <meta property="og:url" content="https://serveros.cz/ochrana-osobnich-udaju.html">
   <meta property="og:title" content="Ochrana osobních údajů | Serveros">
-  <meta property="og:description" content="Jak Serveros zachází s osobními údaji.">
+  <meta property="og:description" content="Jak SERVEROS zpracovává osobní údaje zákazníků a návštěvníků webu, komu je předává, jak dlouho je uchovává a jaká máte práva.">
   <meta property="og:image" content="https://serveros.cz/assets/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -21,7 +21,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <!-- Archivo and JetBrains Mono are self-hosted (@font-face in styles.css); preload the latin face the first paint needs -->
   <link rel="preload" href="/assets/fonts/archivo-v25-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=15">
+  <link rel="stylesheet" href="styles.css?v=16">
 </head>
 <body>
 <div class="rack">
@@ -42,9 +42,129 @@
 
   <main id="top" class="wrap page">
     <div class="page-head">
-      <p class="lcd page__lcd"><span class="lcd__text">stav: připravujeme</span><i class="lcd__cursor" aria-hidden="true"></i></p>
+      <p class="crumbs"><a href="index.html">serveros.cz</a><span aria-hidden="true">/</span><span>právní dokumenty</span><span aria-hidden="true">/</span><span>ochrana osobních údajů</span></p>
       <h1>Ochrana osobních údajů</h1>
-      <p>Připravujeme. Do té doby vám vše rádi vysvětlíme na <a href="mailto:info@serveros.cz">info@serveros.cz</a>.</p>
+      <p>Jaké údaje o vás zpracováváme, proč, jak dlouho a komu je předáváme. A jaká máte práva.</p>
+      <p class="legal-meta"><span>Účinnost od <b>19. 11. 2026</b></span><span>Verze <b>1.0</b></span><span>Provozovatel <b>Vojtěch Kotrč</b>, IČO 17541859</span></p>
+    </div>
+
+    <div class="doc">
+      <article class="prose">
+        <div class="callout">
+          <b>Ve zkratce</b>
+          Údaje potřebujeme, abychom vám mohli poskytovat služby a vystavit fakturu. Neprodáváme je, nesledujeme vás reklamními nástroji a web serveros.cz nepoužívá cookies. Servery máme v Německu (EU). Kdykoli se můžete zeptat, co o vás víme, a požádat o opravu nebo výmaz.
+        </div>
+
+        <h2 id="spravce">1. Kdo vaše údaje zpracovává</h2>
+        <dl class="identity">
+          <dt>Správce</dt><dd>Vojtěch Kotrč, podnikající pod označením SERVEROS</dd>
+          <dt>Místo podnikání</dt><dd>Barákova 561/79, Božkov, 326 00 Plzeň</dd>
+          <dt>IČO</dt><dd>17541859</dd>
+          <dt>Kontakt</dt><dd><a href="mailto:info@serveros.cz">info@serveros.cz</a>, <a href="tel:+420773559645">+420 773 559 645</a></dd>
+        </dl>
+        <p>Pověřence pro ochranu osobních údajů jsme nejmenovali, zákon nám to neukládá. Se vším, co se týká vašich údajů, se obracejte na kontakt výše.</p>
+
+        <h2 id="role">2. Dvě role, ve kterých údaje zpracováváme</h2>
+        <div class="table"><table>
+          <thead><tr><th>Role</th><th>Kdy</th><th>Co to znamená</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Správce</strong></td><td>Údaje o našich zákaznících (kontakty, fakturace, komunikace) a o návštěvnících serveros.cz a panelu</td><td>Platí tyto zásady.</td></tr>
+            <tr><td><strong>Zpracovatel</strong></td><td>Data, která zákazník ukládá na náš hosting nebo servery, třeba databáze jeho e-shopu nebo e-maily</td><td>Zpracováváme je jen podle pokynů zákazníka. Platí <a href="zpracovatelska-smlouva.html">smlouva o zpracování osobních údajů</a>. Správcem je zákazník, na něj se obracejte.</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="ucely">3. Jaké údaje zpracováváme, proč a jak dlouho</h2>
+        <div class="table"><table>
+          <thead><tr><th>Účel</th><th>Údaje</th><th>Právní základ (GDPR)</th><th>Jak dlouho</th></tr></thead>
+          <tbody>
+            <tr><td>Vyřízení objednávky a uzavření smlouvy</td><td>jméno, e-mail, telefon, firma, IČO, DIČ, adresa, doména, poznámka k objednávce</td><td>plnění smlouvy a kroky před jejím uzavřením, čl. 6 odst. 1 písm. b)</td><td>po dobu smlouvy a 3 roky po jejím skončení; objednávky, ze kterých smlouva nevznikla, 1 rok</td></tr>
+            <tr><td>Ochrana objednávkového formuláře před zneužitím</td><td>IP adresa, ze které objednávka přišla</td><td>oprávněný zájem, písm. f)</td><td>stejně jako objednávka</td></tr>
+            <tr><td>Poskytování služeb a klientský panel</td><td>přihlašovací e-mail, jméno, otisk hesla (hash), nastavení dvoufázového ověření, přihlášení (čas, IP adresa), záznam úkonů v panelu</td><td>plnění smlouvy, písm. b); bezpečnost, písm. f)</td><td>po dobu trvání účtu; záznamy přihlášení a úkonů po dobu smlouvy a 3 roky po ní</td></tr>
+            <tr><td>Fakturace a účetnictví</td><td>fakturační údaje, platby, faktury</td><td>právní povinnost, písm. c)</td><td>po dobu, kterou ukládají daňové a účetní předpisy, zpravidla 10 let</td></tr>
+            <tr><td>Registrace domén</td><td>údaje držitele: jméno, firma, adresa, e-mail, telefon, IČO</td><td>plnění smlouvy, písm. b)</td><td>po dobu registrace u nás; v registru domén podle pravidel jeho správce</td></tr>
+            <tr><td>Podpora a komunikace</td><td>obsah e-mailů a požadavků v panelu; telefonáty nenahráváme</td><td>plnění smlouvy, písm. b); oprávněný zájem, písm. f)</td><td>po dobu smlouvy a 3 roky po ní</td></tr>
+            <tr><td>Provoz a bezpečnost webu, panelu a serverů</td><td>IP adresa, čas, požadovaná adresa, identifikace prohlížeče, technické logy</td><td>oprávněný zájem, písm. f)</td><td>nejdéle 90 dní, pokud záznam nepotřebujeme k řešení konkrétního incidentu</td></tr>
+            <tr><td>Novinky a obchodní sdělení stávajícím zákazníkům</td><td>e-mail</td><td>oprávněný zájem, písm. f), a § 7 odst. 3 zákona č. 480/2004 Sb.</td><td>do odhlášení nebo konce smlouvy; odhlásit se jde v každé zprávě</td></tr>
+            <tr><td>Ochrana našich práv</td><td>údaje potřebné k uplatnění nebo obhajobě nároku</td><td>oprávněný zájem, písm. f)</td><td>po dobu promlčecí lhůty a trvání sporu</td></tr>
+          </tbody>
+        </table></div>
+        <p>Údaje získáváme přímo od vás (objednávka, panel, komunikace), u firem také z veřejných rejstříků (ARES). Když ve formuláři použijete tlačítko „Načíst z ARES“, váš prohlížeč pošle zadané IČO přímo do systému ARES Ministerstva financí, které tak uvidí vaši IP adresu.</p>
+        <p>Údaje potřebné k uzavření smlouvy jsou smluvním požadavkem. Bez nich službu poskytnout nemůžeme. Fakturační údaje nám ukládá zákon.</p>
+
+        <h2 id="prijemci">4. Komu údaje předáváme</h2>
+        <p>Údaje svěřujeme jen dodavatelům, bez kterých služby poskytovat nejde, a jen v nezbytném rozsahu. Se zpracovateli máme smlouvy podle čl. 28 GDPR.</p>
+        <div class="table"><table>
+          <thead><tr><th>Příjemce</th><th>Proč</th><th>Kde</th></tr></thead>
+          <tbody>
+            <tr><td>Hetzner Online GmbH, Gunzenhausen</td><td>servery, datová centra, úložiště a zálohy</td><td>Německo (EU)</td></tr>
+            <tr><td>WEBZI s.r.o.</td><td>provoz e-mailového serveru, přes který přijímáme poštu na info@serveros.cz</td><td>Česko (EU)</td></tr>
+            <tr><td>Google Ireland Limited, Dublin</td><td>Google Workspace: e-mail a dokumenty, ve kterých vedeme komunikaci se zákazníky</td><td>EU; případný přenos do USA na základě rámce EU-USA pro ochranu osobních údajů (Data Privacy Framework) a standardních smluvních doložek</td></tr>
+            <tr><td>Ravelor s.r.o., IČO 30047242 (fakturační aplikace Fakturor)</td><td>vystavování faktur a evidence předplatného</td><td>EU</td></tr>
+            <tr><td>WEDOS Internet, a.s., Hluboká nad Vltavou</td><td>registrace a správa domén (akreditovaný registrátor)</td><td>Česko (EU)</td></tr>
+            <tr><td>Správci registrů domén, například CZ.NIC, z. s. p. o. (.cz) nebo EURid (.eu)</td><td>registrace domény; jsou samostatnými správci a údaje držitele zveřejňují podle svých pravidel</td><td>podle koncovky</td></tr>
+            <tr><td>Banka, účetní nebo daňový poradce</td><td>přijímání plateb a vedení účetnictví a daní</td><td>Česko (EU)</td></tr>
+            <tr><td>Orgány veřejné moci</td><td>jen když nám to ukládá zákon</td><td>Česko</td></tr>
+          </tbody>
+        </table></div>
+        <p>Osoby, které pro nás pracují, jsou vázány mlčenlivostí. Údaje neprodáváme a nepoužíváme je k automatizovanému rozhodování ani k profilování.</p>
+
+        <h2 id="cookies">5. Cookies a úložiště v prohlížeči</h2>
+        <div class="table"><table>
+          <thead><tr><th>Kde</th><th>Název</th><th>K čemu</th><th>Jak dlouho</th></tr></thead>
+          <tbody>
+            <tr><td>serveros.cz</td><td><code>serveros-kosik</code> (localStorage)</td><td>pamatuje si domény, které jste vložili do košíku</td><td>dokud košík nevyprázdníte nebo neodešlete objednávku</td></tr>
+            <tr><td>panel.serveros.cz</td><td><code>__Host-servero_session</code></td><td>přihlášení do klientského panelu</td><td>14 dní (u administrátorů 12 hodin), nebo do odhlášení</td></tr>
+            <tr><td>panel.serveros.cz</td><td><code>servero_totp_setup</code></td><td>nastavení dvoufázového ověření</td><td>15 minut</td></tr>
+          </tbody>
+        </table></div>
+        <p>Všechno výše je technicky nezbytné pro funkci, o kterou jste sami požádali, a proto to nevyžaduje souhlas (§ 89 odst. 3 zákona č. 127/2005 Sb.). Web serveros.cz nepoužívá žádné cookies, analytické ani reklamní nástroje a písma i skripty načítá z vlastního serveru, takže o vaší návštěvě se nedozví nikdo třetí.</p>
+
+        <h2 id="zabezpeceni">6. Jak údaje chráníme</h2>
+        <ul>
+          <li>Servery a zálohy jsou v datových centrech v EU.</li>
+          <li>Komunikace je šifrovaná (HTTPS, SSH). Přístup mají jen oprávněné osoby, administrace vyžaduje dvoufázové ověření.</li>
+          <li>Hesla do panelu ukládáme jen jako otisk (Argon2). Přístupové údaje neposíláme e-mailem, když to jde jinak.</li>
+          <li>Systémy pravidelně aktualizujeme, hlídáme monitoringem a zálohujeme s ověřením obnovy.</li>
+        </ul>
+
+        <h2 id="prava">7. Vaše práva</h2>
+        <p>Máte právo:</p>
+        <ul>
+          <li>na přístup ke svým údajům a jejich kopii,</li>
+          <li>na opravu nepřesných údajů,</li>
+          <li>na výmaz, pokud údaje už nepotřebujeme a nebrání tomu zákonná povinnost uchování,</li>
+          <li>na omezení zpracování,</li>
+          <li>na přenositelnost údajů, které jste nám poskytli,</li>
+          <li>vznést námitku proti zpracování založenému na oprávněném zájmu; proti obchodním sdělením kdykoli a bez udání důvodu.</li>
+        </ul>
+        <p>Napište na <a href="mailto:info@serveros.cz">info@serveros.cz</a>. Vyřídíme to bez zbytečného odkladu, nejpozději do jednoho měsíce. Ve složitých případech můžeme lhůtu prodloužit o další dva měsíce, o čemž vás informujeme. Abychom údaje nevydali někomu jinému, můžeme si ověřit vaši totožnost.</p>
+        <p>Když se vám nebude líbit, jak s údaji zacházíme, můžete podat stížnost u Úřadu pro ochranu osobních údajů, Pplk. Sochora 27, 170 00 Praha 7, <a href="https://uoou.gov.cz" rel="noopener">uoou.gov.cz</a>.</p>
+
+        <h2 id="incident">8. Když dojde k porušení zabezpečení</h2>
+        <p>Porušení zabezpečení, které představuje riziko pro vaše práva, ohlásíme Úřadu pro ochranu osobních údajů do 72 hodin od zjištění. Pokud jde o vysoké riziko, informujeme bez zbytečného odkladu i vás. Jako zpracovatel informujeme o incidentu zákazníka podle <a href="zpracovatelska-smlouva.html#incident">smlouvy o zpracování</a>.</p>
+
+        <h2 id="zmeny">9. Změny těchto zásad</h2>
+        <p>Zásady aktualizujeme, když se změní způsob zpracování nebo dodavatelé. Platná verze je vždy na této stránce, o podstatných změnách zákazníky informujeme e-mailem.</p>
+      </article>
+
+      <aside class="doc__side" aria-label="Právní dokumenty a kontakt">
+        <nav class="side-unit" aria-labelledby="side-legal">
+          <h2 id="side-legal">Právní dokumenty</h2>
+          <ul>
+            <li><a href="obchodni-podminky.html"><i class="led"></i>Obchodní podmínky</a></li>
+            <li><a href="sla.html"><i class="led"></i>SLA: úroveň služeb</a></li>
+            <li><a href="ochrana-osobnich-udaju.html" aria-current="page"><i class="led"></i>Ochrana osobních údajů</a></li>
+            <li><a href="zpracovatelska-smlouva.html"><i class="led"></i>Zpracovatelská smlouva</a></li>
+            <li><a href="odstoupeni-od-smlouvy.html"><i class="led"></i>Odstoupení od smlouvy</a></li>
+          </ul>
+        </nav>
+        <div class="side-unit">
+          <h2>Provozovatel</h2>
+          <p>Vojtěch Kotrč<br>Barákova 561/79, Božkov<br>326 00 Plzeň</p>
+          <p>IČO 17541859, nejsme plátci DPH. Zapsán v živnostenském rejstříku.</p>
+          <p><a href="mailto:info@serveros.cz">info@serveros.cz</a><br><a href="tel:+420773559645">+420 773 559 645</a></p>
+        </div>
+      </aside>
     </div>
   </main>
 
@@ -56,10 +176,11 @@
       <a href="https://panel.serveros.cz/stav" data-panel-path="/stav">Stav služeb</a>
       <a href="obchodni-podminky.html">Obchodní podmínky</a>
       <a href="ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="sla.html">SLA</a>
       <a href="#top">Zpět nahoru</a>
     </nav>
   </footer>
 </div>
-<script src="site.js?v=15" defer></script>
+<script src="site.js?v=16" defer></script>
 </body>
 </html>

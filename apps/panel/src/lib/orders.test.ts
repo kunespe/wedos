@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { basketTotal, priced, searchNames } from './domains';
-import { canTransition, fieldErrors, nextStatuses, panelOrderSchema, publicOrderSchema } from './orders';
+import { canTransition, fieldErrors, nextStatuses, panelOrderSchema, publicOrderSchema, withdrawalLine } from './orders';
 
 const valid = {
 	plan: 'web-start',
@@ -49,6 +49,22 @@ describe('publicOrderSchema', () => {
 	it('rejects unknown periods and oversized notes', () => {
 		expect(publicOrderSchema.safeParse({ ...valid, period: 'week' }).success).toBe(false);
 		expect(publicOrderSchema.safeParse({ ...valid, note: 'x'.repeat(2001) }).success).toBe(false);
+	});
+});
+
+describe('consumer withdrawal period', () => {
+	it('records the request to start before the period ends, off unless asked', () => {
+		expect(publicOrderSchema.parse(valid).immediateStart).toBe(false);
+		expect(publicOrderSchema.parse({ ...valid, immediateStart: true }).immediateStart).toBe(true);
+		const form = { plan: 'web-start', period: 'year', domainMode: 'none', domains: '[]' };
+		expect(panelOrderSchema.parse(form).immediateStart).toBe(false);
+		expect(panelOrderSchema.parse({ ...form, immediateStart: 'on' }).immediateStart).toBe(true);
+	});
+
+	it('tells the team how to treat the order', () => {
+		expect(withdrawalLine({ ico: '', immediateStart: true })).toMatch(/hned/);
+		expect(withdrawalLine({ ico: '', immediateStart: false })).toMatch(/po 14 dnech/);
+		expect(withdrawalLine({ ico: '27082440', immediateStart: false })).toBe('');
 	});
 });
 

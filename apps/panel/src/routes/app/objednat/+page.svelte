@@ -99,7 +99,7 @@
 </script>
 
 <PageHeader title="Objednat">
-	{#snippet meta()}Další služba na váš účet. Zřídí ji člověk, obvykle do 4 pracovních hodin. Ceny jsou bez DPH.{/snippet}
+	{#snippet meta()}Další služba na váš účet. Zřídí ji člověk, obvykle do 4 pracovních hodin. Nejsme plátci DPH, ceny jsou konečné.{/snippet}
 </PageHeader>
 
 {#if form && 'ordered' in form && form.ordered}
@@ -313,7 +313,7 @@
 						<span class="text-muted">{period === 'year' ? 'Platba ročně' : 'Platba měsíčně'}</span>
 						<span class="mono font-semibold">{priceOf(chosen.monthly, chosen.priceFrom)}</span>
 					</div>
-					<p class="mt-1 text-xs text-muted">{chosen.monthly == null ? 'Cenu domluvíme podle rozsahu.' : 'Bez DPH. Fakturu pošleme po zřízení.'}</p>
+					<p class="mt-1 text-xs text-muted">{chosen.monthly == null ? 'Cenu domluvíme podle rozsahu.' : 'Konečná cena. Fakturu pošleme po zřízení.'}</p>
 				{:else}
 					<p class="text-sm text-muted">Vyberte tarif vlevo.</p>
 				{/if}
@@ -326,13 +326,21 @@
 							</li>
 						{/each}
 						<li class="mt-1 flex items-baseline justify-between gap-2 border-t border-line pt-2 font-semibold">
-							<span>Domény bez DPH</span><span class="mono">{czk(total.known)}</span>
+							<span>Domény celkem</span><span class="mono">{czk(total.known)}</span>
 						</li>
 					</ul>
 					{#if total.unknown}<p class="mt-1 text-xs text-muted">Cenu ostatních koncovek potvrdíme e-mailem, než doménu objednáme.</p>{/if}
 				{/if}
+				{#if data.customer && !data.customer.ico}
+					<label class="mt-4 flex items-start gap-2 text-xs">
+						<input type="checkbox" name="immediateStart" class="mt-0.5 size-4 shrink-0 accent-[var(--accent)]" />
+						<span>Jsem spotřebitel a žádám o zřízení služby hned, ještě před uplynutím 14denní lhůty pro odstoupení. Beru na vědomí, že při odstoupení zaplatím poměrnou část ceny a že u plně poskytnuté služby (například registrace domény) právo na odstoupení zaniká.</span>
+					</label>
+				{/if}
 				<Button type="submit" variant="primary" class="mt-4 w-full" disabled={busy || !chosen || (domainOnly && !basket.length)}>{busy ? 'Odesílám' : 'Závazně objednat'}</Button>
-				<p class="mt-2 text-xs text-muted">Nic se nespustí automaticky. Před zřízením se vám ozveme, když bude potřeba cokoli upřesnit.</p>
+				<p class="mt-2 text-xs text-muted">
+					Objednávka se řídí <a class="underline" href="https://serveros.cz/obchodni-podminky.html" target="_blank" rel="noopener">obchodními podmínkami</a>, <a class="underline" href="https://serveros.cz/sla.html" target="_blank" rel="noopener">SLA</a> a <a class="underline" href="https://serveros.cz/ochrana-osobnich-udaju.html" target="_blank" rel="noopener">zásadami ochrany osobních údajů</a>. Nic se nespustí automaticky. Před zřízením se vám ozveme, když bude potřeba cokoli upřesnit.
+				</p>
 			</Panel>
 
 			{#if data.customer}

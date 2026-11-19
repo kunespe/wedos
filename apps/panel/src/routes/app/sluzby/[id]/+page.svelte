@@ -52,7 +52,7 @@
 				<div class="text-right">
 					<div class="mono text-lg">{s.priceMonthly == null ? 'Individuálně' : czk(periodTotal(s.priceMonthly, s.period))}</div>
 					<div class="text-xs text-muted">
-						{s.priceMonthly == null ? 'podle dohody' : s.period === 'year' ? 'za rok bez DPH' : 'za měsíc bez DPH'}
+						{s.priceMonthly == null ? 'podle dohody' : s.period === 'year' ? 'za rok' : 'za měsíc'}
 					</div>
 				</div>
 			</div>

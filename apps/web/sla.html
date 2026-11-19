@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SLA: úroveň služeb | Serveros</title>
+  <meta name="description" content="Garantovaná dostupnost, reakční doby, zálohy a kompenzace služeb SERVEROS.">
+  <meta name="theme-color" content="#E7EAEE">
+  <link rel="canonical" href="https://serveros.cz/sla.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Serveros">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:url" content="https://serveros.cz/sla.html">
+  <meta property="og:title" content="SLA: úroveň služeb | Serveros">
+  <meta property="og:description" content="Garantovaná dostupnost, reakční doby, zálohy a kompenzace služeb SERVEROS.">
+  <meta property="og:image" content="https://serveros.cz/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <!-- Archivo and JetBrains Mono are self-hosted (@font-face in styles.css); preload the latin face the first paint needs -->
+  <link rel="preload" href="/assets/fonts/archivo-v25-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css?v=16">
+</head>
+<body>
+<div class="rack">
+  <div class="rail rail--l" aria-hidden="true"><div class="rail__marks"></div></div>
+  <div class="rail rail--r" aria-hidden="true"><div class="rail__marks"></div></div>
+
+  <header class="top wrap">
+    <a class="logo" href="index.html" aria-label="serveros.cz, domů">serveros<span>.cz</span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="index.html#sluzby">Služby</a>
+      <a href="index.html#cenik">Ceník</a>
+      <a href="index.html#tym">Kdo jsme</a>
+      <a href="navody/">Návody</a>
+      <a class="nav__login" href="https://panel.serveros.cz" data-panel-path="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>Přihlásit</a>
+      <a class="btn btn--sm" href="index.html#kontakt"><i class="led led--on"></i>Kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top" class="wrap page">
+    <div class="page-head">
+      <p class="crumbs"><a href="index.html">serveros.cz</a><span aria-hidden="true">/</span><span>právní dokumenty</span><span aria-hidden="true">/</span><span>SLA</span></p>
+      <h1>SLA: úroveň služeb</h1>
+      <p>Kolik garantujeme dostupnosti, jak rychle reagujeme, jak zálohujeme a co dostanete, když to nedodržíme.</p>
+      <p class="legal-meta"><span>Účinnost od <b>19. 11. 2026</b></span><span>Verze <b>1.0</b></span><span>Provozovatel <b>Vojtěch Kotrč</b>, IČO 17541859</span></p>
+    </div>
+
+    <div class="doc">
+      <article class="prose">
+        <p>Tato SLA (smlouva o úrovni služeb) je součástí <a href="obchodni-podminky.html">obchodních podmínek</a>. Říká, co u jednotlivých tarifů garantujeme a co dostanete, když to nedodržíme. Jsme dva lidé a jeden tým, takže slibujeme jen to, co opravdu umíme držet.</p>
+
+        <h2 id="pojmy">1. Pojmy</h2>
+        <div class="table"><table>
+          <thead><tr><th>Pojem</th><th>Význam</th></tr></thead>
+          <tbody>
+            <tr><td>Pracovní doba</td><td>Pondělí až pátek 9:00 až 17:00, mimo státní svátky ČR</td></tr>
+            <tr><td>Dostupnost</td><td>Služba odpovídá z internetu (web na HTTP/HTTPS, VPS na ping nebo SSH). Měří ji náš monitoring v intervalu 1 minuty.</td></tr>
+            <tr><td>Měsíční dostupnost</td><td>(minuty v měsíci minus minuty nedostupnosti) děleno minutami v měsíci</td></tr>
+            <tr><td>Reakce</td><td>První odpověď člověka, že na problému pracujeme. Automatická odpověď se nepočítá.</td></tr>
+            <tr><td>Kritický incident</td><td>Služba je nedostupná nebo hrozí ztráta dat</td></tr>
+            <tr><td>Běžný požadavek</td><td>Dotaz, změna nastavení, drobná chyba bez výpadku</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="dostupnost">2. Garantovaná dostupnost</h2>
+        <div class="table"><table>
+          <thead><tr><th>Tarif</th><th>Měsíční dostupnost</th><th>Nejvýše výpadek za měsíc (přibližně)</th></tr></thead>
+          <tbody>
+            <tr><td>Web Start, Web Plus</td><td>99,5 %</td><td>3 h 39 min</td></tr>
+            <tr><td>WP Provoz, Aplikace Node / Bun</td><td>99,5 %</td><td>3 h 39 min</td></tr>
+            <tr><td>VPS S, M, L</td><td>99,7 %</td><td>2 h 11 min</td></tr>
+            <tr><td>1U Start, 2U Provoz</td><td colspan="2">podle infrastruktury zákazníka, viz <a href="#sprava">čl. 4</a></td></tr>
+            <tr><td>4U Na míru</td><td colspan="2">podle individuální smlouvy</td></tr>
+          </tbody>
+        </table></div>
+        <p>Do nedostupnosti se nepočítá:</p>
+        <ul>
+          <li>plánovaná údržba oznámená nejméně 48 hodin předem, nejvýše 4 hodiny měsíčně, přednostně mezi 22:00 a 6:00,</li>
+          <li>výpadek způsobený zákazníkem (obsah, kód, nastavení, zásah s přístupem root),</li>
+          <li>útoky DDoS nad rámec běžné ochrany a vyšší moc,</li>
+          <li>výpadky služeb, které neprovozujeme (například DNS u registrátora zákazníka nebo jeho e-mail u jiného poskytovatele),</li>
+          <li>pozastavení služby podle obchodních podmínek (nezaplacení, porušení pravidel).</li>
+        </ul>
+
+        <h2 id="reakce">3. Reakční doby</h2>
+        <div class="table"><table>
+          <thead><tr><th>Tarif</th><th>Kritický incident v pracovní době</th><th>Kritický incident mimo pracovní dobu</th><th>Běžný požadavek</th></tr></thead>
+          <tbody>
+            <tr><td>Web Start, Web Plus</td><td>2 h</td><td>co nejdříve, nejpozději další pracovní den do 10:00</td><td>1 pracovní den</td></tr>
+            <tr><td>WP Provoz, Aplikace</td><td>1 h</td><td>co nejdříve, nejpozději další pracovní den do 10:00</td><td>4 pracovní hodiny</td></tr>
+            <tr><td>VPS S, M, L</td><td>1 h</td><td>4 h</td><td>4 pracovní hodiny</td></tr>
+            <tr><td>1U Start</td><td>1 h</td><td>4 h</td><td>1 pracovní den</td></tr>
+            <tr><td>2U Provoz</td><td><strong>30 min</strong></td><td><strong>30 min</strong> (nonstop)</td><td>4 pracovní hodiny</td></tr>
+            <tr><td>4U Na míru</td><td>podle smlouvy</td><td>podle smlouvy</td><td>podle smlouvy</td></tr>
+          </tbody>
+        </table></div>
+        <p>O většině výpadků víme dřív než vy, služby hlídá monitoring nonstop. Kritický incident nahlaste telefonem na <a href="tel:+420773559645">+420 773 559 645</a>, běžný požadavek v <a href="https://panel.serveros.cz/app/podpora" data-panel-path="/app/podpora">klientském panelu</a> nebo na <a href="mailto:info@serveros.cz">info@serveros.cz</a>.</p>
+
+        <h2 id="sprava">4. Správa serverů (1U, 2U, 4U)</h2>
+        <ul>
+          <li>Garantujeme reakci, monitoring, zálohy a aktualizace. Dostupnost serverů závisí i na hardwaru a poskytovateli, kterého si zákazník zvolil, proto ji negarantujeme, pokud servery neprovozujeme my.</li>
+          <li>Když servery provozujeme my (u Hetzneru v rámci SERVEROS), platí dostupnost jako u VPS.</li>
+          <li>Kritické bezpečnostní aktualizace nasazujeme do 48 hodin od vydání, ostatní v pravidelném týdenním okně.</li>
+          <li>U 2U Provoz posíláme měsíční report: dostupnost, incidenty, aktualizace, zálohy a doporučení.</li>
+        </ul>
+
+        <h2 id="zalohy">5. Zálohy</h2>
+        <div class="table"><table>
+          <thead><tr><th>Tarif</th><th>Jak často</th><th>Jak dlouho zpět</th><th>Kde</th></tr></thead>
+          <tbody>
+            <tr><td>Web Start, Web Plus</td><td>denně</td><td>14 dní</td><td>server a šifrovaně mimo datové centrum (EU)</td></tr>
+            <tr><td>WP Provoz</td><td>denně a před každou aktualizací (ověřená)</td><td>14 dní</td><td>server a šifrovaně mimo datové centrum (EU)</td></tr>
+            <tr><td>Aplikace Node / Bun</td><td>denně (data a databáze)</td><td>14 dní</td><td>šifrovaně mimo datové centrum (EU)</td></tr>
+            <tr><td>VPS</td><td>denně</td><td>7 snímků serveru, data 14 dní</td><td>snímky u Hetzneru, data šifrovaně mimo datové centrum (EU)</td></tr>
+            <tr><td>1U, 2U</td><td>každou noc</td><td>14 dní nebo podle dohody</td><td>podle dohody</td></tr>
+          </tbody>
+        </table></div>
+        <ul>
+          <li>Obnovu ze záloh pravidelně zkoušíme, namátkově nejméně jednou měsíčně.</li>
+          <li>Obnovu jednoho webu na vaši žádost provedeme do 4 pracovních hodin.</li>
+          <li>Celý sdílený server po havárii obnovíme do 8 hodin.</li>
+          <li>Jednu obnovu měsíčně na vaši žádost děláme zdarma, obnovu po naší chybě vždy (OP čl. 9.2).</li>
+        </ul>
+
+        <h2 id="kompenzace">6. Kompenzace</h2>
+        <p>Když nedodržíme garantovanou měsíční dostupnost, dostanete kredit z měsíční ceny dotčené služby:</p>
+        <div class="table"><table>
+          <thead><tr><th>Měsíční dostupnost</th><th>Kredit</th></tr></thead>
+          <tbody>
+            <tr><td>pod garantovanou hodnotou, ale nad 99,0 %</td><td>10 %</td></tr>
+            <tr><td>98,0 až 99,0 %</td><td>25 %</td></tr>
+            <tr><td>95,0 až 98,0 %</td><td>50 %</td></tr>
+            <tr><td>pod 95,0 %</td><td>100 %</td></tr>
+          </tbody>
+        </table></div>
+        <ul>
+          <li>U 2U Provoz dostanete za každé nedodržení reakční doby u kritického incidentu kredit 10 % měsíční ceny, celkem nejvýše 50 % za měsíc.</li>
+          <li>Kredit si vyžádejte e-mailem do 30 dnů od konce měsíce. Odečteme ho z nejbližší faktury, v penězích ho nevyplácíme. Při ukončení smlouvy nevyčerpaný kredit vrátíme.</li>
+          <li>Kompenzace za jeden měsíc nepřesáhne 100 % měsíční ceny dotčené služby.</li>
+          <li>Pro podnikatele je kompenzace podle SLA výlučnou náhradou za nedostupnost (OP čl. 11.2). Práva spotřebitele z vadného plnění SLA neomezuje.</li>
+        </ul>
+
+        <h2 id="zrizeni">7. Zřízení služby</h2>
+        <div class="table"><table>
+          <thead><tr><th>Co</th><th>Cíl od obdržení kompletních údajů</th></tr></thead>
+          <tbody>
+            <tr><td>Webhosting, WordPress, aplikace</td><td>do 4 pracovních hodin</td></tr>
+            <tr><td>VPS</td><td>do 4 pracovních hodin</td></tr>
+            <tr><td>Registrace domény</td><td>do 4 pracovních hodin</td></tr>
+            <tr><td>Převod domény</td><td>podle AUTH-ID a registrátora, obvykle do 5 pracovních dnů</td></tr>
+            <tr><td>Správa serverů</td><td>úvodní schůzka do 2 pracovních dnů, převzetí podle rozsahu</td></tr>
+            <tr><td>Migrace webu</td><td>do 1 pracovního dne od zřízení a dodání přístupů</td></tr>
+          </tbody>
+        </table></div>
+        <p>Spotřebiteli bez žádosti o okamžité zřízení běží tyto lhůty až od uplynutí 14denní lhůty pro odstoupení (OP čl. 14.3). Cíle zřízení nejsou podkladem pro kompenzaci.</p>
+
+        <h2 id="komunikace">8. Jak informujeme o incidentech</h2>
+        <ul>
+          <li>Plánovanou údržbu oznámíme e-mailem nejméně 48 hodin předem.</li>
+          <li>O neplánovaném výpadku delším než 15 minut informujeme do 30 minut na <a href="https://panel.serveros.cz/stav" data-panel-path="/stav">stránce stavu služeb</a> nebo e-mailem.</li>
+          <li>Po kritickém incidentu delším než 1 hodina pošleme do 3 pracovních dnů krátkou zprávu o příčině a opatřeních.</li>
+        </ul>
+      </article>
+
+      <aside class="doc__side" aria-label="Právní dokumenty a kontakt">
+        <nav class="side-unit" aria-labelledby="side-legal">
+          <h2 id="side-legal">Právní dokumenty</h2>
+          <ul>
+            <li><a href="obchodni-podminky.html"><i class="led"></i>Obchodní podmínky</a></li>
+            <li><a href="sla.html" aria-current="page"><i class="led"></i>SLA: úroveň služeb</a></li>
+            <li><a href="ochrana-osobnich-udaju.html"><i class="led"></i>Ochrana osobních údajů</a></li>
+            <li><a href="zpracovatelska-smlouva.html"><i class="led"></i>Zpracovatelská smlouva</a></li>
+            <li><a href="odstoupeni-od-smlouvy.html"><i class="led"></i>Odstoupení od smlouvy</a></li>
+          </ul>
+        </nav>
+        <div class="side-unit">
+          <h2>Provozovatel</h2>
+          <p>Vojtěch Kotrč<br>Barákova 561/79, Božkov<br>326 00 Plzeň</p>
+          <p>IČO 17541859, nejsme plátci DPH. Zapsán v živnostenském rejstříku.</p>
+          <p><a href="mailto:info@serveros.cz">info@serveros.cz</a><br><a href="tel:+420773559645">+420 773 559 645</a></p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© <span class="year">2026</span> Serveros.cz, Plzeň. Provozovatel: Vojtěch Kotrč, IČO 17541859, Barákova 561/79, 326 00 Plzeň. Nejsme plátci DPH.</span>
+    <span>Správa serverů, CI/CD, cloud a zálohy pro celou Českou republiku.</span>
+    <nav class="foot__links" aria-label="Odkazy v patičce">
+      <a href="navody/">Návody</a>
+      <a href="https://panel.serveros.cz/stav" data-panel-path="/stav">Stav služeb</a>
+      <a href="obchodni-podminky.html">Obchodní podmínky</a>
+      <a href="ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="sla.html">SLA</a>
+      <a href="#top">Zpět nahoru</a>
+    </nav>
+  </footer>
+</div>
+<script src="site.js?v=16" defer></script>
+</body>
+</html>

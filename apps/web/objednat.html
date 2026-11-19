@@ -24,7 +24,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <!-- Archivo and JetBrains Mono are self-hosted (@font-face in styles.css); preload the latin face the first paint needs -->
   <link rel="preload" href="/assets/fonts/archivo-v25-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=15">
+  <link rel="stylesheet" href="styles.css?v=16">
   <noscript><style>.order__grid { display: none; }</style></noscript>
 </head>
 <body>
@@ -194,9 +194,15 @@
           <div class="field">
             <label class="check">
               <input type="checkbox" name="consent" form="order" required aria-describedby="err-consent">
-              <span>Souhlasím s <a href="obchodni-podminky.html" target="_blank">obchodními podmínkami</a> a beru na vědomí <a href="ochrana-osobnich-udaju.html" target="_blank">zpracování osobních údajů</a>. <b aria-hidden="true">*</b></span>
+              <span>Souhlasím s <a href="obchodni-podminky.html" target="_blank">obchodními podmínkami</a> a <a href="sla.html" target="_blank">SLA</a> a beru na vědomí <a href="ochrana-osobnich-udaju.html" target="_blank">zpracování osobních údajů</a>. <b aria-hidden="true">*</b></span>
             </label>
             <p class="field__err" id="err-consent" hidden></p>
+          </div>
+          <div class="field">
+            <label class="check check--small">
+              <input type="checkbox" name="immediateStart" form="order">
+              <span><b class="check__tag">Jen pro spotřebitele</b> Žádám o zřízení služby hned, ještě před uplynutím 14denní lhůty pro <a href="odstoupeni-od-smlouvy.html" target="_blank">odstoupení od smlouvy</a>. Beru na vědomí, že při odstoupení zaplatím poměrnou část ceny a že u plně poskytnuté služby (například registrace domény) právo na odstoupení zaniká. Bez zaškrtnutí službu spotřebiteli zřídíme po uplynutí lhůty.</span>
+            </label>
           </div>
           <div class="alert" role="alert" hidden></div>
           <button class="btn btn--light order__submit" type="submit" form="order"><i class="led led--on"></i><span>Odeslat objednávku</span></button>
@@ -225,11 +231,12 @@
       <a href="https://panel.serveros.cz/stav" data-panel-path="/stav">Stav služeb</a>
       <a href="obchodni-podminky.html">Obchodní podmínky</a>
       <a href="ochrana-osobnich-udaju.html">Ochrana osobních údajů</a>
+      <a href="sla.html">SLA</a>
       <a href="#top">Zpět nahoru</a>
     </nav>
   </footer>
 </div>
-<script src="site.js?v=15" defer></script>
-<script src="objednat.js?v=15" defer></script>
+<script src="site.js?v=16" defer></script>
+<script src="objednat.js?v=16" defer></script>
 </body>
 </html>

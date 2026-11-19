@@ -18,7 +18,7 @@
 		{ label: 'Služba', sort: (r) => r.label },
 		{ label: 'Doména', sort: (r) => r.domain },
 		{ label: 'Web', class: 'w-16' },
-		{ label: 'Cena bez DPH', sort: (r) => r.priceMonthly, align: 'right' },
+		{ label: 'Cena', sort: (r) => r.priceMonthly, align: 'right' },
 		{ label: 'Platí do', sort: (r) => r.expiresAt },
 		{ label: 'Stav', sort: (r) => SERVICE_STATUSES.indexOf(r.status) }
 	];

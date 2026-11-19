@@ -105,7 +105,7 @@
 					</div>
 					<div class="text-right">
 						<div class="mono text-lg">{czk(total.known)}</div>
-						<div class="text-xs text-muted">{total.unknown ? `známé ceny, ${total.unknown}× nacenit` : 'za domény bez DPH'}</div>
+						<div class="text-xs text-muted">{total.unknown ? `známé ceny, ${total.unknown}× nacenit` : 'za domény'}</div>
 					</div>
 				</div>
 			{:else}
@@ -118,7 +118,7 @@
 						<div class="mono text-lg">
 							{o.priceMonthly == null ? 'Individuálně' : czk(periodTotal(o.priceMonthly, o.period))}
 						</div>
-						<div class="text-xs text-muted">{o.priceMonthly == null ? 'nacenit' : o.period === 'year' ? 'za rok bez DPH' : 'za měsíc bez DPH'}</div>
+						<div class="text-xs text-muted">{o.priceMonthly == null ? 'nacenit' : o.period === 'year' ? 'za rok' : 'za měsíc'}</div>
 					</div>
 				</div>
 			{/if}
@@ -127,6 +127,17 @@
 					<span class="text-muted">Doména</span>
 					<span class="mono font-medium">{o.domain}</span>
 					<Pill tone={o.domainMode === 'register' ? 'warn' : 'off'}>{o.domainMode === 'register' ? 'registrovat' : 'vlastní'}</Pill>
+				</div>
+			{/if}
+			{#if o.immediateStart || !o.ico}
+				<div class="mt-4 flex flex-wrap items-center gap-2 border-t border-line pt-3 text-sm">
+					<span class="text-muted">Zřízení</span>
+					{#if o.immediateStart}
+						<Pill tone="ok">hned, na žádost spotřebitele</Pill>
+					{:else}
+						<Pill tone="warn">bez žádosti o okamžité zřízení</Pill>
+						<span class="text-xs text-muted">Bez IČO jde nejspíš o spotřebitele: zřídit po 14 dnech, nebo až po jeho výslovné žádosti e-mailem.</span>
+					{/if}
 				</div>
 			{/if}
 			{#if o.note}

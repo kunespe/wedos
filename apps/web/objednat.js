@@ -7,7 +7,6 @@
 
   /* ---------- Config ---------- */
   const ARES = 'https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/';
-  const VAT = .21;
   const MAIL = 'info@serveros.cz';
 
   const kc = n => new Intl.NumberFormat('cs-CZ').format(Math.round(n));
@@ -104,9 +103,7 @@
       sName.textContent = 'Jen domény';
       sMeta.textContent = `${items.length} ${domainsWord(items.length)}, bez hostingu`;
       sLcd.textContent = `${kc(known)} Kč za domény`;
-      rows.push(['Domény', `${kc(known)} Kč`]);
-      rows.push(['DPH 21 %', `${kc(known * VAT)} Kč`]);
-      rows.push(['Celkem s DPH', `${kc(known * (1 + VAT))} Kč`, true]);
+      rows.push(['Celkem za domény', `${kc(known)} Kč`, true]);
     } else if (!p) {
       sName.textContent = 'Vyberte službu';
       sMeta.textContent = '';
@@ -122,9 +119,7 @@
         const base = period === 'year' ? p.monthly * mc : p.monthly;
         const free = 12 - mc;
         sMeta.textContent = `${catName[p.category]}, ${period === 'year' ? `ročně (${free} ${months(free)} zdarma)` : 'měsíčně'}`;
-        rows.push([period === 'year' ? 'Za rok' : 'Za měsíc', `${od}${kc(base)} Kč`]);
-        rows.push(['DPH 21 %', `${od}${kc(base * VAT)} Kč`]);
-        rows.push(['Celkem s DPH', `${od}${kc(base * (1 + VAT))} Kč`, true]);
+        rows.push([period === 'year' ? 'Celkem za rok' : 'Celkem za měsíc', `${od}${kc(base)} Kč`, true]);
       }
     }
     const domain = values().domain;
@@ -182,6 +177,8 @@
       note: v('note'),
       website: el('website').value,
       consent: el('consent').checked,
+      // consumers only (no IČO): set the service up before the 14-day withdrawal period ends
+      immediateStart: !/^\d{8}$/.test(ico) && el('immediateStart').checked,
     };
   }
 
@@ -245,6 +242,11 @@
   });
   // the consent box lives in the summary (form="order"), outside the form's DOM subtree
   el('consent').addEventListener('change', () => check('consent'));
+  // a business (IČO filled in) has no withdrawal period, so the consumer box goes away
+  const consumerBox = el('immediateStart').closest('.field');
+  const syncConsumer = () => { consumerBox.hidden = /^\d{8}$/.test(el('ico').value.replace(/\s/g, '')); };
+  el('ico').addEventListener('input', syncConsumer);
+  syncConsumer();
 
   /* ---------- Domain: availability check while registering a new one ---------- */
   const domBtn = $('.domain-check'), domStatus = $('#domain-status'), domHint = $('#hint-domain');
@@ -304,6 +306,7 @@
     setError('ico', msg);
     if (msg) { el('ico').focus(); return; }
     el('ico').value = ico;
+    syncConsumer();
     aresBtn.disabled = true;
     aresStatus.textContent = 'Hledám v ARES…';
     const ctrl = new AbortController();

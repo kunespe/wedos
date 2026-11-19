@@ -42,6 +42,8 @@ export const publicOrderSchema = z
 		// Honeypot: humans never see this field.
 		website: z.string().max(500).default(''),
 		consent: z.literal(true, 'Bez souhlasu s podmínkami objednávku nepřijmeme.'),
+		// Consumers only: set the service up now, before the 14-day withdrawal period ends (OP čl. 14).
+		immediateStart: z.boolean().default(false),
 		turnstileToken: z.string().max(4096).optional(),
 		// Domain basket from the storefront: [{ name, mode: register | transfer, years: 1..3 }]
 		domains: domainBasketSchema
@@ -77,6 +79,13 @@ const TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
 	cancelled: ['new']
 };
 
+/** The line both order e-mails carry about a consumer's withdrawal period. Customers with an IČO order as a business. */
+export function withdrawalLine(o: { ico: string; immediateStart: boolean }): string {
+	if (o.immediateStart) return 'Zřízení: zákazník žádá o zřízení hned, před uplynutím 14denní lhůty pro odstoupení.';
+	if (!o.ico) return 'Zřízení: bez IČO a bez žádosti o okamžité zřízení. Spotřebiteli službu zřídíme po 14 dnech, nebo dřív na jeho výslovnou žádost.';
+	return '';
+}
+
 export const nextStatuses = (from: OrderStatus) => TRANSITIONS[from];
 export const canTransition = (from: OrderStatus, to: OrderStatus) => TRANSITIONS[from].includes(to);
 
@@ -90,6 +99,8 @@ export const panelOrderSchema = z
 			.transform((v) => v.toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, ''))
 			.default(''),
 		note: trimmed(2000).default(''),
+		// Consumers only: the checkbox asking to set the service up before the withdrawal period ends.
+		immediateStart: z.preprocess((v) => v === true || v === 'on' || v === 'true', z.boolean()),
 		// The basket travels as one JSON field of the form.
 		domains: z.preprocess((v) => {
 			if (typeof v !== 'string') return v;

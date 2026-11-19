@@ -54,7 +54,7 @@
 		<h2 class="font-bold">Jak to s doménami funguje</h2>
 		<p>
 			<strong>Spravujeme my:</strong> doménu platíme u registru za vás a prodlužujeme ji sami, nic nemusíte hlídat. Doména
-			<span class="mono">.cz</span> stojí {CZ_PRICE} ročně bez DPH a je na faktuře spolu s hostingem.
+			<span class="mono">.cz</span> stojí {CZ_PRICE} ročně (konečná cena) a je na faktuře spolu s hostingem.
 		</p>
 		<p>
 			<strong>U jiného registrátora:</strong> doménu si platíte sami. My jen nastavujeme DNS, aby web běžel u nás. Prodloužení

@@ -82,7 +82,7 @@ Ostatní služby VEDOS: e-mail 50 až 1 000 Kč/měs, doména .cz 160 Kč/rok (=
 | Ověřené zálohy | Zálohu nejen děláme, ale pravidelně z ní zkoušíme obnovu. |
 | Transparentní správa | Spravované VPS a správa serverů s veřejným ceníkem od 1 290 Kč. Konkurence má mezi ~500 a 1 500+ Kč díru nebo „cenu na dotaz". |
 
-Kde **nesoutěžíme:** nejlevnější sdílený hosting (VEDOS 39 Kč, Endora zdarma). Web Start za 79 Kč je vstupní produkt pro klienty, kteří chtějí jistotu, ne nejnižší cenu.
+Kde **nesoutěžíme:** nejlevnější sdílený hosting (VEDOS 39 Kč, Endora zdarma). Web Start za 99 Kč (do 19. 11. 2026 za 79 Kč) je vstupní produkt pro klienty, kteří chtějí jistotu, ne nejnižší cenu.
 
 E-mail: při spuštění **neprovozujeme vlastní poštu** (doručitelnost, RAM na sdíleném nodu). DNS nastavíme pro Seznam Email Profi, Google Workspace nebo Microsoft 365. Vlastní mail je fáze 2 na samostatném nodu.
 
@@ -101,7 +101,7 @@ Ceny z `catalog/plans.json`, Kč/měs bez DPH. Roční platba = 10 měsíců. �
 
 | Řada | Tarif | Kód | Kč/měs | Kč/rok (10 měs.) | Obsah | Benchmark (Kč/měs) |
 |---|---|---|---|---|---|---|
-| Webhosting | Web Start | web-start | 79 | 790 | 1 web, 5 GB NVMe, 1 DB, SSL, denní záloha 14 dní, migrace zdarma | VEDOS NoLimit 39 → 100; Forpsi Easy 32,50 → 65; Webglobe Start 57 → 69; Český hosting 59 → 125 |
+| Webhosting | Web Start | web-start | 99 | 990 | 1 web, 5 GB NVMe, 1 DB, SSL, denní záloha 14 dní, migrace zdarma | VEDOS NoLimit 39 → 100; Forpsi Easy 32,50 → 65; Webglobe Start 57 → 69; Český hosting 59 → 125 |
 | Webhosting | Web Plus ★ | web-plus | 149 | 1 490 | 5 webů, 20 GB NVMe, 10 DB, Redis, testovací prostředí, migrace zdarma | VEDOS Extra 99 → 200; Forpsi Advanced 55 → 150; Webglobe Plus 131 → 165 |
 | WordPress a aplikace | WP Provoz ★ | wp-provoz | 349 | 3 490 | 1 WP 10 GB, ověřená záloha před každou aktualizací, týdenní aktualizace, hlídání dostupnosti a SSL | VEDOS WMS od 617 |
 | WordPress a aplikace | Aplikace Node / Bun | app-node | 399 | 3 990 | 1 aplikace 1 GB RAM, nasazení z Gitu, reverse proxy, SSL, logy, restart při pádu | Český hosting VMS 250 až 500 (bez nasazení); ZonerCloud managed od 769 |
@@ -138,7 +138,7 @@ Ceny z `catalog/plans.json`, Kč/měs bez DPH. Roční platba = 10 měsíců. �
 
 | Tarif | Cena | Přímý náklad | Hrubá marže | Marže % | Čas/měs **[P]** | Cena času | Marže po času | % po času |
 |---|---|---|---|---|---|---|---|---|
-| Web Start | 79 | 22 | 57 | 72 % | 3 min | 25 | 32 | 41 % |
+| Web Start | 99 | 22 | 77 | 78 % | 3 min | 25 | 52 | 53 % |
 | Web Plus | 149 | 44 | 105 | 70 % | 6 min | 50 | 55 | 37 % |
 | WP Provoz | 349 | 54 | 295 | 85 % | 20 min | 167 | 128 | 37 % |
 | Aplikace Node/Bun | 399 | 110 | 289 | 72 % | 15 min | 125 | 164 | 41 % |
@@ -155,7 +155,7 @@ U správy serverů hradí zákazník svou infrastrukturu sám. Pokud ji provozuj
 
 ### 6.3 Co z toho plyne
 
-- **Web Start** je vstupní produkt. Při 10 minutách podpory měsíčně jde do ztráty. Hlídat počet tiketů, případně zvážit 99 Kč.
+- **Web Start** je vstupní produkt. Při 10 minutách podpory měsíčně jde do ztráty. Od 19. 11. 2026 stojí 99 Kč místo 79 Kč, marže po času vzrostla z 32 na 52 Kč. Dál hlídat počet tiketů.
 - **WP Provoz** je ziskový jen se skriptovanými aktualizacemi. **Skript musí být hotový dřív, než prodáme 10. kus** (základ existuje v `operations/wp-maintenance.py`).
 - **VPS S** má nejnižší marži po času (25 %). Prodávat hlavně VPS M, VPS S jako vstup.
 - **Správa serverů** nese většinu zisku. Je to hlavní obchodní priorita.
@@ -223,6 +223,7 @@ Bod zvratu včetně ohodnocení času (500 Kč/h) v základním mixu (marže po 
 
 Poznámky:
 - Základní a optimistický scénář přesáhnou kapacitu prvního nodu (~30 slotů), druhý node je nutný v průběhu roku.
+- Scénář je spočítaný s Web Startem za 79 Kč (cena do 19. 11. 2026). Za 99 Kč přidá k MRR ve 12. měsíci +160 / +240 / +400 Kč.
 - Čísla nezahrnují stávající klienty Vytvořit web (centrumarete.cz, jrmontaze.cz). Ti se převedou na tarify SERVEROS a jsou bonus nad scénářem.
 - Jednorázové příjmy (audity, CI/CD, hodiny, domény) nejsou v MRR. **[P]** Základ: 3 audity + 2 CI/CD + 20 h práce za rok ≈ 59 000 Kč.
 

@@ -82,7 +82,7 @@ window.servero = (() => {
 
   /* ---------- Catalog: plans.json, a copy of /catalog/plans.json (see main.js) ---------- */
   let catalogP;
-  const catalog = () => catalogP || (catalogP = fetch('plans.json?v=5')
+  const catalog = () => catalogP || (catalogP = fetch('plans.json?v=6')
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .catch(e => { catalogP = null; throw e; }));
   // price per year from the "domains" table; null means "cenu potvrdíme". Tolerates older catalogs.
@@ -163,6 +163,9 @@ window.servero = (() => {
     paint(load());
     basket.onChange(paint);
   }
+
+  /* ---------- Print buttons (legal pages): CSP allows no inline handlers ---------- */
+  document.querySelectorAll('[data-print]').forEach(b => b.addEventListener('click', () => print()));
 
   return { panel, drawRails, cleanDomain, checkDomain, checkQueued, catalog, domainPrice, basket };
 })();

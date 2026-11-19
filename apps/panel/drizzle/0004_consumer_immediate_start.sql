@@ -1,0 +1,1 @@
+ALTER TABLE `orders` ADD `immediate_start` boolean DEFAULT false NOT NULL;
